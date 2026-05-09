@@ -1,0 +1,15 @@
+node_modules/
+.venv/
+.env
+*.log
+.DS_Store
+dist/
+build/
+.gemini/
+.agents/
+brain/
+__pycache__/
+*.pyc
+*.crdownload
+gateway-server/ml/data/*.zip
+gateway-server/ml/data/Unconfirmed *.crdownload
