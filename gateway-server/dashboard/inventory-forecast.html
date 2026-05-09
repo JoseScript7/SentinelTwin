@@ -1,0 +1,472 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inventory Forecast Engine — SentinelTwin | TNI26086</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        :root {
+            --bg-deep: #0a0a0f;
+            --bg-surface: #12121a;
+            --bg-card: #1a1a24;
+            --bg-elevated: #242430;
+            --text-primary: #f0f0f5;
+            --text-secondary: #a0a0b0;
+            --text-muted: #606070;
+            --border: #2a2a3a;
+            --critical: #dc2626;
+            --high: #ef4444;
+            --moderate: #f97316;
+            --elevated: #eab308;
+            --low: #22c55e;
+            --success: #10b981;
+            --info: #06b6d4;
+            --accent: #f59e0b;
+            --accent-glow: rgba(245, 158, 11, 0.3);
+            --blue: #3b82f6;
+            --purple: #a855f7;
+        }
+        * { margin:0; padding:0; box-sizing:border-box; }
+        body { font-family:'Inter',sans-serif; background:var(--bg-deep); color:var(--text-primary); min-height:100vh; overflow:hidden; }
+
+        /* ═══ APP SHELL — same grid as flood-nowcast & routing ═══ */
+        .app-container {
+            display: grid;
+            grid-template-columns: 1fr 360px;
+            grid-template-rows: auto auto 1fr auto;
+            height: 100vh;
+        }
+
+        /* ═══ HEADER ═══ */
+        .header { grid-column:1/-1; display:flex; align-items:center; gap:10px; padding:6px 12px; background:var(--bg-surface); border-bottom:1px solid var(--border); }
+        .header-divider { width:1px; height:28px; background:var(--border); flex-shrink:0; }
+        .header-group { display:flex; align-items:center; gap:6px; flex-shrink:0; }
+        .header-spacer { flex:1; min-width:4px; }
+
+        .logo { display:flex; align-items:center; gap:10px; cursor:pointer; }
+        .logo-icon { width:32px; height:32px; background:linear-gradient(135deg,var(--accent),var(--info)); border-radius:8px; display:flex; align-items:center; justify-content:center; font-size:16px; box-shadow:0 0 15px var(--accent-glow); }
+        .logo-title { font-size:13px; font-weight:700; background:linear-gradient(90deg,var(--accent),var(--info)); -webkit-background-clip:text; background-clip:text; -webkit-text-fill-color:transparent; }
+        .logo-subtitle { font-size:9px; color:var(--text-muted); }
+
+        .stat-box { display:flex; flex-direction:column; align-items:center; padding:3px 10px; background:var(--bg-card); border-radius:6px; border:1px solid var(--border); min-width:50px; }
+        .stat-box.healthy { border-color:var(--success); background:rgba(16,185,129,0.08); }
+        .stat-box.warning { border-color:var(--elevated); background:rgba(234,179,8,0.08); }
+        .stat-box.critical { border-color:var(--critical); background:rgba(220,38,38,0.08); }
+        .stat-box.info { border-color:var(--info); background:rgba(6,182,212,0.08); }
+        .stat-value { font-size:15px; font-weight:700; font-family:'JetBrains Mono'; }
+        .stat-box.healthy .stat-value { color:var(--success); }
+        .stat-box.warning .stat-value { color:var(--elevated); }
+        .stat-box.critical .stat-value { color:var(--critical); }
+        .stat-box.info .stat-value { color:var(--info); }
+        .stat-label { font-size:7px; color:var(--text-muted); text-transform:uppercase; letter-spacing:0.3px; }
+
+        .mode-btn { padding:4px 10px; border:1px solid var(--border); border-radius:6px; font-size:10px; font-weight:600; cursor:pointer; background:var(--bg-elevated); color:var(--text-primary); transition:.2s; text-decoration:none; }
+        .mode-btn.nav { background:var(--accent); border-color:var(--accent); color:#000; }
+        .mode-btn:hover { filter:brightness(1.2); }
+
+        .live-badge { display:flex; align-items:center; gap:4px; padding:3px 8px; border-radius:10px; font-size:9px; font-weight:700; background:rgba(16,185,129,0.15); border:1px solid var(--success); color:var(--success); }
+        .live-badge .dot { width:5px; height:5px; border-radius:50%; background:currentColor; animation:pulse 1.5s infinite; }
+        @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.4} }
+
+        .clock-group { display:flex; align-items:center; gap:4px; font-family:'JetBrains Mono'; font-size:11px; color:var(--info); padding:3px 8px; background:var(--bg-elevated); border-radius:6px; border:1px solid var(--border); }
+        .clock-date { color:var(--text-muted); font-size:10px; }
+
+        .filter-select { background:var(--bg-elevated); border:1px solid var(--border); color:var(--text-primary); padding:4px 8px; border-radius:4px; font-size:10px; font-weight:600; outline:none; cursor:pointer; }
+
+        /* ═══ SKU BAR — horizontal scroll zone cards ═══ */
+        .sku-ticker-bar {
+            grid-column: 1 / -1;
+            display: flex;
+            gap: 8px;
+            padding: 8px 12px;
+            overflow-x: auto;
+            background: var(--bg-deep);
+            border-bottom: 1px solid var(--border);
+        }
+        .sku-ticker-bar::-webkit-scrollbar { height:4px; }
+        .sku-ticker-bar::-webkit-scrollbar-thumb { background:var(--border); border-radius:2px; }
+
+        /* SKU card CSS expected by inventory-forecast.js */
+        .sku-card { background:var(--bg-card); border:1px solid var(--border); border-radius:8px; padding:8px 10px; min-width:160px; cursor:pointer; transition:.2s; flex-shrink:0; }
+        .sku-card:hover { border-color:var(--text-muted); }
+        .sku-card.selected { border-color:var(--accent); background:rgba(245,158,11,0.05); box-shadow:0 0 12px rgba(245,158,11,0.15); }
+        .sku-card.high-risk { border-left:3px solid var(--high); }
+        .sku-card-header { display:flex; justify-content:space-between; font-size:10px; font-family:'JetBrains Mono'; }
+        .sku-id { color:var(--text-muted); }
+        .sku-trend { font-weight:700; }
+        .sku-name { font-weight:700; font-size:11px; color:var(--text-primary); margin:3px 0; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; max-width:140px; }
+        .sku-risk-display { display:flex; justify-content:space-between; align-items:center; margin-top:4px; }
+        .sku-risk-value { font-family:'JetBrains Mono'; font-size:14px; font-weight:800; }
+        .sku-risk-badge { font-size:7px; padding:2px 5px; border-radius:3px; color:#fff; font-weight:700; }
+        .sku-sensors { display:flex; gap:8px; font-size:9px; color:var(--text-muted); margin-top:4px; font-family:'JetBrains Mono'; }
+
+        /* ═══ MAIN CONTENT ═══ */
+        .main-content {
+            grid-column: 1;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            background: var(--bg-deep);
+        }
+
+        /* Chart fills center */
+        .chart-area {
+            flex: 1;
+            position: relative;
+            padding: 12px 16px;
+            display: flex;
+            flex-direction: column;
+        }
+        .chart-header { display:flex; justify-content:space-between; align-items:center; margin-bottom:8px; }
+        .chart-title { font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:0.5px; display:flex; align-items:center; gap:8px; }
+        .chart-badge { font-size:9px; font-weight:700; background:rgba(6,182,212,0.1); color:var(--info); padding:2px 8px; border-radius:12px; border:1px solid rgba(6,182,212,0.2); display:none; }
+        .chart-canvas-wrap { flex:1; position:relative; min-height:0; }
+        .chart-canvas-wrap canvas { position:absolute; top:0; left:0; width:100%!important; height:100%!important; }
+
+        /* Bottom charts toggle */
+        .bottom-strip { display:flex; border-top:1px solid var(--border); background:var(--bg-surface); }
+        .bottom-panel { flex:1; padding:10px 14px; border-right:1px solid var(--border); display:none; }
+        .bottom-panel:last-child { border-right:none; }
+        .bottom-panel.visible { display:block; }
+        .bottom-panel h4 { font-size:10px; font-family:'JetBrains Mono'; color:var(--info); margin-bottom:6px; font-weight:600; text-transform:uppercase; letter-spacing:0.3px; }
+
+        .toggle-row { display:flex; justify-content:center; padding:6px; background:var(--bg-surface); border-top:1px solid var(--border); }
+        .toggle-btn { background:var(--bg-elevated); border:1px solid var(--border); color:var(--text-muted); padding:5px 14px; border-radius:14px; font-size:9px; font-weight:700; text-transform:uppercase; letter-spacing:0.5px; cursor:pointer; transition:.2s; }
+        .toggle-btn:hover { border-color:var(--accent); color:var(--text-primary); }
+
+        /* ═══ RIGHT PANEL ═══ */
+        .side-panel {
+            grid-column: 2;
+            grid-row: 3;
+            background: var(--bg-surface);
+            border-left: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto;
+        }
+        .side-panel::-webkit-scrollbar { width:5px; }
+        .side-panel::-webkit-scrollbar-thumb { background:var(--border); border-radius:3px; }
+
+        .panel-tabs { display:flex; border-bottom:1px solid var(--border); background:var(--bg-elevated); }
+        .ptab { flex:1; padding:10px 4px; text-align:center; font-size:10px; font-weight:600; color:var(--text-muted); cursor:pointer; border-bottom:2px solid transparent; transition:.2s; white-space:nowrap; }
+        .ptab.active { color:var(--accent); border-bottom-color:var(--accent); background:rgba(245,158,11,0.05); }
+        .ptab:hover:not(.active) { color:var(--text-primary); }
+
+        .panel-body { flex:1; padding:14px; overflow-y:auto; overflow-x:hidden; }
+        .tab-pane { display:none; }
+        .tab-pane.active { display:block; animation:fadeIn .2s; }
+        @keyframes fadeIn { from{opacity:0} to{opacity:1} }
+
+        /* What-If / Chat */
+        .wi-row { display:flex; justify-content:space-between; padding:4px 0; border-bottom:1px solid rgba(255,255,255,0.05); }
+        .wi-rl { color:var(--text-muted); }
+        .wi-rv { font-family:'JetBrains Mono'; font-weight:700; }
+        .wi-rv.up { color:var(--success); }
+        .wi-rv.down { color:var(--text-secondary); }
+        .wi-rv.alert { color:var(--high); }
+        .chat-msg.user p { background:rgba(6,182,212,0.1); border:1px solid rgba(6,182,212,0.3); padding:8px 12px; border-radius:8px; margin:0; }
+        .chat-msg.ai p { background:var(--bg-surface); border:1px solid var(--border); padding:8px 12px; border-radius:8px; margin:0; }
+        .chat-msg { display:flex; gap:8px; margin-bottom:12px; align-items:flex-start; }
+
+        /* Detail Header */
+        .detail-header { display:flex; justify-content:space-between; border-bottom:1px dashed var(--border); padding-bottom:10px; margin-bottom:14px; }
+        .dh-id { font-family:'JetBrains Mono'; font-size:10px; color:var(--text-muted); }
+        .dh-name { font-size:15px; font-weight:800; color:#fff; margin-top:3px; }
+        .dh-risk { text-align:right; }
+        .dh-risk-val { font-size:22px; font-weight:800; font-family:'JetBrains Mono'; color:var(--critical); line-height:1; }
+        .dh-risk-lbl { font-size:8px; font-weight:800; color:var(--critical); margin-top:3px; text-transform:uppercase; }
+
+        /* Forecast & Models Tab Custom UI */
+        .acc-row { display:flex; align-items:center; margin-bottom:8px; gap:8px; background:var(--bg-elevated); padding:6px 10px; border-radius:6px; }
+        .acc-icon { font-size:14px; }
+        .acc-info { flex:1; display:flex; align-items:center; gap:8px; }
+        .acc-label { font-size:10px; font-weight:600; color:var(--text-muted); width:50px; }
+        .acc-val { font-family:'JetBrains Mono'; font-size:12px; font-weight:bold; width:45px; text-align:right; }
+        .acc-bar { flex:1; height:4px; background:var(--bg-card); border-radius:2px; overflow:hidden; }
+        .acc-fill { height:100%; border-radius:2px; transition:width 0.5s ease; }
+        
+        .fi-row { display:flex; align-items:center; gap:8px; margin-bottom:6px; font-size:10px; }
+        .fi-icon { font-size:12px; }
+        .fi-name { width:70px; color:var(--text-secondary); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+        .fi-bar-wrap { flex:1; height:4px; background:var(--bg-elevated); border-radius:2px; overflow:hidden; }
+        .fi-bar { height:100%; background:var(--info); border-radius:2px; }
+        .fi-pct { width:24px; text-align:right; font-family:'JetBrains Mono'; color:var(--text-muted); }
+        
+        .cat-row { display:flex; align-items:center; gap:8px; margin-bottom:6px; font-size:10px; }
+        .cat-dot { width:8px; height:8px; border-radius:50%; }
+        .cat-name { width:60px; color:var(--text-secondary); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+        .cat-bar-wrap { flex:1; height:4px; background:var(--bg-elevated); border-radius:2px; overflow:hidden; }
+        .cat-bar { height:100%; border-radius:2px; }
+        .cat-val { font-family:'JetBrains Mono'; color:var(--text-primary); }
+
+        .optimize-row { display:flex; justify-content:space-between; align-items:center; padding:6px 0; border-bottom:1px solid rgba(255,255,255,0.05); font-size:11px; }
+        .opt-label { color:var(--text-muted); }
+        .opt-value { font-family:'JetBrains Mono'; font-weight:700; color:var(--text-primary); }
+        .quick-stat { flex:1; background:var(--bg-elevated); padding:8px; border-radius:8px; text-align:center; border:1px solid var(--border); }
+        .qs-label { display:block; font-size:8px; color:var(--text-muted); text-transform:uppercase; margin-bottom:4px; }
+        .qs-value { font-size:14px; font-weight:800; font-family:'JetBrains Mono'; }
+
+        /* Downloads Popup */
+        .downloads-drop { position:absolute; top:45px; right:150px; background:var(--bg-card); border:1px solid var(--accent); border-radius:8px; padding:12px; width:220px; box-shadow:0 8px 24px rgba(0,0,0,0.5); display:none; flex-direction:column; gap:10px; z-index:100; }
+        .downloads-drop.show { display:flex; animation:fadeIn 0.2s; }
+        .dl-app-card { display:flex; align-items:center; gap:10px; padding:8px; background:var(--bg-elevated); border-radius:6px; text-decoration:none; color:var(--text-primary); transition:0.2s; border:1px solid var(--border); }
+        .dl-app-card:hover { border-color:var(--accent); background:rgba(245,158,11,0.1); transform:translateY(-1px); }
+        .dl-icon { font-size:20px; }
+        .dl-info { flex:1; }
+        .dl-title { font-size:11px; font-weight:700; margin-bottom:2px; }
+        .dl-sub { font-size:9px; color:var(--text-muted); }
+        .dl-qr { width:30px; height:30px; background:#fff; padding:2px; border-radius:4px; }
+
+        .sensor-grid { display:grid; grid-template-columns:1fr 1fr; gap:6px; margin-bottom:14px; }
+        .sensor-card { background:var(--bg-elevated); border:1px solid var(--border); border-radius:6px; padding:8px; }
+        .sensor-label { font-size:8px; color:var(--text-muted); text-transform:uppercase; font-weight:600; margin-bottom:3px; }
+        .sensor-value { font-size:14px; font-weight:800; font-family:'JetBrains Mono'; color:#fff; }
+
+        .action-btn { display:block; width:100%; padding:8px; background:rgba(245,158,11,0.1); border:1px solid var(--accent); color:var(--accent); font-size:10px; font-weight:700; text-align:center; border-radius:5px; cursor:pointer; transition:.2s; text-transform:uppercase; }
+        .action-btn:hover { background:rgba(245,158,11,0.2); }
+
+        /* ═══ FOOTER ═══ */
+        .footer-bar { grid-column:1/-1; display:flex; background:var(--bg-surface); border-top:1px solid var(--border); height:26px; font-family:'JetBrains Mono'; font-size:10px; }
+        .fb-item { display:flex; align-items:center; padding:0 14px; border-right:1px solid var(--border); color:var(--text-secondary); gap:6px; }
+        .fb-item .dot { width:5px; height:5px; border-radius:50%; background:var(--success); }
+        .fb-item strong { color:var(--text-primary); }
+
+        /* Hidden elements needed by inventory-forecast.js */
+        .js-hidden { display:none!important; }
+
+        ::-webkit-scrollbar { width:5px; height:5px; }
+        ::-webkit-scrollbar-track { background:transparent; }
+        ::-webkit-scrollbar-thumb { background:var(--border); border-radius:3px; }
+    </style>
+</head>
+<body>
+<div class="app-container">
+
+    <!-- HEADER -->
+    <header class="header">
+        <div class="logo" onclick="window.location.href='global-twin.html'" title="Back to Command Center">
+            <div class="logo-icon">📦</div>
+            <div>
+                <div class="logo-title">SentinelTwin Inventory</div>
+                <div class="logo-subtitle">ML Forecast Engine · TNI26086</div>
+            </div>
+        </div>
+        <div class="header-divider"></div>
+
+        <div class="header-group" id="headerStats">
+            <div class="stat-box"><div class="stat-value" id="statTotal">120</div><div class="stat-label">SKUs</div></div>
+            <div class="stat-box healthy"><div class="stat-value" id="statHealthy">9</div><div class="stat-label">Healthy</div></div>
+            <div class="stat-box warning"><div class="stat-value" id="statWarning">0</div><div class="stat-label">Warning</div></div>
+            <div class="stat-box critical"><div class="stat-value" id="statCritical">111</div><div class="stat-label">Critical</div></div>
+            <div class="stat-box info"><div class="stat-value" id="statAccuracy">80%</div><div class="stat-label">Accuracy</div></div>
+        </div>
+        <div class="header-divider"></div>
+
+        <div class="header-group">
+            <select class="filter-select" id="filterLocation" onchange="onLocationChange(this.value)">
+                <option value="ALL">All Regions</option>
+            </select>
+            <select class="filter-select" id="filterCategory" onchange="onCategoryChange(this.value)">
+                <option value="ALL">All Categories</option>
+            </select>
+        </div>
+
+        <div class="header-spacer"></div>
+
+        <div class="header-group">
+            <button class="mode-btn nav" onclick="window.location.href='routing-dashboard.html'">🚛 Routing</button>
+            <button class="mode-btn" onclick="window.location.href='risk-alerts-dashboard.html'">⚠ Risk</button>
+            <button class="mode-btn" onclick="window.location.href='ai-accuracy.html'">🎯 AI Accuracy</button>
+            <button class="mode-btn" style="background:var(--bg-card);border-color:var(--accent);color:var(--accent)" onclick="document.getElementById('dlDrop').classList.toggle('show')">📱 App Downloads</button>
+        </div>
+        <div class="header-divider"></div>
+
+        <!-- App Downloads Dropdown -->
+        <div class="downloads-drop" id="dlDrop">
+            <div style="font-size:10px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:4px">Mobile Companions</div>
+            <a href="mobile-inventory-app.html" target="_blank" class="dl-app-card">
+                <div class="dl-icon">📦</div>
+                <div class="dl-info">
+                    <div class="dl-title">Inventory App</div>
+                    <div class="dl-sub">Managers & Planners</div>
+                </div>
+                <div class="dl-qr" style="background:url('data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 10 10\'><rect width=\'10\' height=\'10\' fill=\'white\'/><path d=\'M1,1v3h3V1H1zM2,2h1v1H2V2zM6,1v3h3V1H6zM7,2h1v1H7V2zM1,6v3h3V6H1zM2,7h1v1H2V7zM6,6v1h1V6H6zM8,6v1h1V6H8zM6,8v1h1V8H6zM8,8v1h1V8H8z\' fill=\'black\'/></svg>') center/cover"></div>
+            </a>
+            <a href="mobile-rescue-app.html" target="_blank" class="dl-app-card">
+                <div class="dl-icon">🚁</div>
+                <div class="dl-info">
+                    <div class="dl-title">RescueLink App</div>
+                    <div class="dl-sub">Field Responders</div>
+                </div>
+                <div class="dl-qr" style="background:url('data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 10 10\'><rect width=\'10\' height=\'10\' fill=\'white\'/><path d=\'M1,1v3h3V1H1zM2,2h1v1H2V2zM6,1v3h3V1H6zM7,2h1v1H7V2zM1,6v3h3V6H1zM2,7h1v1H2V7zM6,6v1h1V6H6zM8,6v1h1V8H8zM6,8v1h1V8H6z\' fill=\'black\'/></svg>') center/cover"></div>
+            </a>
+        </div>
+        <div class="live-badge"><div class="dot"></div>LIVE</div>
+        <div class="clock-group"><span id="liveClock">00:00:00</span><span class="clock-date" id="liveDate">--</span></div>
+    </header>
+
+    <!-- SKU TICKER BAR -->
+    <div class="sku-ticker-bar" id="skuBar">
+        <!-- inventory-forecast.js renders .sku-card elements here -->
+    </div>
+
+    <!-- MAIN CONTENT -->
+    <main class="main-content">
+        <div class="chart-area">
+            <div class="chart-header">
+                <div class="chart-title">📊 8-Week ML Demand Forecast — Candlestick View</div>
+                <div class="chart-badge" id="scenarioBadge">WHAT-IF SCENARIO</div>
+            </div>
+            <div class="chart-canvas-wrap">
+                <canvas id="demandChart"></canvas>
+            </div>
+        </div>
+
+        <div class="toggle-row">
+            <button class="toggle-btn" id="btnToggleBottom" onclick="toggleBottom()">▼ Show Decomposition & Category</button>
+        </div>
+
+        <div class="bottom-strip" id="bottomStrip">
+            <div class="bottom-panel" id="panelDecomp">
+                <h4>Time-Series Decomposition</h4>
+                <div style="height:120px;position:relative;"><canvas id="decompositionChart"></canvas></div>
+            </div>
+            <div class="bottom-panel" id="panelDonut">
+                <h4>Category Distribution</h4>
+                <div style="height:120px;position:relative;"><canvas id="categoryDonut"></canvas></div>
+            </div>
+        </div>
+    </main>
+
+    <!-- RIGHT PANEL -->
+    <aside class="side-panel">
+        <div class="panel-tabs">
+            <div class="ptab active" onclick="switchTab('tab-overview',this)">Overview</div>
+            <div class="ptab" onclick="switchTab('tab-forecast',this)">Forecast</div>
+            <div class="ptab" onclick="switchTab('tab-models',this)">Models</div>
+            <div class="ptab" onclick="switchTab('tab-optimize',this)">Optimize</div>
+            <div class="ptab" onclick="switchTab('tab-analysis',this)">Table</div>
+            <div class="ptab" onclick="switchTab('tab-bot',this)">🤖 AI Bot</div>
+        </div>
+
+        <div class="panel-body" id="skuDetailCard">
+            <div class="detail-header">
+                <div><div class="dh-id" id="detailSKUID">SKU-####</div><div class="dh-name" id="detailSKUName">Select a SKU</div></div>
+                <div class="dh-risk"><div class="dh-risk-val" id="detailRisk">--%</div><div class="dh-risk-lbl" id="detailRiskLabel">--</div></div>
+            </div>
+
+            <!-- OVERVIEW -->
+            <div class="tab-pane active" id="tab-overview">
+                <div class="sensor-grid" id="sensorGrid"></div>
+                <div id="demandDNAPanel"></div>
+                <div id="mcStockoutPanel" style="margin-bottom:12px;"></div>
+                <button class="action-btn" id="btnReorder">Auto-Replenish Selected SKU</button>
+                <button class="action-btn" id="btnAlert" style="margin-top:6px;background:transparent;border-color:var(--border);color:var(--text-primary);">Flag as Critical</button>
+            </div>
+
+            <!-- FORECAST -->
+            <div class="tab-pane" id="tab-forecast">
+                <div id="accuracyMetrics" style="margin-bottom:16px;"></div>
+                <div style="font-size:9px;font-weight:700;color:var(--text-secondary);margin-bottom:10px;text-transform:uppercase;letter-spacing:1px;">Model Features</div>
+                <div id="featureImportance"></div>
+                <div id="anomalyExplanationPanel" style="margin-top:16px;"></div>
+            </div>
+
+            <!-- MODELS -->
+            <div class="tab-pane" id="tab-models">
+                <div id="modelsComparison"></div>
+                <div id="driftMonitorPanel" style="margin-top:16px;"></div>
+            </div>
+
+            <!-- OPTIMIZE -->
+            <div class="tab-pane" id="tab-optimize">
+                <div class="wi-panel" style="margin-bottom:12px;padding:10px;background:rgba(255,255,255,0.03);border:1px solid var(--border);border-radius:8px">
+                    <div style="font-size:10px;font-weight:700;color:var(--text-secondary);margin-bottom:8px">LIVE WHAT-IF SCENARIO</div>
+                    <label style="display:flex;justify-content:space-between;font-size:9px;color:var(--text-muted);margin-bottom:4px">Promo Lift <span id="whatifPromoVal" style="color:#fff">0%</span></label>
+                    <input type="range" id="whatifPromo" min="0" max="50" value="0" style="width:100%;margin-bottom:8px;accent-color:var(--success)">
+                    
+                    <label style="display:flex;justify-content:space-between;font-size:9px;color:var(--text-muted);margin-bottom:4px">Price Δ <span id="whatifPriceVal" style="color:#fff">0%</span></label>
+                    <input type="range" id="whatifPrice" min="-30" max="30" value="0" style="width:100%;margin-bottom:8px;accent-color:var(--info)">
+                    
+                    <label style="display:flex;justify-content:space-between;font-size:9px;color:var(--text-muted);margin-bottom:4px">Lead Time Delay <span id="whatifLeadVal" style="color:#fff">0 days</span></label>
+                    <input type="range" id="whatifLead" min="0" max="14" value="0" style="width:100%;margin-bottom:12px;accent-color:var(--danger)">
+                    
+                    <div style="display:flex;gap:6px">
+                        <button id="btnSimulate" class="action-btn" style="flex:1;background:var(--success);color:#000;border-color:var(--success)" onclick="window.runWhatIfScenario()">Simulate</button>
+                        <button onclick="window.resetWhatIf()" class="action-btn" style="flex:1;background:transparent;color:var(--text-primary);border-color:var(--border)">Reset</button>
+                    </div>
+                </div>
+                <div id="whatifResults" style="margin-bottom:12px;font-size:10px"></div>
+                <div id="optimizeDetails"></div>
+                <div id="financialImpactPanel" style="margin-top:16px;"></div>
+                <div id="predictionBox" style="margin-top:16px;padding:10px;background:rgba(255,255,255,0.03);border-radius:6px;border-left:3px solid var(--accent);">
+                    <div id="predAlert" style="font-size:10px;font-weight:700;margin-bottom:6px;"></div>
+                    <div id="predValue" style="font-size:16px;font-weight:800;font-family:'JetBrains Mono';"></div>
+                    <div id="predConfidence" style="font-size:9px;color:var(--text-muted);margin-top:3px;"></div>
+                </div>
+                <div id="quickStats" style="display:flex;gap:10px;margin-top:12px;"></div>
+            </div>
+
+            <!-- TABLE -->
+            <div class="tab-pane" id="tab-analysis">
+                <div id="categoryBreakdown" style="margin-bottom:16px;"></div>
+                <div id="locationBreakdown"></div>
+            </div>
+
+            <!-- BOT / AI CHAT -->
+            <div class="tab-pane" id="tab-bot" style="display:flex;flex-direction:column;height:480px">
+                <div id="aiChatArea" style="flex:1;overflow-y:auto;padding:10px;background:var(--bg-elevated);border-radius:8px;margin-bottom:10px;font-size:11px;color:var(--text-secondary)">
+                    <div class="chat-msg ai">
+                        <span class="chat-avatar">🤖</span>
+                        <p>Hello! I am your AI Inventory Assistant. Ask me about SKUs, risks, or predictions.</p>
+                    </div>
+                </div>
+                <div style="display:flex;gap:6px">
+                    <input type="text" id="aiInput" placeholder="Ask about inventory..." style="flex:1;background:var(--bg-surface);border:1px solid var(--border);color:#fff;padding:8px 12px;border-radius:6px;font-size:10px" onkeypress="if(event.key==='Enter') window.handleAIPrompt()">
+                    <button class="action-btn" style="width:auto;padding:8px 16px" onclick="window.handleAIPrompt()">Ask</button>
+                </div>
+            </div>
+        </div>
+    </aside>
+
+    <!-- FOOTER -->
+    <footer class="footer-bar">
+        <div class="fb-item"><div class="dot"></div>Engine: <strong>Holt-Winters + Monte Carlo</strong></div>
+        <div class="fb-item">Active SKUs: <strong id="totalInvValue">--</strong></div>
+        <div class="fb-item">Overstock: <strong id="fleetCapitalLocked">--</strong></div>
+        <div class="fb-item">Revenue Risk: <strong id="fleetRevenueRisk">--</strong></div>
+        <div class="fb-item">Updated: <strong id="lastUpdate">--</strong></div>
+    </footer>
+</div>
+
+<!-- Hidden elements needed by JS -->
+<div class="js-hidden" id="headerTime"></div>
+<div class="js-hidden" id="headerDate"></div>
+<div class="js-hidden" id="serviceLevelLabel"></div>
+<div class="js-hidden" id="skuTableBody"></div>
+<div class="js-hidden">
+    <select id="whatifEvent"><option>None</option></select>
+</div>
+
+<script>
+    function switchTab(id, btn) {
+        document.querySelectorAll('.tab-pane').forEach(el => el.classList.remove('active'));
+        document.querySelectorAll('.ptab').forEach(el => el.classList.remove('active'));
+        document.getElementById(id).classList.add('active');
+        btn.classList.add('active');
+    }
+    function toggleBottom() {
+        const panels = document.querySelectorAll('.bottom-panel');
+        const btn = document.getElementById('btnToggleBottom');
+        const isOpen = panels[0].classList.contains('visible');
+        panels.forEach(p => p.classList.toggle('visible'));
+        btn.textContent = isOpen ? '▼ Show Decomposition & Category' : '▲ Hide';
+        if (!isOpen) window.dispatchEvent(new Event('resize'));
+    }
+</script>
+<script src="inventory-forecast.js"></script>
+</body>
+</html>

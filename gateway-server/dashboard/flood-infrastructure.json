@@ -1,0 +1,973 @@
+{
+    "metadata": {
+        "version": "2.0.0",
+        "lastUpdated": "2026-02-03",
+        "source": "National Health Mission, State Health Departments, NDMA"
+    },
+    "hospitals": {
+        "TN-CHN-01": [
+            {
+                "id": "HOSP-CHN-001",
+                "name": "MIOT International Hospital",
+                "type": "multispecialty",
+                "beds": 1000,
+                "icuBeds": 120,
+                "floodReady": true,
+                "helipad": true,
+                "lat": 13.0123,
+                "lng": 80.1678,
+                "contact": "044-4200-2288",
+                "distance": "1.2 km"
+            },
+            {
+                "id": "HOSP-CHN-002",
+                "name": "Porur Government Hospital",
+                "type": "government",
+                "beds": 250,
+                "icuBeds": 30,
+                "floodReady": true,
+                "helipad": false,
+                "lat": 13.0350,
+                "lng": 80.1480,
+                "contact": "044-2476-XXXX",
+                "distance": "0.8 km"
+            },
+            {
+                "id": "HOSP-CHN-003",
+                "name": "Sri Ramachandra Medical Center",
+                "type": "multispecialty",
+                "beds": 1600,
+                "icuBeds": 200,
+                "floodReady": true,
+                "helipad": true,
+                "lat": 13.0330,
+                "lng": 80.1420,
+                "contact": "044-2476-8027",
+                "distance": "0.5 km"
+            }
+        ],
+        "TN-CHN-02": [
+            {
+                "id": "HOSP-CHN-004",
+                "name": "Apollo Hospitals, Guindy",
+                "type": "multispecialty",
+                "beds": 710,
+                "icuBeds": 100,
+                "floodReady": true,
+                "helipad": true,
+                "lat": 13.0067,
+                "lng": 80.2206,
+                "contact": "044-2829-0200",
+                "distance": "2.1 km"
+            },
+            {
+                "id": "HOSP-CHN-005",
+                "name": "Adyar Cancer Institute",
+                "type": "specialty",
+                "beds": 535,
+                "icuBeds": 45,
+                "floodReady": false,
+                "helipad": false,
+                "lat": 13.0066,
+                "lng": 80.2566,
+                "contact": "044-2491-1526",
+                "distance": "1.8 km"
+            },
+            {
+                "id": "HOSP-CHN-006",
+                "name": "Velachery Government PHC",
+                "type": "primary",
+                "beds": 50,
+                "icuBeds": 5,
+                "floodReady": false,
+                "helipad": false,
+                "lat": 12.9750,
+                "lng": 80.2200,
+                "contact": "044-2243-XXXX",
+                "distance": "0.6 km"
+            }
+        ],
+        "TN-CHN-03": [
+            {
+                "id": "HOSP-CHN-007",
+                "name": "Government Royapettah Hospital",
+                "type": "government",
+                "beds": 618,
+                "icuBeds": 50,
+                "floodReady": true,
+                "helipad": false,
+                "lat": 13.0546,
+                "lng": 80.2614,
+                "contact": "044-2854-2126",
+                "distance": "1.5 km"
+            },
+            {
+                "id": "HOSP-CHN-008",
+                "name": "Kauvery Hospital",
+                "type": "multispecialty",
+                "beds": 500,
+                "icuBeds": 80,
+                "floodReady": true,
+                "helipad": true,
+                "lat": 13.0500,
+                "lng": 80.2700,
+                "contact": "044-4000-6000",
+                "distance": "1.0 km"
+            }
+        ],
+        "TN-CHN-04": [
+            {
+                "id": "HOSP-CHN-009",
+                "name": "Fortis Malar Hospital",
+                "type": "multispecialty",
+                "beds": 180,
+                "icuBeds": 40,
+                "floodReady": true,
+                "helipad": true,
+                "lat": 13.0320,
+                "lng": 80.2510,
+                "contact": "044-4289-2222",
+                "distance": "0.9 km"
+            },
+            {
+                "id": "HOSP-CHN-010",
+                "name": "SIMS Hospital",
+                "type": "multispecialty",
+                "beds": 350,
+                "icuBeds": 60,
+                "floodReady": true,
+                "helipad": true,
+                "lat": 13.0380,
+                "lng": 80.2280,
+                "contact": "044-2476-2222",
+                "distance": "1.1 km"
+            }
+        ],
+        "TN-CHN-05": [
+            {
+                "id": "HOSP-CHN-011",
+                "name": "Ambattur Government Hospital",
+                "type": "government",
+                "beds": 200,
+                "icuBeds": 25,
+                "floodReady": true,
+                "helipad": false,
+                "lat": 13.1180,
+                "lng": 80.1580,
+                "contact": "044-2653-XXXX",
+                "distance": "0.7 km"
+            },
+            {
+                "id": "HOSP-CHN-012",
+                "name": "Billroth Hospital",
+                "type": "multispecialty",
+                "beds": 250,
+                "icuBeds": 45,
+                "floodReady": true,
+                "helipad": false,
+                "lat": 13.1050,
+                "lng": 80.1820,
+                "contact": "044-2620-4545",
+                "distance": "2.0 km"
+            }
+        ],
+        "MH-MUM-01": [
+            {
+                "id": "HOSP-MUM-001",
+                "name": "King Edward Memorial Hospital",
+                "type": "government",
+                "beds": 1800,
+                "icuBeds": 150,
+                "floodReady": true,
+                "helipad": false,
+                "lat": 19.0176,
+                "lng": 72.8562,
+                "contact": "022-2410-7000",
+                "distance": "2.5 km"
+            },
+            {
+                "id": "HOSP-MUM-002",
+                "name": "Sion Hospital",
+                "type": "government",
+                "beds": 1500,
+                "icuBeds": 120,
+                "floodReady": true,
+                "helipad": false,
+                "lat": 19.0400,
+                "lng": 72.8650,
+                "contact": "022-2406-4655",
+                "distance": "0.8 km"
+            }
+        ],
+        "MH-MUM-02": [
+            {
+                "id": "HOSP-MUM-003",
+                "name": "Kurla Bhabha Hospital",
+                "type": "government",
+                "beds": 400,
+                "icuBeds": 40,
+                "floodReady": true,
+                "helipad": false,
+                "lat": 19.0720,
+                "lng": 72.8850,
+                "contact": "022-2522-XXXX",
+                "distance": "1.0 km"
+            },
+            {
+                "id": "HOSP-MUM-004",
+                "name": "Kokilaben Hospital",
+                "type": "multispecialty",
+                "beds": 750,
+                "icuBeds": 145,
+                "floodReady": true,
+                "helipad": true,
+                "lat": 19.1330,
+                "lng": 72.8280,
+                "contact": "022-3066-6666",
+                "distance": "4.5 km"
+            }
+        ],
+        "KL-EKM-01": [
+            {
+                "id": "HOSP-KOC-001",
+                "name": "Amrita Institute of Medical Sciences",
+                "type": "multispecialty",
+                "beds": 1300,
+                "icuBeds": 200,
+                "floodReady": true,
+                "helipad": true,
+                "lat": 10.0389,
+                "lng": 76.2905,
+                "contact": "0484-285-8000",
+                "distance": "3.2 km"
+            },
+            {
+                "id": "HOSP-KOC-002",
+                "name": "Government Medical College Ernakulam",
+                "type": "government",
+                "beds": 800,
+                "icuBeds": 80,
+                "floodReady": true,
+                "helipad": false,
+                "lat": 9.9670,
+                "lng": 76.2850,
+                "contact": "0484-236-2116",
+                "distance": "1.5 km"
+            }
+        ],
+        "KL-ALP-01": [
+            {
+                "id": "HOSP-ALP-001",
+                "name": "Alappuzha Medical College",
+                "type": "government",
+                "beds": 1250,
+                "icuBeds": 100,
+                "floodReady": true,
+                "helipad": true,
+                "lat": 9.4870,
+                "lng": 76.3530,
+                "contact": "0477-228-2021",
+                "distance": "2.0 km"
+            }
+        ],
+        "KA-BLR-01": [
+            {
+                "id": "HOSP-BLR-001",
+                "name": "Manipal Hospital, Sarjapur",
+                "type": "multispecialty",
+                "beds": 400,
+                "icuBeds": 70,
+                "floodReady": true,
+                "helipad": true,
+                "lat": 12.9150,
+                "lng": 77.6850,
+                "contact": "080-2502-4444",
+                "distance": "1.8 km"
+            },
+            {
+                "id": "HOSP-BLR-002",
+                "name": "Sakra World Hospital",
+                "type": "multispecialty",
+                "beds": 350,
+                "icuBeds": 65,
+                "floodReady": true,
+                "helipad": true,
+                "lat": 12.9400,
+                "lng": 77.6920,
+                "contact": "080-4969-4969",
+                "distance": "1.2 km"
+            }
+        ],
+        "BR-PAT-01": [
+            {
+                "id": "HOSP-PAT-001",
+                "name": "AIIMS Patna",
+                "type": "government",
+                "beds": 750,
+                "icuBeds": 100,
+                "floodReady": true,
+                "helipad": true,
+                "lat": 25.6200,
+                "lng": 85.0850,
+                "contact": "0612-245-1070",
+                "distance": "2.5 km"
+            },
+            {
+                "id": "HOSP-PAT-002",
+                "name": "Patna Medical College Hospital",
+                "type": "government",
+                "beds": 2400,
+                "icuBeds": 180,
+                "floodReady": true,
+                "helipad": false,
+                "lat": 25.6100,
+                "lng": 85.1300,
+                "contact": "0612-267-2167",
+                "distance": "1.8 km"
+            }
+        ],
+        "AS-KAM-01": [
+            {
+                "id": "HOSP-GUW-001",
+                "name": "Guwahati Medical College Hospital",
+                "type": "government",
+                "beds": 1300,
+                "icuBeds": 100,
+                "floodReady": true,
+                "helipad": true,
+                "lat": 26.1830,
+                "lng": 91.7420,
+                "contact": "0361-252-9457",
+                "distance": "1.5 km"
+            },
+            {
+                "id": "HOSP-GUW-002",
+                "name": "Dispur Hospital",
+                "type": "private",
+                "beds": 200,
+                "icuBeds": 35,
+                "floodReady": true,
+                "helipad": false,
+                "lat": 26.1380,
+                "lng": 91.7900,
+                "contact": "0361-222-8888",
+                "distance": "2.8 km"
+            }
+        ]
+    },
+    "shelters": {
+        "TN-CHN-01": [
+            {
+                "id": "SHL-CHN-001",
+                "name": "Porur Community Hall",
+                "type": "community",
+                "capacity": 500,
+                "currentOccupancy": 0,
+                "status": "standby",
+                "facilities": [
+                    "water",
+                    "electricity",
+                    "toilets",
+                    "kitchen"
+                ],
+                "lat": 13.0360,
+                "lng": 80.1450,
+                "contact": "044-2476-XXXX",
+                "distance": "0.3 km"
+            },
+            {
+                "id": "SHL-CHN-002",
+                "name": "Kundrathur Govt High School",
+                "type": "school",
+                "capacity": 800,
+                "currentOccupancy": 0,
+                "status": "standby",
+                "facilities": [
+                    "water",
+                    "electricity",
+                    "toilets"
+                ],
+                "lat": 12.9980,
+                "lng": 80.1020,
+                "contact": "044-2478-XXXX",
+                "distance": "1.5 km"
+            },
+            {
+                "id": "SHL-CHN-003",
+                "name": "SDMC Relief Center Porur",
+                "type": "relief_camp",
+                "capacity": 2000,
+                "currentOccupancy": 0,
+                "status": "standby",
+                "facilities": [
+                    "water",
+                    "electricity",
+                    "toilets",
+                    "kitchen",
+                    "medical"
+                ],
+                "lat": 13.0320,
+                "lng": 80.1380,
+                "contact": "1070",
+                "distance": "0.8 km"
+            }
+        ],
+        "TN-CHN-02": [
+            {
+                "id": "SHL-CHN-004",
+                "name": "Velachery Corporation School",
+                "type": "school",
+                "capacity": 600,
+                "currentOccupancy": 0,
+                "status": "standby",
+                "facilities": [
+                    "water",
+                    "electricity",
+                    "toilets"
+                ],
+                "lat": 12.9800,
+                "lng": 80.2150,
+                "contact": "044-2243-XXXX",
+                "distance": "0.5 km"
+            },
+            {
+                "id": "SHL-CHN-005",
+                "name": "Adyar Community Center",
+                "type": "community",
+                "capacity": 400,
+                "currentOccupancy": 0,
+                "status": "standby",
+                "facilities": [
+                    "water",
+                    "electricity",
+                    "toilets",
+                    "kitchen"
+                ],
+                "lat": 13.0080,
+                "lng": 80.2550,
+                "contact": "044-2441-XXXX",
+                "distance": "1.2 km"
+            }
+        ],
+        "TN-CHN-03": [
+            {
+                "id": "SHL-CHN-006",
+                "name": "Marina Beach Relief Camp",
+                "type": "relief_camp",
+                "capacity": 3000,
+                "currentOccupancy": 0,
+                "status": "standby",
+                "facilities": [
+                    "water",
+                    "electricity",
+                    "toilets",
+                    "kitchen",
+                    "medical",
+                    "helipad"
+                ],
+                "lat": 13.0550,
+                "lng": 80.2780,
+                "contact": "1070",
+                "distance": "0.4 km"
+            }
+        ],
+        "MH-MUM-01": [
+            {
+                "id": "SHL-MUM-001",
+                "name": "Dharavi Municipal School",
+                "type": "school",
+                "capacity": 1200,
+                "currentOccupancy": 0,
+                "status": "standby",
+                "facilities": [
+                    "water",
+                    "electricity",
+                    "toilets"
+                ],
+                "lat": 19.0420,
+                "lng": 80.8520,
+                "contact": "022-2407-XXXX",
+                "distance": "0.3 km"
+            },
+            {
+                "id": "SHL-MUM-002",
+                "name": "BMC Relief Camp Sion",
+                "type": "relief_camp",
+                "capacity": 2500,
+                "currentOccupancy": 0,
+                "status": "standby",
+                "facilities": [
+                    "water",
+                    "electricity",
+                    "toilets",
+                    "kitchen",
+                    "medical"
+                ],
+                "lat": 19.0450,
+                "lng": 72.8600,
+                "contact": "1916",
+                "distance": "0.6 km"
+            }
+        ],
+        "KL-ALP-01": [
+            {
+                "id": "SHL-ALP-001",
+                "name": "Alappuzha Town Hall",
+                "type": "community",
+                "capacity": 800,
+                "currentOccupancy": 0,
+                "status": "standby",
+                "facilities": [
+                    "water",
+                    "electricity",
+                    "toilets",
+                    "kitchen"
+                ],
+                "lat": 9.4950,
+                "lng": 76.3350,
+                "contact": "0477-225-XXXX",
+                "distance": "0.5 km"
+            },
+            {
+                "id": "SHL-ALP-002",
+                "name": "KSEB Training Center",
+                "type": "government",
+                "capacity": 500,
+                "currentOccupancy": 0,
+                "status": "standby",
+                "facilities": [
+                    "water",
+                    "electricity",
+                    "toilets",
+                    "kitchen",
+                    "generator"
+                ],
+                "lat": 9.5020,
+                "lng": 76.3420,
+                "contact": "0477-228-XXXX",
+                "distance": "0.8 km"
+            }
+        ]
+    },
+    "rescueTeams": {
+        "TN-CHN-01": [
+            {
+                "id": "NDRF-TN-01",
+                "name": "NDRF 4th Battalion - Team Alpha",
+                "type": "NDRF",
+                "personnel": 45,
+                "boats": 8,
+                "vehicles": 4,
+                "status": "standby",
+                "baseLocation": "Arakkonam",
+                "eta": "45 min",
+                "contact": "044-2534-XXXX"
+            },
+            {
+                "id": "FIRE-CHN-01",
+                "name": "Fire & Rescue - Porur Station",
+                "type": "Fire",
+                "personnel": 25,
+                "boats": 3,
+                "vehicles": 6,
+                "status": "ready",
+                "baseLocation": "Porur",
+                "eta": "10 min",
+                "contact": "101"
+            },
+            {
+                "id": "SDRF-TN-01",
+                "name": "SDRF Tamil Nadu - Unit 3",
+                "type": "SDRF",
+                "personnel": 30,
+                "boats": 5,
+                "vehicles": 3,
+                "status": "standby",
+                "baseLocation": "Tambaram",
+                "eta": "25 min",
+                "contact": "1070"
+            }
+        ],
+        "MH-MUM-01": [
+            {
+                "id": "NDRF-MH-01",
+                "name": "NDRF 5th Battalion - Team Bravo",
+                "type": "NDRF",
+                "personnel": 50,
+                "boats": 12,
+                "vehicles": 6,
+                "status": "standby",
+                "baseLocation": "Pune",
+                "eta": "90 min",
+                "contact": "020-2612-XXXX"
+            },
+            {
+                "id": "NAVY-MUM-01",
+                "name": "Indian Navy - Western Command",
+                "type": "Navy",
+                "personnel": 100,
+                "boats": 20,
+                "helicopters": 4,
+                "status": "standby",
+                "baseLocation": "INS Shikra",
+                "eta": "30 min",
+                "contact": "022-2266-XXXX"
+            }
+        ],
+        "KL-ALP-01": [
+            {
+                "id": "NDRF-KL-01",
+                "name": "NDRF 9th Battalion",
+                "type": "NDRF",
+                "personnel": 45,
+                "boats": 15,
+                "vehicles": 5,
+                "status": "ready",
+                "baseLocation": "Thrissur",
+                "eta": "60 min",
+                "contact": "0487-232-XXXX"
+            },
+            {
+                "id": "FISH-KL-01",
+                "name": "Fishermen Rescue Volunteers",
+                "type": "Volunteer",
+                "personnel": 200,
+                "boats": 80,
+                "status": "ready",
+                "baseLocation": "Alappuzha",
+                "eta": "15 min",
+                "contact": "Local Fishermen Association"
+            }
+        ]
+    },
+    "evacuationRoutes": {
+        "TN-CHN-01": [
+            {
+                "id": "EVAC-CHN-01",
+                "name": "NH-4 Route to Tambaram",
+                "description": "Porur → Poonamallee → Tambaram via NH-4",
+                "distance": "18 km",
+                "estimatedTime": "45 min",
+                "status": "clear",
+                "alternateRoute": "Kundrathur Road"
+            },
+            {
+                "id": "EVAC-CHN-02",
+                "name": "Inner Ring Road Route",
+                "description": "Porur → Vadapalani → Guindy via IRR",
+                "distance": "12 km",
+                "estimatedTime": "35 min",
+                "status": "clear",
+                "alternateRoute": "Mount Road"
+            }
+        ],
+        "TN-CHN-02": [
+            {
+                "id": "EVAC-CHN-03",
+                "name": "OMR to Tambaram",
+                "description": "Velachery → Thoraipakkam → Sholinganallur → Tambaram",
+                "distance": "15 km",
+                "estimatedTime": "40 min",
+                "status": "clear",
+                "alternateRoute": "GST Road"
+            },
+            {
+                "id": "EVAC-CHN-04",
+                "name": "Adyar to Marina",
+                "description": "Velachery → Adyar → Besant Nagar → Marina High Ground",
+                "distance": "8 km",
+                "estimatedTime": "25 min",
+                "status": "clear",
+                "alternateRoute": "Raja Annamalai Road"
+            }
+        ],
+        "MH-MUM-01": [
+            {
+                "id": "EVAC-MUM-01",
+                "name": "Eastern Express Highway",
+                "description": "Dharavi → Sion → Chembur → Thane",
+                "distance": "22 km",
+                "estimatedTime": "60 min",
+                "status": "clear",
+                "alternateRoute": "LBS Marg"
+            },
+            {
+                "id": "EVAC-MUM-02",
+                "name": "Western Express Highway",
+                "description": "Dharavi → Bandra → Andheri → Borivali",
+                "distance": "25 km",
+                "estimatedTime": "75 min",
+                "status": "clear",
+                "alternateRoute": "SV Road"
+            }
+        ],
+        "KL-ALP-01": [
+            {
+                "id": "EVAC-ALP-01",
+                "name": "NH-66 North Route",
+                "description": "Alappuzha → Cherthala → Ernakulam",
+                "distance": "55 km",
+                "estimatedTime": "90 min",
+                "status": "clear",
+                "alternateRoute": "MC Road"
+            },
+            {
+                "id": "EVAC-ALP-02",
+                "name": "MC Road East Route",
+                "description": "Alappuzha → Changanassery → Kottayam High Ground",
+                "distance": "35 km",
+                "estimatedTime": "60 min",
+                "status": "clear",
+                "alternateRoute": "Boat Evacuation"
+            }
+        ]
+    },
+    "emergencyContacts": {
+        "national": {
+            "ndma": {
+                "name": "National Disaster Management Authority",
+                "number": "1078",
+                "email": "controlroom@ndma.gov.in"
+            },
+            "ndrf": {
+                "name": "National Disaster Response Force",
+                "number": "011-2436-1526",
+                "email": "ndrf@ndrf.gov.in"
+            },
+            "imd": {
+                "name": "India Meteorological Department",
+                "number": "1800-180-1717",
+                "website": "mausam.imd.gov.in"
+            },
+            "army": {
+                "name": "Indian Army (Disaster Relief)",
+                "number": "1800-112-100"
+            },
+            "navy": {
+                "name": "Indian Navy (Coastal Rescue)",
+                "number": "1800-200-3051"
+            },
+            "coastGuard": {
+                "name": "Indian Coast Guard",
+                "number": "1554"
+            }
+        },
+        "tamilNadu": {
+            "sdma": {
+                "name": "TN State Disaster Management Authority",
+                "number": "1070",
+                "email": "tnsdma@tn.gov.in"
+            },
+            "collectors": {
+                "name": "District Collectors (Emergency)",
+                "number": "1077"
+            },
+            "healthDept": {
+                "name": "Health Department Emergency",
+                "number": "104"
+            },
+            "fireRescue": {
+                "name": "Fire & Rescue Services",
+                "number": "101"
+            },
+            "policeControl": {
+                "name": "Police Control Room",
+                "number": "100"
+            }
+        },
+        "kerala": {
+            "sdma": {
+                "name": "Kerala State Disaster Management Authority",
+                "number": "1077",
+                "email": "ksdma@kerala.gov.in"
+            },
+            "disha": {
+                "name": "DISHA Helpline",
+                "number": "1056"
+            },
+            "fishermen": {
+                "name": "Fishermen Rescue Coord.",
+                "number": "1093"
+            }
+        },
+        "maharashtra": {
+            "sdma": {
+                "name": "Maharashtra SDMA",
+                "number": "1077",
+                "email": "dmmu@maharashtra.gov.in"
+            },
+            "bmc": {
+                "name": "BMC Disaster Control",
+                "number": "1916"
+            }
+        }
+    },
+    "weatherStations": {
+        "TN-CHN-01": {
+            "stationId": "IMD-CHN-NUNGAMBAKKAM",
+            "name": "Nungambakkam AWS",
+            "lat": 13.0670,
+            "lng": 80.2420,
+            "type": "automatic"
+        },
+        "TN-CHN-02": {
+            "stationId": "IMD-CHN-MEENAMBAKKAM",
+            "name": "Chennai Airport AWS",
+            "lat": 12.9941,
+            "lng": 80.1709,
+            "type": "automatic"
+        },
+        "TN-CHN-03": {
+            "stationId": "IMD-CHN-MARINA",
+            "name": "Marina Beach Station",
+            "lat": 13.0500,
+            "lng": 80.2850,
+            "type": "manual"
+        },
+        "MH-MUM-01": {
+            "stationId": "IMD-MUM-COLABA",
+            "name": "Colaba Observatory",
+            "lat": 18.9067,
+            "lng": 72.8147,
+            "type": "automatic"
+        },
+        "MH-MUM-02": {
+            "stationId": "IMD-MUM-SANTACRUZ",
+            "name": "Santacruz Airport AWS",
+            "lat": 19.0896,
+            "lng": 72.8656,
+            "type": "automatic"
+        },
+        "KL-EKM-01": {
+            "stationId": "IMD-KOC-AIRPORT",
+            "name": "Cochin Airport AWS",
+            "lat": 10.1520,
+            "lng": 76.4019,
+            "type": "automatic"
+        }
+    },
+    "riverGauges": {
+        "adyar": {
+            "id": "CWC-TN-ADYAR-01",
+            "name": "Adyar River - Kotturpuram",
+            "lat": 13.0180,
+            "lng": 80.2430,
+            "dangerLevel": 4.5,
+            "warningLevel": 3.5,
+            "currentLevel": 1.2
+        },
+        "cooum": {
+            "id": "CWC-TN-COOUM-01",
+            "name": "Cooum River - Basin Bridge",
+            "lat": 13.0720,
+            "lng": 80.2580,
+            "dangerLevel": 3.8,
+            "warningLevel": 2.8,
+            "currentLevel": 0.9
+        },
+        "periyar": {
+            "id": "CWC-KL-PERIYAR-01",
+            "name": "Periyar River - Aluva",
+            "lat": 10.1076,
+            "lng": 76.3528,
+            "dangerLevel": 8.5,
+            "warningLevel": 7.0,
+            "currentLevel": 4.2
+        },
+        "mithi": {
+            "id": "CWC-MH-MITHI-01",
+            "name": "Mithi River - Mahim",
+            "lat": 19.0380,
+            "lng": 72.8450,
+            "dangerLevel": 3.2,
+            "warningLevel": 2.5,
+            "currentLevel": 1.1
+        },
+        "brahmaputra": {
+            "id": "CWC-AS-BRAHMA-01",
+            "name": "Brahmaputra - Guwahati",
+            "lat": 26.1880,
+            "lng": 91.7450,
+            "dangerLevel": 49.2,
+            "warningLevel": 48.0,
+            "currentLevel": 45.5
+        }
+    },
+    "reservoirs": {
+        "chembarambakkam": {
+            "id": "RES-TN-CHEM-01",
+            "name": "Chembarambakkam Lake",
+            "lat": 13.0167,
+            "lng": 80.0667,
+            "fullCapacity": 3645,
+            "currentLevel": 2850,
+            "currentPercent": 78.2,
+            "dangerLevel": 95,
+            "spillwayOpen": false,
+            "affectedZones": [
+                "TN-CHN-01",
+                "TN-CHN-06"
+            ]
+        },
+        "poondi": {
+            "id": "RES-TN-POON-01",
+            "name": "Poondi Reservoir",
+            "lat": 13.3500,
+            "lng": 79.9000,
+            "fullCapacity": 3231,
+            "currentLevel": 2680,
+            "currentPercent": 82.9,
+            "dangerLevel": 90,
+            "spillwayOpen": false,
+            "affectedZones": [
+                "TN-TIR-01",
+                "TN-TIR-02"
+            ]
+        },
+        "redHills": {
+            "id": "RES-TN-RED-01",
+            "name": "Red Hills Lake",
+            "lat": 13.1833,
+            "lng": 80.1833,
+            "fullCapacity": 3300,
+            "currentLevel": 2150,
+            "currentPercent": 65.2,
+            "dangerLevel": 95,
+            "spillwayOpen": false,
+            "affectedZones": [
+                "TN-CHN-05",
+                "TN-CHN-08"
+            ]
+        },
+        "idukki": {
+            "id": "RES-KL-IDUK-01",
+            "name": "Idukki Dam",
+            "lat": 9.8417,
+            "lng": 76.9750,
+            "fullCapacity": 1996,
+            "currentLevel": 1650,
+            "currentPercent": 82.7,
+            "dangerLevel": 95,
+            "spillwayOpen": false,
+            "affectedZones": [
+                "KL-EKM-02",
+                "KL-ALP-02"
+            ]
+        },
+        "ukai": {
+            "id": "RES-GJ-UKAI-01",
+            "name": "Ukai Dam",
+            "lat": 21.2500,
+            "lng": 73.5833,
+            "fullCapacity": 8511,
+            "currentLevel": 6200,
+            "currentPercent": 72.8,
+            "dangerLevel": 95,
+            "spillwayOpen": false,
+            "affectedZones": [
+                "GJ-SUR-01",
+                "GJ-SUR-02"
+            ]
+        }
+    }
+}

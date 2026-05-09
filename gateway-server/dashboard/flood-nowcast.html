@@ -1,0 +1,2556 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Flood Nowcasting - Real-Time System</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <style>
+        :root {
+            --bg-deep: #0a0a0f;
+            --bg-surface: #12121a;
+            --bg-card: #1a1a24;
+            --bg-elevated: #242430;
+            --text-primary: #f0f0f5;
+            --text-secondary: #a0a0b0;
+            --text-muted: #606070;
+            --border: #2a2a3a;
+            --accent: #3b82f6;
+            --accent-glow: rgba(59, 130, 246, 0.3);
+            --critical: #dc2626;
+            --high: #ef4444;
+            --moderate: #f97316;
+            --elevated: #eab308;
+            --low: #22c55e;
+            --success: #10b981;
+            --info: #06b6d4;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--bg-deep);
+            color: var(--text-primary);
+            min-height: 100vh;
+            overflow: hidden;
+        }
+
+        .app-container {
+            display: grid;
+            grid-template-columns: 1fr 320px;
+            grid-template-rows: auto auto 1fr auto;
+            height: 100vh;
+        }
+
+        /* Header */
+        .header {
+            grid-column: 1 / -1;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 16px;
+            background: var(--bg-surface);
+            border-bottom: 1px solid var(--border);
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .logo-icon {
+            width: 36px;
+            height: 36px;
+            background: linear-gradient(135deg, #3b82f6, #06b6d4);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+        }
+
+        .logo-text {}
+
+        .logo-title {
+            font-size: 14px;
+            font-weight: 700;
+            background: linear-gradient(90deg, #3b82f6, #06b6d4);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .logo-subtitle {
+            font-size: 9px;
+            color: var(--text-muted);
+        }
+
+        .header-stats {
+            display: flex;
+            gap: 8px;
+        }
+
+        .stat-box {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 4px 12px;
+            background: var(--bg-card);
+            border-radius: 8px;
+            border: 1px solid var(--border);
+            min-width: 60px;
+        }
+
+        .stat-box.critical {
+            border-color: var(--critical);
+            background: rgba(220, 38, 38, 0.1);
+        }
+
+        .stat-box.high {
+            border-color: var(--high);
+            background: rgba(239, 68, 68, 0.1);
+        }
+
+        .stat-box.moderate {
+            border-color: var(--moderate);
+            background: rgba(249, 115, 22, 0.1);
+        }
+
+        .stat-box.sos {
+            border-color: var(--info);
+            background: rgba(6, 182, 212, 0.1);
+        }
+
+        .stat-box.sms {
+            border-color: var(--success);
+            background: rgba(16, 185, 129, 0.1);
+        }
+
+        .stat-value {
+            font-size: 18px;
+            font-weight: 700;
+            font-family: 'JetBrains Mono';
+        }
+
+        .stat-box.critical .stat-value {
+            color: var(--critical);
+        }
+
+        .stat-box.high .stat-value {
+            color: var(--high);
+        }
+
+        .stat-box.moderate .stat-value {
+            color: var(--moderate);
+        }
+
+        .stat-box.sos .stat-value {
+            color: var(--info);
+        }
+
+        .stat-box.sms .stat-value {
+            color: var(--success);
+        }
+
+        .stat-label {
+            font-size: 8px;
+            color: var(--text-muted);
+            text-transform: uppercase;
+        }
+
+        .header-controls {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .region-select {
+            padding: 6px 10px;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            color: var(--text-primary);
+            font-size: 11px;
+            max-width: 150px;
+        }
+
+        .mode-indicator {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            padding: 5px 10px;
+            border-radius: 12px;
+            font-size: 10px;
+            font-weight: 600;
+        }
+
+        .mode-indicator.live {
+            background: rgba(16, 185, 129, 0.15);
+            border: 1px solid var(--success);
+            color: var(--success);
+        }
+
+        .mode-indicator.simulation {
+            background: rgba(239, 68, 68, 0.15);
+            border: 1px solid var(--high);
+            color: var(--high);
+            animation: pulse 1s infinite;
+        }
+
+        @keyframes pulse {
+
+            0%,
+            100% {
+                opacity: 1;
+            }
+
+            50% {
+                opacity: 0.6;
+            }
+        }
+
+        .mode-dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: currentColor;
+        }
+
+        .mode-btn {
+            padding: 5px 12px;
+            border: none;
+            border-radius: 12px;
+            font-size: 10px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .mode-btn.start {
+            background: var(--accent);
+            color: #fff;
+        }
+
+        .mode-btn.stop {
+            background: var(--high);
+            color: #fff;
+        }
+
+        .rainfall-box {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding: 4px 10px;
+            background: rgba(59, 130, 246, 0.15);
+            border: 1px solid var(--accent);
+            border-radius: 6px;
+        }
+
+        .rainfall-value {
+            font-size: 14px;
+            font-weight: 700;
+            color: var(--accent);
+            font-family: 'JetBrains Mono';
+        }
+
+        .rainfall-intensity {
+            font-size: 8px;
+            color: var(--accent);
+            text-transform: uppercase;
+        }
+
+        .clock-box {
+            text-align: right;
+        }
+
+        .live-clock {
+            font-size: 14px;
+            font-weight: 600;
+            font-family: 'JetBrains Mono';
+            color: var(--text-primary);
+        }
+
+        .live-date {
+            font-size: 9px;
+            color: var(--text-muted);
+        }
+
+        .back-btn {
+            padding: 5px 10px;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            color: var(--text-secondary);
+            font-size: 10px;
+            text-decoration: none;
+        }
+
+        /* Zone Bar */
+        .zone-bar {
+            grid-column: 1 / -1;
+            display: flex;
+            gap: 6px;
+            padding: 8px 16px;
+            background: var(--bg-surface);
+            border-bottom: 1px solid var(--border);
+            overflow-x: auto;
+        }
+
+        .zone-card {
+            flex: 0 0 auto;
+            min-width: 110px;
+            padding: 6px 10px;
+            background: var(--bg-card);
+            border: 2px solid transparent;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .zone-card:hover {
+            background: var(--bg-elevated);
+        }
+
+        .zone-card.selected {
+            border-color: var(--accent);
+            background: rgba(59, 130, 246, 0.1);
+        }
+
+        .zone-card.high-risk {
+            border-color: var(--high);
+            animation: pulse-card 1.5s infinite;
+        }
+
+        @keyframes pulse-card {
+
+            0%,
+            100% {
+                box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.3);
+            }
+
+            50% {
+                box-shadow: 0 0 12px 3px rgba(239, 68, 68, 0.15);
+            }
+        }
+
+        .zone-card-header {
+            display: flex;
+            justify-content: space-between;
+            font-size: 9px;
+            margin-bottom: 2px;
+        }
+
+        .zone-id {
+            font-weight: 600;
+            font-family: 'JetBrains Mono';
+            color: var(--text-muted);
+        }
+
+        .zone-trend {
+            font-weight: 700;
+        }
+
+        .zone-name {
+            font-size: 10px;
+            color: var(--text-secondary);
+            margin-bottom: 3px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .zone-risk-display {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            margin-bottom: 2px;
+        }
+
+        .zone-risk-value {
+            font-size: 16px;
+            font-weight: 800;
+            font-family: 'JetBrains Mono';
+        }
+
+        .zone-risk-badge {
+            font-size: 6px;
+            font-weight: 700;
+            padding: 1px 4px;
+            border-radius: 4px;
+            color: #fff;
+        }
+
+        .zone-sensors {
+            display: flex;
+            gap: 6px;
+            font-size: 8px;
+            color: var(--text-muted);
+        }
+
+        .zone-prediction {
+            font-size: 8px;
+            color: var(--high);
+            margin-top: 2px;
+            font-weight: 500;
+        }
+
+        /* Main Area */
+        .main-area {
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .map-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 6px 12px;
+            background: var(--bg-surface);
+            border-bottom: 1px solid var(--border);
+        }
+
+        .map-title {
+            font-size: 12px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .map-info {
+            font-size: 9px;
+            color: var(--text-muted);
+        }
+
+        #map {
+            flex: 1;
+            background: var(--bg-deep);
+        }
+
+        .map-legend {
+            display: flex;
+            justify-content: center;
+            gap: 12px;
+            padding: 6px;
+            background: var(--bg-surface);
+            border-top: 1px solid var(--border);
+            flex-wrap: wrap;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            font-size: 9px;
+            color: var(--text-muted);
+        }
+
+        .legend-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+        }
+
+        /* Side Panel */
+        .side-panel {
+            display: flex;
+            flex-direction: column;
+            background: var(--bg-surface);
+            border-left: 1px solid var(--border);
+            overflow: hidden;
+        }
+
+        .panel-header {
+            padding: 10px 12px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .panel-title {
+            font-size: 12px;
+            font-weight: 600;
+            margin-bottom: 6px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .panel-tabs {
+            display: flex;
+            gap: 3px;
+            flex-wrap: wrap;
+        }
+
+        .panel-tab {
+            padding: 3px 7px;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            color: var(--text-muted);
+            font-size: 9px;
+            font-weight: 500;
+            cursor: pointer;
+        }
+
+        .panel-tab:hover {
+            background: var(--bg-elevated);
+        }
+
+        .panel-tab.active {
+            background: rgba(59, 130, 246, 0.15);
+            border-color: var(--accent);
+            color: var(--accent);
+        }
+
+        .panel-content {
+            flex: 1;
+            overflow-y: auto;
+            padding: 10px;
+        }
+
+        /* Activity Log */
+        .activity-log-container {
+            grid-column: 1 / -1;
+            height: 120px;
+            background: var(--bg-surface);
+            border-top: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .log-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 4px 12px;
+            background: var(--bg-card);
+            border-bottom: 1px solid var(--border);
+        }
+
+        .log-title {
+            font-size: 10px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .log-title::before {
+            content: '';
+            width: 6px;
+            height: 6px;
+            background: var(--success);
+            border-radius: 50%;
+            animation: pulse 1s infinite;
+        }
+
+        .last-update {
+            font-size: 9px;
+            color: var(--text-muted);
+        }
+
+        #activityLog {
+            flex: 1;
+            overflow-y: auto;
+            padding: 4px 12px;
+            font-family: 'JetBrains Mono';
+            font-size: 10px;
+        }
+
+        .log-entry {
+            padding: 2px 0;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            gap: 8px;
+        }
+
+        .log-time {
+            color: var(--text-muted);
+            min-width: 70px;
+        }
+
+        .log-category {
+            min-width: 70px;
+            font-weight: 600;
+        }
+
+        .log-entry.info .log-category {
+            color: var(--info);
+        }
+
+        .log-entry.warning .log-category {
+            color: var(--elevated);
+        }
+
+        .log-entry.critical .log-category {
+            color: var(--critical);
+        }
+
+        .log-entry.success .log-category {
+            color: var(--success);
+        }
+
+        .log-message {
+            color: var(--text-secondary);
+            flex: 1;
+        }
+
+        /* Panel Content Styles */
+        .zone-detail-card {
+            background: var(--bg-card);
+            border-radius: 8px;
+            padding: 10px;
+            margin-bottom: 10px;
+            border-left: 3px solid var(--accent);
+        }
+
+        .zone-detail-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 8px;
+        }
+
+        .zone-detail-id {
+            font-size: 10px;
+            font-weight: 600;
+            font-family: 'JetBrains Mono';
+            color: var(--text-muted);
+        }
+
+        .zone-detail-name {
+            font-size: 11px;
+            font-weight: 600;
+        }
+
+        .zone-detail-risk {
+            text-align: right;
+        }
+
+        .risk-number {
+            font-size: 24px;
+            font-weight: 800;
+            font-family: 'JetBrains Mono';
+            display: block;
+        }
+
+        .risk-label {
+            font-size: 9px;
+            font-weight: 600;
+        }
+
+        .sensor-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 6px;
+            margin-bottom: 10px;
+        }
+
+        .sensor-card {
+            background: var(--bg-elevated);
+            border-radius: 6px;
+            padding: 6px 8px;
+            text-align: center;
+        }
+
+        .sensor-icon {
+            font-size: 16px;
+            margin-bottom: 2px;
+        }
+
+        .sensor-label {
+            font-size: 8px;
+            color: var(--text-muted);
+        }
+
+        .sensor-value {
+            font-size: 14px;
+            font-weight: 700;
+            font-family: 'JetBrains Mono';
+        }
+
+        .sensor-bar {
+            height: 3px;
+            background: var(--bg-card);
+            border-radius: 2px;
+            margin-top: 3px;
+            overflow: hidden;
+        }
+
+        .sensor-bar div {
+            height: 100%;
+            border-radius: 2px;
+            transition: width 0.3s;
+        }
+
+        .prediction-box {
+            background: var(--bg-elevated);
+            border-radius: 6px;
+            padding: 8px;
+            margin-bottom: 10px;
+        }
+
+        .prediction-box.warning {
+            background: rgba(234, 179, 8, 0.1);
+            border: 1px solid var(--elevated);
+        }
+
+        .prediction-header {
+            display: flex;
+            justify-content: space-between;
+            font-size: 9px;
+            margin-bottom: 4px;
+        }
+
+        .confidence {
+            color: var(--text-muted);
+        }
+
+        .prediction-value {
+            font-size: 20px;
+            font-weight: 800;
+            font-family: 'JetBrains Mono';
+            text-align: center;
+        }
+
+        .prediction-alert {
+            font-size: 9px;
+            color: var(--high);
+            text-align: center;
+            margin-top: 4px;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 6px;
+        }
+
+        .action-btn {
+            flex: 1;
+            padding: 8px;
+            border: none;
+            border-radius: 6px;
+            font-size: 10px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .action-btn.dispatch {
+            background: var(--accent);
+            color: #fff;
+        }
+
+        .action-btn.alert {
+            background: var(--high);
+            color: #fff;
+        }
+
+        .quick-stats {
+            display: flex;
+            gap: 6px;
+            margin-top: 10px;
+        }
+
+        .quick-stat {
+            flex: 1;
+            background: var(--bg-card);
+            border-radius: 6px;
+            padding: 6px;
+            text-align: center;
+        }
+
+        .qs-label {
+            font-size: 8px;
+            color: var(--text-muted);
+            display: block;
+        }
+
+        .qs-value {
+            font-size: 14px;
+            font-weight: 700;
+            font-family: 'JetBrains Mono';
+        }
+
+        .section-title {
+            font-size: 10px;
+            font-weight: 600;
+            color: var(--text-muted);
+            margin: 10px 0 6px;
+            text-transform: uppercase;
+        }
+
+        .alerts-summary {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 4px;
+            margin-bottom: 10px;
+        }
+
+        .alert-stat {
+            background: var(--bg-card);
+            border-radius: 6px;
+            padding: 6px;
+            text-align: center;
+        }
+
+        .alert-stat.critical {
+            border-left: 2px solid var(--critical);
+        }
+
+        .alert-stat.warning {
+            border-left: 2px solid var(--elevated);
+        }
+
+        .alert-stat.sos {
+            border-left: 2px solid var(--info);
+        }
+
+        .alert-stat.sms {
+            border-left: 2px solid var(--success);
+        }
+
+        .as-value {
+            font-size: 16px;
+            font-weight: 700;
+            font-family: 'JetBrains Mono';
+            display: block;
+        }
+
+        .as-label {
+            font-size: 7px;
+            color: var(--text-muted);
+        }
+
+        .alerts-list {
+            max-height: 300px;
+            overflow-y: auto;
+        }
+
+        .alert-card {
+            background: var(--bg-card);
+            border-radius: 6px;
+            padding: 8px;
+            margin-bottom: 6px;
+            border-left: 3px solid var(--border);
+        }
+
+        .alert-card.critical {
+            border-left-color: var(--critical);
+            background: rgba(220, 38, 38, 0.08);
+        }
+
+        .alert-card.prediction {
+            border-left-color: var(--elevated);
+        }
+
+        .alert-card.sos_spike {
+            border-left-color: var(--info);
+            background: rgba(6, 182, 212, 0.08);
+        }
+
+        .alert-card.resolved {
+            opacity: 0.5;
+        }
+
+        .alert-header {
+            display: flex;
+            gap: 6px;
+            align-items: center;
+            margin-bottom: 4px;
+            font-size: 9px;
+        }
+
+        .alert-type-badge {
+            padding: 1px 4px;
+            border-radius: 3px;
+            font-weight: 600;
+            font-size: 7px;
+        }
+
+        .alert-type-badge.critical {
+            background: var(--critical);
+            color: #fff;
+        }
+
+        .alert-type-badge.prediction {
+            background: var(--elevated);
+            color: #000;
+        }
+
+        .alert-type-badge.sos_spike {
+            background: var(--info);
+            color: #fff;
+        }
+
+        .alert-type-badge.manual {
+            background: var(--accent);
+            color: #fff;
+        }
+
+        .alert-zone {
+            color: var(--text-muted);
+            font-family: 'JetBrains Mono';
+        }
+
+        .alert-time {
+            color: var(--text-muted);
+            margin-left: auto;
+        }
+
+        .alert-message {
+            font-size: 10px;
+            line-height: 1.4;
+            margin-bottom: 4px;
+        }
+
+        .alert-recipients {
+            font-size: 9px;
+            color: var(--text-muted);
+        }
+
+        .resolve-btn {
+            padding: 3px 8px;
+            background: var(--success);
+            border: none;
+            border-radius: 4px;
+            color: #fff;
+            font-size: 8px;
+            cursor: pointer;
+            margin-top: 4px;
+        }
+
+        .resolved-badge {
+            font-size: 8px;
+            color: var(--success);
+        }
+
+        .social-summary {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 4px;
+            margin-bottom: 8px;
+        }
+
+        .ss-stat {
+            background: var(--bg-card);
+            border-radius: 6px;
+            padding: 6px;
+            text-align: center;
+        }
+
+        .ss-value {
+            font-size: 16px;
+            font-weight: 700;
+            font-family: 'JetBrains Mono';
+            display: block;
+            color: var(--info);
+        }
+
+        .ss-label {
+            font-size: 7px;
+            color: var(--text-muted);
+        }
+
+        .hashtag-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 4px;
+            margin-bottom: 8px;
+        }
+
+        .hashtag {
+            background: rgba(59, 130, 246, 0.15);
+            border: 1px solid var(--accent);
+            border-radius: 10px;
+            padding: 2px 6px;
+            font-size: 9px;
+            color: var(--accent);
+        }
+
+        .hashtag small {
+            color: var(--text-muted);
+            margin-left: 3px;
+        }
+
+        .social-feed {
+            max-height: 280px;
+            overflow-y: auto;
+        }
+
+        .social-post {
+            background: var(--bg-card);
+            border-radius: 6px;
+            padding: 8px;
+            margin-bottom: 6px;
+            border-left: 2px solid var(--border);
+        }
+
+        .social-post.critical {
+            border-left-color: var(--critical);
+            background: rgba(220, 38, 38, 0.08);
+        }
+
+        .social-post.high {
+            border-left-color: var(--high);
+        }
+
+        .post-header {
+            display: flex;
+            gap: 6px;
+            font-size: 8px;
+            color: var(--text-muted);
+            margin-bottom: 4px;
+        }
+
+        .post-platform {
+            background: var(--bg-elevated);
+            padding: 1px 4px;
+            border-radius: 3px;
+        }
+
+        .post-text {
+            font-size: 10px;
+            line-height: 1.4;
+            margin-bottom: 4px;
+        }
+
+        .keyword {
+            color: var(--high);
+            font-weight: 700;
+        }
+
+        .post-footer {
+            display: flex;
+            justify-content: space-between;
+            font-size: 8px;
+        }
+
+        .verified-badge {
+            color: var(--success);
+        }
+
+        .rescue-summary {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 4px;
+            margin-bottom: 8px;
+        }
+
+        .rs-stat {
+            background: var(--bg-card);
+            border-radius: 6px;
+            padding: 6px;
+            text-align: center;
+        }
+
+        .rs-stat.active {
+            border-left: 2px solid var(--high);
+        }
+
+        .rs-stat.complete {
+            border-left: 2px solid var(--success);
+        }
+
+        .rs-stat.personnel {
+            border-left: 2px solid var(--accent);
+        }
+
+        .rs-value {
+            font-size: 16px;
+            font-weight: 700;
+            font-family: 'JetBrains Mono';
+            display: block;
+        }
+
+        .rs-label {
+            font-size: 7px;
+            color: var(--text-muted);
+        }
+
+        .operations-list {
+            max-height: 200px;
+            overflow-y: auto;
+        }
+
+        .operation-card {
+            background: var(--bg-card);
+            border-radius: 6px;
+            padding: 8px;
+            margin-bottom: 6px;
+            border-left: 2px solid var(--accent);
+        }
+
+        .operation-card.completed {
+            opacity: 0.6;
+            border-left-color: var(--success);
+        }
+
+        .op-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 4px;
+        }
+
+        .op-id {
+            font-size: 10px;
+            font-weight: 600;
+            font-family: 'JetBrains Mono';
+        }
+
+        .op-type {
+            font-size: 7px;
+            font-weight: 600;
+            padding: 1px 4px;
+            border-radius: 3px;
+        }
+
+        .op-type.ndrf {
+            background: var(--accent);
+            color: #fff;
+        }
+
+        .op-type.sdrf {
+            background: #9333ea;
+            color: #fff;
+        }
+
+        .op-type.fire {
+            background: var(--high);
+            color: #fff;
+        }
+
+        .op-type.navy {
+            background: #14b8a6;
+            color: #fff;
+        }
+
+        .op-team {
+            font-size: 10px;
+            font-weight: 500;
+            margin-bottom: 3px;
+        }
+
+        .op-details {
+            display: flex;
+            gap: 8px;
+            font-size: 8px;
+            color: var(--text-muted);
+        }
+
+        .complete-btn {
+            padding: 4px 10px;
+            background: var(--success);
+            border: none;
+            border-radius: 4px;
+            color: #fff;
+            font-size: 9px;
+            cursor: pointer;
+            margin-top: 4px;
+        }
+
+        .op-complete-badge {
+            font-size: 8px;
+            color: var(--success);
+        }
+
+        .predictions-list {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .prediction-card {
+            display: grid;
+            grid-template-columns: 1fr auto auto auto auto;
+            gap: 8px;
+            align-items: center;
+            background: var(--bg-card);
+            border-radius: 6px;
+            padding: 8px;
+            font-size: 10px;
+        }
+
+        .prediction-card.high-risk {
+            background: rgba(239, 68, 68, 0.1);
+            border: 1px solid var(--high);
+        }
+
+        .pred-zone {
+            font-weight: 600;
+        }
+
+        .pred-current {
+            color: var(--text-muted);
+        }
+
+        .pred-arrow {
+            font-size: 14px;
+            font-weight: 700;
+        }
+
+        .pred-future {
+            font-weight: 700;
+            font-family: 'JetBrains Mono';
+        }
+
+        .pred-confidence {
+            font-size: 8px;
+            color: var(--text-muted);
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 20px;
+            color: var(--text-muted);
+            font-size: 11px;
+        }
+
+        ::-webkit-scrollbar {
+            width: 4px;
+            height: 4px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: var(--bg-card);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--border);
+            border-radius: 2px;
+        }
+
+        .leaflet-container {
+            background: var(--bg-deep) !important;
+        }
+
+        .leaflet-control-zoom a {
+            background: var(--bg-card) !important;
+            color: var(--text-primary) !important;
+            border: 1px solid var(--border) !important;
+        }
+
+        /* Rivers Tab Styles */
+        .data-source-badge {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 10px;
+            background: rgba(59, 130, 246, 0.1);
+            border: 1px solid var(--accent);
+            border-radius: 6px;
+            font-size: 9px;
+            color: var(--accent);
+            margin-bottom: 10px;
+        }
+
+        .rivers-list,
+        .reservoirs-list {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .river-card,
+        .reservoir-card {
+            background: var(--bg-card);
+            border-radius: 8px;
+            padding: 10px;
+            border-left: 3px solid var(--success);
+        }
+
+        .river-card.danger,
+        .reservoir-card.overflow_risk {
+            border-left-color: var(--critical);
+            background: rgba(220, 38, 38, 0.05);
+        }
+
+        .river-card.warning,
+        .reservoir-card.high {
+            border-left-color: var(--moderate);
+            background: rgba(249, 115, 22, 0.05);
+        }
+
+        .river-header,
+        .res-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 4px;
+        }
+
+        .river-id {
+            font-size: 9px;
+            font-family: 'JetBrains Mono';
+            color: var(--text-muted);
+        }
+
+        .river-status,
+        .res-status {
+            font-size: 7px;
+            font-weight: 700;
+            padding: 2px 6px;
+            border-radius: 4px;
+            color: #fff;
+        }
+
+        .river-name,
+        .res-name {
+            font-size: 11px;
+            font-weight: 600;
+            margin-bottom: 2px;
+        }
+
+        .river-river {
+            font-size: 9px;
+            color: var(--text-muted);
+            margin-bottom: 8px;
+        }
+
+        .river-level-display {
+            margin: 8px 0;
+        }
+
+        .level-main {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            margin-bottom: 6px;
+        }
+
+        .level-value {
+            font-size: 20px;
+            font-weight: 800;
+            font-family: 'JetBrains Mono';
+        }
+
+        .level-trend {
+            font-size: 10px;
+            font-weight: 600;
+        }
+
+        .level-bar-container,
+        .res-bar-container {
+            margin-bottom: 4px;
+        }
+
+        .level-bar-bg,
+        .res-bar-bg {
+            height: 8px;
+            background: var(--bg-elevated);
+            border-radius: 4px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .level-bar-fill,
+        .res-bar-fill {
+            height: 100%;
+            border-radius: 4px;
+            transition: width 0.3s ease;
+        }
+
+        .level-bar-warning,
+        .level-bar-danger {
+            position: absolute;
+            top: 0;
+            width: 2px;
+            height: 100%;
+            background: currentColor;
+        }
+
+        .level-labels {
+            display: flex;
+            justify-content: space-between;
+            font-size: 7px;
+            color: var(--text-muted);
+            margin-top: 2px;
+        }
+
+        .river-meta {
+            font-size: 8px;
+            color: var(--text-muted);
+        }
+
+        .res-storage {
+            text-align: center;
+            margin: 8px 0;
+        }
+
+        .res-percentage {
+            font-size: 24px;
+            font-weight: 800;
+            font-family: 'JetBrains Mono';
+        }
+
+        .res-capacity {
+            font-size: 9px;
+            color: var(--text-muted);
+        }
+
+        .res-flow {
+            display: flex;
+            gap: 8px;
+            margin-top: 8px;
+        }
+
+        .flow-item {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 6px;
+            background: var(--bg-elevated);
+            border-radius: 6px;
+        }
+
+        .flow-icon {
+            font-size: 14px;
+        }
+
+        .flow-label {
+            font-size: 8px;
+            color: var(--text-muted);
+        }
+
+        .flow-value {
+            font-size: 10px;
+            font-weight: 600;
+        }
+
+        .data-sources-list {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .data-source-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 8px;
+            background: var(--bg-card);
+            border-radius: 6px;
+            font-size: 10px;
+        }
+
+        .ds-icon {
+            font-size: 12px;
+        }
+
+        .ds-name {
+            flex: 1;
+            font-weight: 500;
+        }
+
+        .ds-status {
+            color: var(--success);
+            font-size: 9px;
+        }
+
+        .api-stats {
+            display: flex;
+            gap: 8px;
+            margin-top: 10px;
+        }
+
+        .api-stat {
+            flex: 1;
+            background: var(--bg-card);
+            border-radius: 6px;
+            padding: 8px;
+            text-align: center;
+        }
+
+        .api-label {
+            display: block;
+            font-size: 8px;
+            color: var(--text-muted);
+        }
+
+        .api-value {
+            display: block;
+            font-size: 14px;
+            font-weight: 700;
+            font-family: 'JetBrains Mono';
+            color: var(--accent);
+        }
+
+        .weather-forecast {
+            display: flex;
+            gap: 6px;
+        }
+
+        .forecast-day {
+            flex: 1;
+            background: var(--bg-card);
+            border-radius: 6px;
+            padding: 8px;
+            text-align: center;
+        }
+
+        .forecast-date {
+            font-size: 10px;
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+
+        .forecast-condition {
+            font-size: 9px;
+            color: var(--text-secondary);
+            margin-bottom: 4px;
+        }
+
+        .forecast-rain {
+            font-size: 9px;
+            color: var(--accent);
+        }
+
+        .current-weather {
+            background: var(--bg-card);
+            border-radius: 6px;
+            padding: 10px;
+        }
+
+        .cw-item {
+            display: flex;
+            justify-content: space-between;
+            font-size: 10px;
+            padding: 4px 0;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .cw-item:last-child {
+            border-bottom: none;
+        }
+
+        /* Earthquake Tab Styles */
+        .eq-summary {
+            display: flex;
+            gap: 8px;
+            margin: 10px 0;
+        }
+
+        .eq-stat {
+            flex: 1;
+            text-align: center;
+            background: var(--bg-card);
+            border-radius: 6px;
+            padding: 8px;
+        }
+
+        .eq-stat.significant {
+            background: rgba(249, 115, 22, 0.15);
+            border: 1px solid #f97316;
+        }
+
+        .eq-stat.near {
+            background: rgba(59, 130, 246, 0.15);
+            border: 1px solid var(--accent);
+        }
+
+        .eq-value {
+            display: block;
+            font-size: 18px;
+            font-weight: 700;
+            font-family: 'JetBrains Mono';
+        }
+
+        .eq-stat.significant .eq-value {
+            color: #f97316;
+        }
+
+        .eq-stat.near .eq-value {
+            color: var(--accent);
+        }
+
+        .eq-label {
+            font-size: 9px;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+        }
+
+        .earthquakes-list {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+
+        .eq-card {
+            background: var(--bg-card);
+            border-radius: 6px;
+            padding: 10px;
+            border-left: 3px solid var(--border);
+        }
+
+        .eq-card.significant {
+            border-left-color: #dc2626;
+            background: rgba(220, 38, 38, 0.08);
+        }
+
+        .eq-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 6px;
+        }
+
+        .eq-mag {
+            padding: 2px 8px;
+            border-radius: 4px;
+            color: white;
+            font-weight: 700;
+            font-size: 11px;
+        }
+
+        .eq-time {
+            font-size: 9px;
+            color: var(--text-muted);
+        }
+
+        .eq-place {
+            font-size: 11px;
+            color: var(--text-primary);
+            margin-bottom: 4px;
+        }
+
+        .eq-details {
+            display: flex;
+            gap: 10px;
+            font-size: 9px;
+            color: var(--text-secondary);
+        }
+
+        .eq-tsunami {
+            margin-top: 6px;
+            padding: 4px 8px;
+            background: #dc2626;
+            color: white;
+            border-radius: 4px;
+            font-size: 10px;
+            font-weight: 600;
+            animation: pulse 1s infinite;
+        }
+
+        .nasa-events {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 6px;
+            margin-top: 10px;
+        }
+
+        .nasa-stat {
+            background: var(--bg-card);
+            border-radius: 6px;
+            padding: 8px;
+            text-align: center;
+        }
+
+        .nasa-icon {
+            display: block;
+            font-size: 16px;
+            margin-bottom: 4px;
+        }
+
+        .nasa-count {
+            display: block;
+            font-size: 14px;
+            font-weight: 700;
+            font-family: 'JetBrains Mono';
+            color: var(--accent);
+        }
+
+        .nasa-label {
+            display: block;
+            font-size: 8px;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+        }
+
+        /* Air Quality Tab Styles */
+        .aqi-main {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 15px;
+            margin: 10px 0;
+        }
+
+        .aqi-circle {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            border: 4px solid;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 10px;
+        }
+
+        .aqi-value {
+            font-size: 28px;
+            font-weight: 700;
+            font-family: 'JetBrains Mono';
+        }
+
+        .aqi-label {
+            font-size: 10px;
+            color: var(--text-secondary);
+        }
+
+        .aqi-category {
+            padding: 6px 16px;
+            border-radius: 20px;
+            color: white;
+            font-size: 11px;
+            font-weight: 600;
+        }
+
+        .pollutants-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 6px;
+        }
+
+        .pollutant-card {
+            background: var(--bg-card);
+            border-radius: 6px;
+            padding: 8px;
+            text-align: center;
+        }
+
+        .poll-icon {
+            display: block;
+            font-size: 14px;
+            margin-bottom: 2px;
+        }
+
+        .poll-name {
+            display: block;
+            font-size: 10px;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .poll-value {
+            display: block;
+            font-size: 9px;
+            color: var(--text-secondary);
+            margin-top: 2px;
+        }
+
+        .env-metrics {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 8px;
+        }
+
+        .env-item {
+            background: var(--bg-card);
+            border-radius: 6px;
+            padding: 10px;
+            text-align: center;
+        }
+
+        .env-icon {
+            display: block;
+            font-size: 18px;
+            margin-bottom: 4px;
+        }
+
+        .env-label {
+            display: block;
+            font-size: 9px;
+            color: var(--text-secondary);
+        }
+
+        .env-value {
+            display: block;
+            font-size: 16px;
+            font-weight: 700;
+            font-family: 'JetBrains Mono';
+        }
+
+        .marine-info {
+            background: var(--bg-card);
+            border-radius: 6px;
+            padding: 10px;
+        }
+
+        .marine-item {
+            display: flex;
+            justify-content: space-between;
+            font-size: 10px;
+            padding: 4px 0;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .marine-item:last-child {
+            border-bottom: none;
+        }
+
+        /* ==========================================
+           INTERACTIVE MODAL SYSTEM
+           ========================================== */
+        .data-modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.85);
+            backdrop-filter: blur(8px);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 10000;
+            animation: fadeIn 0.2s ease;
+        }
+
+        .data-modal-overlay.active {
+            display: flex;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+
+            to {
+                opacity: 1;
+            }
+        }
+
+        @keyframes slideUp {
+            from {
+                transform: translateY(20px);
+                opacity: 0;
+            }
+
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .data-modal {
+            background: linear-gradient(145deg, var(--bg-card), var(--bg-surface));
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            max-width: 600px;
+            width: 90%;
+            max-height: 80vh;
+            overflow: hidden;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5),
+                0 0 50px rgba(59, 130, 246, 0.15);
+            animation: slideUp 0.3s ease;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 16px 20px;
+            background: var(--bg-elevated);
+            border-bottom: 1px solid var(--border);
+        }
+
+        .modal-title {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 16px;
+            font-weight: 700;
+        }
+
+        .modal-title-icon {
+            font-size: 24px;
+        }
+
+        .modal-close {
+            width: 32px;
+            height: 32px;
+            border: none;
+            background: var(--bg-card);
+            border-radius: 8px;
+            color: var(--text-secondary);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            transition: all 0.2s;
+        }
+
+        .modal-close:hover {
+            background: var(--critical);
+            color: white;
+        }
+
+        .modal-body {
+            padding: 0;
+            overflow: hidden;
+            max-height: 65vh;
+        }
+
+        /* ============================================
+           PREMIUM TAB NAVIGATION
+           ============================================ */
+
+        .modal-tabs {
+            display: flex;
+            gap: 0;
+            border-bottom: 1px solid rgba(59, 130, 246, 0.2);
+            padding: 0 20px;
+            background: linear-gradient(to bottom, var(--bg-surface), var(--bg-card));
+        }
+
+        .modal-tab {
+            flex: 1;
+            background: transparent;
+            border: none;
+            color: var(--text-secondary);
+            padding: 14px 16px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            font-size: 12px;
+            font-weight: 500;
+            position: relative;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            border-bottom: 2px solid transparent;
+        }
+
+        .modal-tab::before {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            width: 0;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, var(--accent), transparent);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            transform: translateX(-50%);
+        }
+
+        .modal-tab:hover::before {
+            width: 80%;
+        }
+
+        .modal-tab:hover {
+            color: var(--text-primary);
+            background: rgba(59, 130, 246, 0.05);
+        }
+
+        .modal-tab.active {
+            color: var(--accent);
+            border-bottom-color: var(--accent);
+        }
+
+        .modal-tab.active::before {
+            width: 100%;
+        }
+
+        .tab-icon {
+            font-size: 14px;
+        }
+
+        /* Tab Content Transitions */
+        .modal-tab-content {
+            display: none;
+            padding: 20px;
+            overflow-y: auto;
+            max-height: calc(65vh - 60px);
+            animation: fadeSlideIn 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .modal-tab-content.active {
+            display: block;
+        }
+
+        @keyframes fadeSlideIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* AI Thinking Animation */
+        .ai-thinking {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 60px 20px;
+            color: var(--text-secondary);
+        }
+
+        .thinking-dots {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 20px;
+        }
+
+        .thinking-dots span {
+            width: 10px;
+            height: 10px;
+            background: var(--accent);
+            border-radius: 50%;
+            animation: thinking 1.4s infinite;
+        }
+
+        .thinking-dots span:nth-child(2) {
+            animation-delay: 0.2s;
+        }
+
+        .thinking-dots span:nth-child(3) {
+            animation-delay: 0.4s;
+        }
+
+        @keyframes thinking {
+
+            0%,
+            60%,
+            100% {
+                transform: translateY(0);
+                opacity: 0.5;
+            }
+
+            30% {
+                transform: translateY(-10px);
+                opacity: 1;
+            }
+        }
+
+        /* Placeholder Styles */
+        .ai-analysis-placeholder,
+        .trends-placeholder,
+        .actions-placeholder {
+            text-align: center;
+            padding: 40px 20px;
+            color: var(--text-secondary);
+            font-size: 13px;
+        }
+
+        .modal-live-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: rgba(16, 185, 129, 0.15);
+            border: 1px solid rgba(16, 185, 129, 0.3);
+            color: #10b981;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 10px;
+            font-weight: 600;
+            margin-bottom: 15px;
+        }
+
+        .modal-live-badge::before {
+            content: '';
+            width: 6px;
+            height: 6px;
+            background: #10b981;
+            border-radius: 50%;
+            animation: pulse 1.5s infinite;
+        }
+
+        @keyframes pulse {
+
+            0%,
+            100% {
+                opacity: 1;
+                transform: scale(1);
+            }
+
+            50% {
+                opacity: 0.5;
+                transform: scale(1.2);
+            }
+        }
+
+        .modal-timestamp {
+            font-size: 11px;
+            color: var(--text-muted);
+            margin-bottom: 15px;
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        .modal-section {
+            background: var(--bg-card);
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 15px;
+            border: 1px solid var(--border);
+        }
+
+        .modal-section-title {
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--accent);
+            margin-bottom: 10px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .modal-data-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+        }
+
+        .modal-data-item {
+            background: var(--bg-elevated);
+            border-radius: 8px;
+            padding: 12px;
+            transition: all 0.2s;
+        }
+
+        .modal-data-item:hover {
+            border-color: var(--accent);
+            box-shadow: 0 0 15px var(--accent-glow);
+        }
+
+        .modal-data-label {
+            font-size: 10px;
+            color: var(--text-muted);
+            margin-bottom: 4px;
+            text-transform: uppercase;
+        }
+
+        .modal-data-value {
+            font-size: 18px;
+            font-weight: 700;
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        .modal-data-unit {
+            font-size: 11px;
+            color: var(--text-secondary);
+            margin-left: 4px;
+        }
+
+        .modal-data-subtext {
+            font-size: 9px;
+            color: var(--text-muted);
+            margin-top: 2px;
+        }
+
+        .modal-history {
+            background: var(--bg-card);
+            border-radius: 10px;
+            padding: 15px;
+            border: 1px solid var(--border);
+        }
+
+        .modal-history-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            border-bottom: 1px solid var(--border);
+            font-size: 11px;
+        }
+
+        .modal-history-item:last-child {
+            border-bottom: none;
+        }
+
+        .modal-status-good {
+            color: var(--success);
+        }
+
+        .modal-status-warning {
+            color: var(--elevated);
+        }
+
+        .modal-status-danger {
+            color: var(--critical);
+        }
+
+        /* ============================================
+           PREMIUM CLICKABLE DATA ELEMENTS
+           ============================================ */
+
+        .clickable-data {
+            cursor: pointer;
+            position: relative;
+            background: linear-gradient(135deg,
+                    rgba(59, 130, 246, 0.06) 0%,
+                    rgba(59, 130, 246, 0.02) 100%);
+            border: 1px solid rgba(59, 130, 246, 0.15);
+            border-radius: 16px;
+            padding: 20px;
+            overflow: hidden;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            backdrop-filter: blur(8px);
+        }
+
+        /* Shimmer effect on hover */
+        .clickable-data::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg,
+                    transparent 0%,
+                    rgba(59, 130, 246, 0.15) 50%,
+                    transparent 100%);
+            transition: left 0.6s ease;
+            z-index: 1;
+            pointer-events: none;
+        }
+
+        .clickable-data:hover::before {
+            left: 100%;
+        }
+
+        /* Premium badge indicator */
+        .clickable-data::after {
+            content: '';
+            position: absolute;
+            top: 12px;
+            right: 12px;
+            width: 28px;
+            height: 28px;
+            background: linear-gradient(135deg, rgba(59, 130, 246, 0.2), rgba(59, 130, 246, 0.1));
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(59, 130, 246, 0.3);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            opacity: 0;
+            transform: scale(0.8) rotate(-10deg);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            z-index: 2;
+            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.2);
+        }
+
+        .clickable-data:hover::after {
+            opacity: 1;
+            transform: scale(1) rotate(0deg);
+            content: '🔍';
+        }
+
+        .clickable-data:hover {
+            transform: translateY(-4px) scale(1.01);
+            box-shadow:
+                0 12px 40px rgba(59, 130, 246, 0.25),
+                0 0 60px rgba(59, 130, 246, 0.15),
+                inset 0 1px 0 rgba(255, 255, 255, 0.05),
+                inset 0 0 30px rgba(59, 130, 246, 0.08);
+            border-color: rgba(59, 130, 246, 0.4);
+            background: linear-gradient(135deg,
+                    rgba(59, 130, 246, 0.1) 0%,
+                    rgba(59, 130, 246, 0.04) 100%);
+        }
+
+        .clickable-data:active {
+            transform: translateY(-2px) scale(0.99);
+        }
+
+        /* Pulse animation for high-priority items */
+        @keyframes pulse-glow {
+
+            0%,
+            100% {
+                box-shadow: 0 0 20px rgba(59, 130, 246, 0.3);
+            }
+
+            50% {
+                box-shadow: 0 0 40px rgba(59, 130, 246, 0.5);
+            }
+        }
+
+        .clickable-data.priority-high {
+            animation: pulse-glow 2s infinite;
+            border-color: rgba(249, 115, 22, 0.3);
+        }
+
+        .clickable-data.priority-critical {
+            animation: pulse-glow 1.5s infinite;
+            border-color: rgba(220, 38, 38, 0.4);
+        }
+
+        /* Interactive card overlays */
+        .river-gauge.clickable-data:hover,
+        .reservoir-item.clickable-data:hover,
+        .eq-card.clickable-data:hover,
+        .social-post.clickable-data:hover,
+        .rescue-card.clickable-data:hover {
+            background: var(--bg-elevated);
+            border-color: var(--accent);
+        }
+    </style>
+</head>
+
+<body>
+    <div class="app-container">
+        <!-- Header -->
+        <header class="header">
+            <div class="logo">
+                <div class="logo-icon">🌊</div>
+                <div class="logo-text">
+                    <div class="logo-title">AI Flood Nowcasting</div>
+                    <div class="logo-subtitle" id="regionSubtitle">Chennai, Tamil Nadu</div>
+                </div>
+            </div>
+
+            <div class="header-stats">
+                <div class="stat-box critical">
+                    <span class="stat-value" id="criticalCount">0</span>
+                    <span class="stat-label">Critical</span>
+                </div>
+                <div class="stat-box high">
+                    <span class="stat-value" id="highCount">0</span>
+                    <span class="stat-label">High</span>
+                </div>
+                <div class="stat-box moderate">
+                    <span class="stat-value" id="moderateCount">0</span>
+                    <span class="stat-label">Moderate</span>
+                </div>
+                <div class="stat-box sos">
+                    <span class="stat-value" id="sosCount">0</span>
+                    <span class="stat-label">SOS Spikes</span>
+                </div>
+                <div class="stat-box sms">
+                    <span class="stat-value" id="alertsSent">0</span>
+                    <span class="stat-label">SMS Sent</span>
+                </div>
+            </div>
+
+            <div class="header-controls">
+                <select class="region-select" id="regionSelect"></select>
+                <div class="mode-indicator live" id="modeIndicator">
+                    <span class="mode-dot"></span>
+                    <span id="modeText">LIVE</span>
+                </div>
+                <button class="mode-btn start" id="modeBtn">▶ Simulate</button>
+                <button class="mode-btn" id="emergencyAlertBtn"
+                    style="background:linear-gradient(135deg,#dc2626,#991b1b);border:1px solid #f87171"
+                    onclick="triggerEmergencyAlert()">🚨 Send Alert</button>
+                <button class="mode-btn" id="voiceBtn"
+                    style="background:linear-gradient(135deg,#22c55e,#16a34a);border:1px solid #4ade80"
+                    onclick="window.voiceService?.toggleListening()">🎙️ Voice</button>
+                <div class="rainfall-box">
+                    <span>🌧️</span>
+                    <div>
+                        <div class="rainfall-value" id="rainfallValue">0 mm</div>
+                        <div class="rainfall-intensity" id="rainfallIntensity">NONE</div>
+                    </div>
+                </div>
+                <div class="clock-box">
+                    <div class="live-clock" id="liveClock">--:--:--</div>
+                    <div class="live-date" id="liveDate">---</div>
+                </div>
+                <a href="/" class="back-btn">← Dashboard</a>
+            </div>
+        </header>
+
+        <!-- Zone Bar -->
+        <div class="zone-bar" id="zoneSummaryBar"></div>
+
+        <!-- Main Map Area -->
+        <div class="main-area">
+            <div class="map-header">
+                <div class="map-title">📍 <span id="mapTitle">Chennai Flood Risk Map</span></div>
+                <div class="map-info">SAR Satellite + Social Media Fusion | 15-min Predictions</div>
+            </div>
+            <div id="map"></div>
+            <div class="map-legend">
+                <span class="legend-item"><span class="legend-dot" style="background: #b91c1c;"></span> Critical
+                    (&gt;85%)</span>
+                <span class="legend-item"><span class="legend-dot" style="background: #dc2626;"></span> High
+                    (70-85%)</span>
+                <span class="legend-item"><span class="legend-dot" style="background: #f97316;"></span> Moderate
+                    (55-70%)</span>
+                <span class="legend-item"><span class="legend-dot" style="background: #eab308;"></span> Elevated
+                    (40-55%)</span>
+                <span class="legend-item"><span class="legend-dot" style="background: #22c55e;"></span> Low
+                    (&lt;40%)</span>
+            </div>
+        </div>
+
+        <!-- Side Panel -->
+        <aside class="side-panel">
+            <div class="panel-header">
+                <div class="panel-title">📊 Flood Intelligence</div>
+                <div class="panel-tabs">
+                    <button class="panel-tab active" data-tab="overview">Overview</button>
+                    <button class="panel-tab" data-tab="alerts">Alerts</button>
+                    <button class="panel-tab" data-tab="rivers">Rivers</button>
+                    <button class="panel-tab" data-tab="reservoirs">Dams</button>
+                    <button class="panel-tab" data-tab="earthquakes">Seismic</button>
+                    <button class="panel-tab" data-tab="air">AQI</button>
+                    <button class="panel-tab" data-tab="social">Social</button>
+                    <button class="panel-tab" data-tab="rescue">Rescue</button>
+                </div>
+            </div>
+            <div class="panel-content" id="panelContent"></div>
+        </aside>
+
+        <!-- Activity Log -->
+        <div class="activity-log-container">
+            <div class="log-header">
+                <div class="log-title">Real-Time Activity Log</div>
+                <div class="last-update" id="lastUpdate">Updated: --:--:--</div>
+            </div>
+            <div id="activityLog"></div>
+        </div>
+    </div>
+
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="tamil-nadu-database.js"></script>
+    <script src="realtime-data-service.js"></script>
+    <script src="ai-chatbot.js"></script>
+    <script src="sms-alert-service.js"></script>
+    <!-- Phase 2-5 Advanced Features -->
+    <script src="llm-service.js"></script>
+    <script src="nlp-service.js"></script>
+    <script src="voice-service.js"></script>
+    <script src="user-service.js"></script>
+    <script src="flood-app.js"></script>
+
+    <!-- Premium Multi-Tab Interactive Data Modal -->
+    <div class="data-modal-overlay" id="dataModalOverlay">
+        <div class="data-modal">
+            <!-- Modal Header -->
+            <div class="modal-header">
+                <div class="modal-title">
+                    <span class="modal-title-icon" id="modalIcon">📊</span>
+                    <span id="modalTitle">Data Details</span>
+                </div>
+                <button class="modal-close" onclick="window.floodApp?.closeModal()">✕</button>
+            </div>
+
+            <!-- Tab Navigation -->
+            <div class="modal-tabs">
+                <button class="modal-tab active" data-tab="live" onclick="window.floodApp?.switchTab('live')">
+                    <span class="tab-icon">📡</span>
+                    <span>Live Data</span>
+                </button>
+                <button class="modal-tab" data-tab="analysis" onclick="window.floodApp?.switchTab('analysis')">
+                    <span class="tab-icon">🤖</span>
+                    <span>AI Analysis</span>
+                </button>
+                <button class="modal-tab" data-tab="history" onclick="window.floodApp?.switchTab('history')">
+                    <span class="tab-icon">📊</span>
+                    <span>Trends</span>
+                </button>
+                <button class="modal-tab" data-tab="actions" onclick="window.floodApp?.switchTab('actions')">
+                    <span class="tab-icon">⚡</span>
+                    <span>Actions</span>
+                </button>
+            </div>
+
+            <!-- Tab Content -->
+            <div class="modal-body" id="modalBody">
+                <!-- Live Data Tab -->
+                <div class="modal-tab-content active" id="tabLive">
+                    <!-- Dynamic content injected here -->
+                </div>
+
+                <!-- AI Analysis Tab -->
+                <div class="modal-tab-content" id="tabAnalysis">
+                    <div class="ai-analysis-placeholder">
+                        <div class="ai-thinking">
+                            <div class="thinking-dots">
+                                <span></span><span></span><span></span>
+                            </div>
+                            <p>AI Analysis Coming Soon...</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Historical Trends Tab -->
+                <div class="modal-tab-content" id="tabHistory">
+                    <div class="trends-placeholder">
+                        <p>📈 Historical trends visualization coming soon</p>
+                    </div>
+                </div>
+
+                <!-- Actions Tab -->
+                <div class="modal-tab-content" id="tabActions">
+                    <div class="actions-placeholder">
+                        <p>⚡ Quick actions and recommendations coming soon</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+<!-- Infrastructure Impact on Supply Chain Panel -->
+<div id="infraPanel" style="position:fixed;bottom:12px;right:12px;width:320px;background:rgba(18,18,26,0.95);backdrop-filter:blur(12px);border:1px solid #2a2a3a;border-radius:12px;padding:14px;z-index:2000;box-shadow:0 8px 32px rgba(0,0,0,0.5);font-family:'Inter',sans-serif">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
+        <div style="font-size:11px;font-weight:700;color:#06b6d4;font-family:'JetBrains Mono';text-transform:uppercase;letter-spacing:.5px">🏗 Infrastructure Impact on Supply Chain</div>
+        <a href="global-twin.html" style="font-size:9px;color:#3b82f6;text-decoration:none">← Global Twin</a>
+    </div>
+    <div style="font-size:10px;font-family:'JetBrains Mono';line-height:1.8;color:#a0a0b0">
+        <div style="padding:6px 0;border-bottom:1px solid #2a2a3a"><span style="color:#ef4444;font-weight:700">3 fuel depots</span> in active flood zone</div>
+        <div style="padding:6px 0;border-bottom:1px solid #2a2a3a">Road <span style="color:#eab308;font-weight:700">NH-45 blocked</span> — Estimated delay: <span style="color:#ef4444;font-weight:700">+2.1 days</span></div>
+        <div style="padding:6px 0;border-bottom:1px solid #2a2a3a">🔄 Rerouting recommendation: <span style="color:#10b981;font-weight:600">Use NH-32 via Vellore</span></div>
+        <div style="padding:6px 0;border-bottom:1px solid #2a2a3a">
+            <div style="color:#ef4444;font-weight:600;margin-bottom:4px">⚠ CASCADE ALERT</div>
+            <div>Flood risk &gt; 70 detected → INFRASTRUCTURE_ALERT triggered</div>
+        </div>
+        <div style="padding:6px 0;color:#06b6d4;font-size:9px">
+            🤖 Safety stock auto-increased by <span style="font-weight:700">+15%</span> for affected SKUs
+            <a href="inventory-forecast.html" style="color:#3b82f6;margin-left:4px;text-decoration:none">View Forecast →</a>
+        </div>
+    </div>
+    <div style="text-align:center;margin-top:8px;font-size:8px;color:#606070;font-family:'JetBrains Mono'">TNI26086 | KIT Hackathon 2026 | Team SentinelTwin</div>
+</div>
+
+<script>
+// Cross-dashboard sync: write infrastructure alerts to localStorage
+(function(){
+    function writeInfraAlerts(){
+        localStorage.setItem('sentinel_infrastructure', JSON.stringify({
+            portStatus: 'RESTRICTED',
+            roadsImpacted: ['NH-45','NH-32'],
+            fuelDepotsInFloodZone: 3,
+            estimatedDelay: '+2.1 days',
+            rerouteRecommendation: 'NH-32 via Vellore',
+            floodRiskScore: 78,
+            safetyStockIncrease: '+15%',
+            cascadeAlert: true,
+            updated: new Date().toISOString()
+        }));
+        localStorage.setItem('sentinel_flood_risk', JSON.stringify({
+            zones: [
+                {id:'Z1', name:'Adyar Basin', risk:82, status:'CRITICAL'},
+                {id:'Z2', name:'Cooum River', risk:68, status:'ELEVATED'},
+                {id:'Z3', name:'Palar Delta', risk:74, status:'HIGH'}
+            ],
+            updated: new Date().toISOString()
+        }));
+    }
+    writeInfraAlerts();
+    setInterval(writeInfraAlerts, 5000);
+})();
+</script>
+</body>
+
+</html>

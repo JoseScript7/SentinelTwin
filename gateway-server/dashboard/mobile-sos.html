@@ -1,0 +1,786 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, maximum-scale=1.0">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="theme-color" content="#dc2626">
+    <title>SOS - Emergency Alert</title>
+
+    <!-- PWA Manifest -->
+    <link rel="manifest" href="manifest.json">
+    <link rel="apple-touch-icon"
+        href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect fill='%23dc2626' width='100' height='100' rx='20'/><text x='50%' y='55%' font-size='50' text-anchor='middle' fill='white'>🆘</text></svg>">
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #0f0f14, #1a1a24);
+            color: #fff;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .header {
+            padding: 16px 20px;
+            background: rgba(0, 0, 0, 0.3);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 18px;
+            font-weight: 700;
+        }
+
+        .logo span {
+            color: #dc2626;
+        }
+
+        .status {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 12px;
+        }
+
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #22c55e;
+        }
+
+        .status-dot.offline {
+            background: #f59e0b;
+        }
+
+        .main {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 24px;
+            text-align: center;
+        }
+
+        .sos-container {
+            position: relative;
+            width: 240px;
+            height: 240px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .sos-button {
+            width: 200px;
+            height: 200px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #dc2626, #991b1b);
+            border: none;
+            color: white;
+            font-size: 42px;
+            font-weight: 800;
+            cursor: pointer;
+            box-shadow: 0 0 40px rgba(220, 38, 38, 0.4);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            z-index: 2;
+            user-select: none;
+            -webkit-user-select: none;
+            touch-action: none;
+            transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .sos-button:active {
+            transform: scale(0.95);
+        }
+
+        /* Pulse Animation (Idle) */
+        .sos-button::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            border-radius: 50%;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            animation: ripple 2s infinite;
+            z-index: -1;
+        }
+
+        @keyframes ripple {
+            0% {
+                transform: scale(1);
+                opacity: 0.6;
+            }
+
+            100% {
+                transform: scale(1.4);
+                opacity: 0;
+            }
+        }
+
+        /* Progress Ring */
+        .progress-ring {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 240px;
+            height: 240px;
+            transform: rotate(-90deg);
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        .progress-ring__circle {
+            transition: stroke-dashoffset 0.1s linear;
+            stroke-dasharray: 691;
+            /* 2 * PI * 110 */
+            stroke-dashoffset: 691;
+            stroke-linecap: round;
+            filter: drop-shadow(0 0 10px #ef4444);
+        }
+
+        .hold-instruction {
+            position: absolute;
+            bottom: -50px;
+            left: 0;
+            right: 0;
+            text-align: center;
+            color: #fff;
+            font-weight: 600;
+            font-size: 14px;
+            opacity: 0.8;
+            pointer-events: none;
+        }
+
+        .sos-button.sending {
+            background: linear-gradient(135deg, #f59e0b, #d97706);
+            animation: none;
+        }
+
+        .sos-button.sent {
+            background: linear-gradient(135deg, #22c55e, #16a34a);
+        }
+
+        .instruction {
+            margin-top: 24px;
+            font-size: 16px;
+            color: #a0a0b0;
+            max-width: 280px;
+        }
+
+        .location-info {
+            margin-top: 20px;
+            padding: 16px 20px;
+            background: rgba(59, 130, 246, 0.1);
+            border: 1px solid rgba(59, 130, 246, 0.3);
+            border-radius: 12px;
+            font-size: 13px;
+            color: #a0a0b0;
+        }
+
+        .location-info strong {
+            color: #3b82f6;
+        }
+
+        .footer {
+            padding: 20px;
+            background: rgba(0, 0, 0, 0.3);
+        }
+
+        .helplines {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+        }
+
+        .helpline {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 12px 8px;
+            text-align: center;
+            text-decoration: none;
+            color: white;
+        }
+
+        .helpline-icon {
+            font-size: 24px;
+            margin-bottom: 4px;
+        }
+
+        .helpline-number {
+            font-size: 18px;
+            font-weight: 700;
+            color: #3b82f6;
+        }
+
+        .helpline-label {
+            font-size: 10px;
+            color: #666;
+            text-transform: uppercase;
+        }
+
+        .queue-indicator {
+            position: fixed;
+            bottom: 160px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #f59e0b;
+            color: #000;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            display: none;
+        }
+
+        .queue-indicator.visible {
+            display: block;
+        }
+
+        .confirm-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.9);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 24px;
+            z-index: 100;
+        }
+
+        .confirm-modal.visible {
+            display: flex;
+        }
+
+        .confirm-box {
+            background: linear-gradient(135deg, #1a1a24, #12121a);
+            border: 2px solid #dc2626;
+            border-radius: 20px;
+            padding: 32px;
+            text-align: center;
+            max-width: 340px;
+        }
+
+        .confirm-icon {
+            font-size: 60px;
+            margin-bottom: 16px;
+        }
+
+        .confirm-title {
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 12px;
+        }
+
+        .confirm-text {
+            font-size: 14px;
+            color: #a0a0b0;
+            margin-bottom: 24px;
+        }
+
+        .confirm-buttons {
+            display: flex;
+            gap: 12px;
+        }
+
+        .confirm-btn {
+            flex: 1;
+            padding: 14px;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 600;
+            border: none;
+            cursor: pointer;
+        }
+
+        .confirm-btn.yes {
+            background: linear-gradient(135deg, #dc2626, #991b1b);
+            color: white;
+        }
+
+        .confirm-btn.no {
+            background: rgba(255, 255, 255, 0.1);
+            color: #a0a0b0;
+        }
+
+        .sent-animation {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(34, 197, 94, 0.95);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            z-index: 200;
+        }
+
+        .sent-animation.visible {
+            display: flex;
+        }
+
+        .sent-animation .icon {
+            font-size: 80px;
+            margin-bottom: 20px;
+        }
+
+        .sent-animation .text {
+            font-size: 28px;
+            font-weight: 700;
+        }
+
+        .sent-animation .sub {
+            font-size: 14px;
+            color: rgba(255, 255, 255, 0.8);
+            margin-top: 12px;
+        }
+
+        /* PWA Install Button */
+        .install-btn {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: linear-gradient(135deg, #3b82f6, #2563eb);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.4);
+            z-index: 99;
+            animation: slideDown 0.5s ease;
+        }
+
+        @keyframes slideDown {
+            from {
+                top: -50px;
+                opacity: 0;
+            }
+
+            to {
+                top: 20px;
+                opacity: 1;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <header class="header">
+        <div class="logo">Rescue<span>Link</span> SOS</div>
+        <div class="status">
+            <span class="status-dot" id="statusDot"></span>
+            <span id="statusText">Online</span>
+        </div>
+    </header>
+
+    <main class="main">
+        <div class="sos-container">
+            <!-- Progress Ring -->
+            <svg class="progress-ring" width="240" height="240">
+                <circle class="progress-ring__circle" stroke="#ef4444" stroke-width="8" fill="transparent" r="110"
+                    cx="120" cy="120" />
+            </svg>
+
+            <button class="sos-button" id="sosButton">
+                <span class="emoji">🆘</span>
+                <span>SOS</span>
+                <span class="hold-instruction">Hold 3 Seconds</span>
+            </button>
+        </div>
+
+        <p class="instruction" style="margin-top: 60px;">
+            Keep holding to send emergency alert
+        </p>
+
+        <div class="location-info" id="locationInfo">
+            <strong>📍 Location:</strong> Acquiring GPS...
+        </div>
+    </main>
+
+    <div class="queue-indicator" id="queueIndicator">
+        📡 1 SOS queued - will send when online
+    </div>
+
+    <footer class="footer">
+        <div class="helplines">
+            <a href="tel:1070" class="helpline">
+                <div class="helpline-icon">🆘</div>
+                <div class="helpline-number">1070</div>
+                <div class="helpline-label">NDRF</div>
+            </a>
+            <a href="tel:100" class="helpline">
+                <div class="helpline-icon">🚔</div>
+                <div class="helpline-number">100</div>
+                <div class="helpline-label">Police</div>
+            </a>
+            <a href="tel:108" class="helpline">
+                <div class="helpline-icon">🚑</div>
+                <div class="helpline-number">108</div>
+                <div class="helpline-label">Ambulance</div>
+            </a>
+        </div>
+    </footer>
+
+    <!-- Install Button (Hidden by default) -->
+    <button id="installBtn" class="install-btn" style="display: none;">
+        📲 Install App for Offline Use
+    </button>
+
+    <!-- Sent Animation -->
+    <div class="sent-animation" id="sentAnimation">
+        <div class="icon">✅</div>
+        <div class="text">SOS Sent!</div>
+        <div class="sub">Help is on the way. Stay calm.</div>
+    </div>
+
+    <script>
+        // ==========================================
+        // MOBILE SOS APP
+        // Works offline with queue
+        // ==========================================
+
+        // Setup Progress Ring
+        const circle = document.querySelector('.progress-ring__circle');
+        const radius = circle.r.baseVal.value;
+        const circumference = radius * 2 * Math.PI;
+
+        circle.style.strokeDasharray = `${circumference} ${circumference}`;
+        circle.style.strokeDashoffset = circumference;
+
+        function setProgress(percent) {
+            const offset = circumference - (percent / 100) * circumference;
+            circle.style.strokeDashoffset = offset;
+        }
+
+        // ==========================================
+        // PRESS AND HOLD LOGIC
+        // ==========================================
+        const btn = document.getElementById('sosButton');
+        let pressTimer;
+        let startTime;
+        let isHolding = false;
+
+        // Prevent default browser behaviors that interfere
+        btn.addEventListener('contextmenu', e => { e.preventDefault(); e.stopPropagation(); return false; });
+        btn.addEventListener('selectstart', e => { e.preventDefault(); return false; });
+
+        // Robust Event Handling
+        const startEvents = ['mousedown', 'touchstart', 'pointerdown'];
+        const endEvents = ['mouseup', 'mouseleave', 'touchend', 'touchcancel', 'pointerup', 'pointercancel', 'pointerleave'];
+
+        startEvents.forEach(evt => btn.addEventListener(evt, startPress, { passive: false }));
+        endEvents.forEach(evt => window.addEventListener(evt, cancelPress)); // Listen on window to catch drags outside
+
+        function startPress(e) {
+            // Prevent scrolling on mobile while holding
+            if (e.type === 'touchstart' || e.type === 'pointerdown') {
+                e.preventDefault();
+            }
+
+            // Ignore multi-touch or right click
+            if ((e.touches && e.touches.length > 1) || (e.button && e.button !== 0)) return;
+
+            if (isHolding || btn.classList.contains('sending')) return;
+
+            isHolding = true;
+            startTime = Date.now();
+            btn.style.transform = 'scale(0.95)';
+
+            // Haptic feedback
+            if ('vibrate' in navigator) navigator.vibrate(50);
+
+            // Animation loop
+            requestAnimationFrame(updateProgress);
+        }
+
+        function updateProgress() {
+            if (!isHolding) return;
+
+            const elapsed = Date.now() - startTime;
+            const progress = Math.min((elapsed / 3000) * 100, 100);
+
+            setProgress(progress);
+
+            if (progress >= 100) {
+                triggerSOS();
+            } else {
+                requestAnimationFrame(updateProgress);
+            }
+        }
+
+        function cancelPress(e) {
+            if (!isHolding) return;
+
+            // For touch events, ensure we don't accidentally cancel on minor moves
+            if (e.type === 'touchmove') return;
+
+            isHolding = false;
+            btn.style.transform = 'scale(1)';
+            setProgress(0);
+        }
+
+        function triggerSOS() {
+            isHolding = false;
+            btn.style.transform = 'scale(1)';
+            setProgress(0);
+
+            // Haptic success
+            if ('vibrate' in navigator) navigator.vibrate([200, 100, 200]);
+
+            sendSOS();
+        }
+
+        // PWA Install Prompt
+        let deferredPrompt;
+        const installBtn = document.getElementById('installBtn');
+
+        window.addEventListener('beforeinstallprompt', (e) => {
+            e.preventDefault();
+            deferredPrompt = e;
+            installBtn.style.display = 'block';
+        });
+
+        installBtn.addEventListener('click', async () => {
+            if (!deferredPrompt) return;
+            deferredPrompt.prompt();
+            const { outcome } = await deferredPrompt.userChoice;
+            console.log(`User response to install prompt: ${outcome}`);
+            deferredPrompt = null;
+            installBtn.style.display = 'none';
+        });
+
+        let currentLocation = null;
+        let isOnline = navigator.onLine;
+        let sosQueue = [];
+
+        // Load queue from storage
+        try {
+            sosQueue = JSON.parse(localStorage.getItem('sosQueue') || '[]');
+            updateQueueIndicator();
+        } catch (e) { }
+
+        // ==========================================
+        // LOCATION TRACKING
+        // ==========================================
+
+        function startLocationTracking() {
+            if ('geolocation' in navigator) {
+                navigator.geolocation.watchPosition(
+                    (position) => {
+                        currentLocation = {
+                            lat: position.coords.latitude,
+                            lng: position.coords.longitude,
+                            accuracy: position.coords.accuracy,
+                            timestamp: new Date().toISOString()
+                        };
+
+                        document.getElementById('locationInfo').innerHTML = `
+                            <strong>📍 Location:</strong> ${currentLocation.lat.toFixed(6)}, ${currentLocation.lng.toFixed(6)}
+                            <br><span style="font-size:11px">Accuracy: ±${Math.round(currentLocation.accuracy)}m</span>
+                        `;
+                    },
+                    (error) => {
+                        document.getElementById('locationInfo').innerHTML = `
+                            <strong>⚠️ Location:</strong> Unable to get GPS
+                            <br><span style="font-size:11px">${error.message}</span>
+                        `;
+                    },
+                    { enableHighAccuracy: true, maximumAge: 5000, timeout: 10000 }
+                );
+            }
+        }
+
+        // ==========================================
+        // ONLINE/OFFLINE HANDLING
+        // ==========================================
+
+        function updateOnlineStatus() {
+            isOnline = navigator.onLine;
+            const dot = document.getElementById('statusDot');
+            const text = document.getElementById('statusText');
+
+            if (isOnline) {
+                dot.classList.remove('offline');
+                text.textContent = 'Online';
+                processQueue();
+            } else {
+                dot.classList.add('offline');
+                text.textContent = 'Offline';
+            }
+        }
+
+        window.addEventListener('online', updateOnlineStatus);
+        window.addEventListener('offline', updateOnlineStatus);
+
+        // ==========================================
+        // SOS FUNCTIONS
+        // ==========================================
+
+        async function sendSOS() {
+            const btn = document.getElementById('sosButton');
+            btn.classList.add('sending');
+            btn.innerHTML = '<span class="emoji">📡</span><span>Sending...</span>';
+
+            const sosData = {
+                id: 'SOS-' + Date.now(),
+                location: currentLocation || { lat: 13.0827, lng: 80.2707, accuracy: 100 },
+                timestamp: new Date().toISOString(),
+                battery: navigator.getBattery ? await getBattery() : null,
+                userAgent: navigator.userAgent,
+                emergencyType: 'flood',
+                emergencyStatus: 'CRITICAL'
+            };
+
+            if (isOnline) {
+                try {
+                    await sendToServer(sosData);
+                    showSentAnimation();
+                } catch (e) {
+                    queueSOS(sosData);
+                    sendSMSFallback(sosData);
+                }
+            } else {
+                queueSOS(sosData);
+                showSentAnimation('No Internet: Opening SMS...');
+                sendSMSFallback(sosData);
+            }
+
+            // Reset button
+            setTimeout(() => {
+                btn.classList.remove('sending');
+                btn.innerHTML = `
+                    <span class="emoji">🆘</span>
+                    <span>SOS</span>
+                    <span class="hold-instruction">Hold 3 Seconds</span>
+                `;
+            }, 3000);
+        }
+
+        function sendSMSFallback(data) {
+            // Emergency Number (NDRF/helpline)
+            const adminNumber = "1070";
+
+            const lat = data.location.lat.toFixed(6);
+            const lng = data.location.lng.toFixed(6);
+            const mapsLink = `https://maps.google.com/?q=${lat},${lng}`;
+
+            const message = `🚨 SOS FLOOD ALERT 🚨\n\n📍 My Location:\n${mapsLink}\n\n⚠️ Status: CRITICAL\n🔋 Battery: ${data.battery}%`;
+
+            // Trigger native SMS app
+            const ua = navigator.userAgent.toLowerCase();
+            const startChar = (ua.indexOf('iphone') > -1 || ua.indexOf('ipad') > -1) ? '&' : '?';
+
+            window.location.href = `sms:${adminNumber}${startChar}body=${encodeURIComponent(message)}`;
+        }
+
+        async function sendToServer(sosData) {
+            const response = await fetch('/api/sos', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(sosData)
+            });
+
+            if (!response.ok) throw new Error('Failed to send');
+            console.log('✅ SOS sent:', sosData.id);
+        }
+
+        function queueSOS(sosData) {
+            sosQueue.push(sosData);
+            localStorage.setItem('sosQueue', JSON.stringify(sosQueue));
+            updateQueueIndicator();
+            console.log('📦 SOS queued:', sosData.id);
+        }
+
+        function updateQueueIndicator() {
+            const indicator = document.getElementById('queueIndicator');
+            if (sosQueue.length > 0 && !isOnline) {
+                indicator.textContent = `📡 ${sosQueue.length} SOS queued - will send when online`;
+                indicator.classList.add('visible');
+            } else {
+                indicator.classList.remove('visible');
+            }
+        }
+
+        async function processQueue() {
+            while (sosQueue.length > 0 && isOnline) {
+                const sos = sosQueue.shift();
+                try {
+                    await sendToServer(sos);
+                } catch (e) {
+                    sosQueue.unshift(sos);
+                    break;
+                }
+            }
+            localStorage.setItem('sosQueue', JSON.stringify(sosQueue));
+            updateQueueIndicator();
+        }
+
+        function showSentAnimation(customText) {
+            const animation = document.getElementById('sentAnimation');
+            if (customText) {
+                animation.querySelector('.sub').textContent = customText;
+            }
+            animation.classList.add('visible');
+
+            setTimeout(() => {
+                animation.classList.remove('visible');
+            }, 3000);
+        }
+
+        async function getBattery() {
+            try {
+                const battery = await navigator.getBattery();
+                return Math.round(battery.level * 100);
+            } catch {
+                return null;
+            }
+        }
+
+        // ==========================================
+        // INITIALIZE
+        // ==========================================
+
+        document.addEventListener('DOMContentLoaded', () => {
+            startLocationTracking();
+            updateOnlineStatus();
+
+            // Register service worker for offline support
+            if ('serviceWorker' in navigator) {
+                navigator.serviceWorker.register('sw.js')
+                    .then(() => console.log('✅ Service worker registered'))
+                    .catch(e => console.log('SW error:', e));
+            }
+        });
+    </script>
+</body>
+
+</html>

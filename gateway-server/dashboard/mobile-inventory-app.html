@@ -1,0 +1,507 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="theme-color" content="#2563eb">
+    <title>SentinelTwin Inventory</title>
+    <link rel="manifest" href="manifest-inventory.json">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        :root {
+            --bg: #f1f3f8; --surface: #ffffff; --card: #ffffff;
+            --primary: #2563eb; --primary-light: #dbeafe; --primary-dark: #1d4ed8;
+            --danger: #ef4444; --danger-light: #fef2f2; --danger-border: #fecaca;
+            --warn: #f59e0b; --warn-light: #fffbeb; --warn-border: #fde68a;
+            --success: #10b981; --success-light: #ecfdf5; --success-border: #a7f3d0;
+            --cyan: #06b6d4;
+            --txt: #0f172a; --txt-secondary: #475569; --muted: #94a3b8;
+            --border: #e2e8f0; --border-strong: #cbd5e1;
+            --radius: 16px; --radius-sm: 10px;
+            --shadow: 0 1px 3px rgba(0,0,0,0.06), 0 4px 12px rgba(0,0,0,0.04);
+            --shadow-lg: 0 4px 20px rgba(0,0,0,0.08);
+        }
+        * { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+        body { font-family:'Inter',sans-serif; background:var(--bg); color:var(--txt); height:100vh; overflow:hidden; display:flex; flex-direction:column; }
+
+        /* Material Symbols */
+        .material-symbols-rounded { font-variation-settings:'FILL' 1,'wght' 500,'GRAD' 0,'opsz' 24; vertical-align:middle; }
+        .icon-sm { font-size:20px; }
+        .icon-md { font-size:24px; }
+        .icon-lg { font-size:28px; }
+
+        /* Status Bar */
+        .status-bar { display:flex; justify-content:space-between; align-items:center; padding:10px 20px 6px; font-size:12px; font-weight:600; background:var(--surface); }
+        .status-bar .time { font-weight:700; font-size:14px; }
+        .sync-badge { display:flex; align-items:center; gap:3px; font-size:10px; font-weight:700; color:var(--success); }
+        .sync-badge .dot { width:5px; height:5px; border-radius:50%; background:var(--success); animation:blink 2s infinite; }
+        @keyframes blink { 0%,100%{opacity:1} 50%{opacity:.3} }
+
+        /* Navigation */
+        .screen { display:none; flex:1; overflow-y:auto; -webkit-overflow-scrolling:touch; }
+        .screen.active { display:flex; flex-direction:column; animation:slideIn .25s ease; }
+        @keyframes slideIn { from{opacity:0;transform:translateY(6px)} to{opacity:1;transform:translateY(0)} }
+
+        /* Tab Bar */
+        .tab-bar { position:fixed; bottom:0; left:0; right:0; display:flex; justify-content:space-around; background:var(--surface); border-top:1px solid var(--border); padding:8px 0 env(safe-area-inset-bottom, 20px); z-index:200; box-shadow:0 -2px 12px rgba(0,0,0,0.04); }
+        .tab-item { display:flex; flex-direction:column; align-items:center; gap:2px; font-size:10px; font-weight:600; color:var(--muted); cursor:pointer; padding:4px 10px; transition:.2s; position:relative; }
+        .tab-item.active { color:var(--primary); }
+        .tab-item.active::after { content:''; position:absolute; top:-8px; left:50%; transform:translateX(-50%); width:20px; height:3px; background:var(--primary); border-radius:0 0 3px 3px; }
+        .tab-item .material-symbols-rounded { font-size:24px; transition:.15s; }
+
+        /* Page Shell */
+        .page-padding { padding:0 20px 100px; }
+        .page-header { padding:16px 20px 4px; background:var(--surface); }
+        .page-title { font-size:24px; font-weight:800; letter-spacing:-0.5px; display:flex; align-items:center; gap:8px; }
+        .page-sub { font-size:12px; color:var(--muted); margin:4px 0 0; font-weight:500; }
+        .live-tag { font-size:9px; font-weight:800; color:var(--success); background:var(--success-light); padding:3px 8px; border-radius:10px; border:1px solid var(--success-border); display:inline-flex; align-items:center; gap:4px; vertical-align:middle; }
+
+        /* KPI Strip */
+        .kpi-strip { display:flex; gap:10px; overflow-x:auto; padding:16px 20px 4px; -webkit-overflow-scrolling:touch; }
+        .kpi-strip::-webkit-scrollbar { display:none; }
+        .kpi-tile { flex-shrink:0; background:var(--card); border-radius:var(--radius); padding:14px 16px; min-width:100px; border:1px solid var(--border); box-shadow:var(--shadow); }
+        .kpi-tile .kv { font-size:22px; font-weight:800; font-family:'JetBrains Mono'; line-height:1.1; }
+        .kpi-tile .kl { font-size:10px; color:var(--muted); font-weight:600; margin-top:4px; text-transform:uppercase; letter-spacing:0.3px; }
+
+        /* Section */
+        .sec-title { font-size:15px; font-weight:800; margin:20px 0 10px; display:flex; align-items:center; gap:6px; }
+
+        /* Item Cards */
+        .item-card { display:flex; align-items:center; gap:12px; padding:14px; background:var(--card); border-radius:var(--radius); margin-bottom:10px; border:1px solid var(--border); cursor:pointer; transition:.15s; box-shadow:var(--shadow); }
+        .item-card:active { transform:scale(0.98); box-shadow:0 1px 4px rgba(0,0,0,0.03); }
+        .item-icon { width:40px; height:40px; border-radius:var(--radius-sm); display:flex; align-items:center; justify-content:center; flex-shrink:0; }
+        .item-body { flex:1; min-width:0; }
+        .item-body .name { font-size:14px; font-weight:700; }
+        .item-body .meta { font-size:11px; color:var(--muted); margin-top:2px; font-family:'JetBrains Mono'; }
+        .item-right { text-align:right; flex-shrink:0; }
+        .item-right .val { font-size:16px; font-weight:800; font-family:'JetBrains Mono'; }
+        .item-right .lbl { font-size:9px; color:var(--muted); margin-top:2px; font-weight:600; }
+
+        /* Badges */
+        .badge { padding:3px 8px; border-radius:6px; font-size:10px; font-weight:700; display:inline-flex; align-items:center; gap:3px; }
+        .badge.danger { background:var(--danger-light); color:var(--danger); border:1px solid var(--danger-border); }
+        .badge.warn { background:var(--warn-light); color:#b45309; border:1px solid var(--warn-border); }
+        .badge.ok { background:var(--success-light); color:#047857; border:1px solid var(--success-border); }
+
+        /* Charts */
+        .chart-card { background:var(--card); border-radius:var(--radius); padding:16px; margin-bottom:16px; border:1px solid var(--border); box-shadow:var(--shadow); }
+        .chart-wrap { height:200px; position:relative; margin-top:10px; }
+        .chart-label { display:flex; justify-content:space-between; align-items:center; }
+        .chart-label .title { font-size:13px; font-weight:700; }
+
+        /* Alerts */
+        .alert-card { display:flex; gap:12px; padding:14px; background:var(--card); border-radius:var(--radius); margin-bottom:10px; border:1px solid var(--border); border-left:4px solid; box-shadow:var(--shadow); }
+        .alert-card .a-body { flex:1; }
+        .alert-card .a-title { font-size:13px; font-weight:700; margin-bottom:3px; }
+        .alert-card .a-text { font-size:12px; color:var(--txt-secondary); line-height:1.5; }
+        .alert-card .a-time { font-size:10px; color:var(--muted); margin-top:5px; font-weight:600; display:flex; align-items:center; gap:4px; }
+
+        /* CTA */
+        .cta-card { background:linear-gradient(135deg,#2563eb,#06b6d4); border-radius:var(--radius); padding:20px; margin:16px 0; color:#fff; position:relative; overflow:hidden; }
+        .cta-card::before { content:''; position:absolute; right:-20px; top:-20px; width:80px; height:80px; background:rgba(255,255,255,0.1); border-radius:50%; }
+        .cta-card .cta-title { font-size:15px; font-weight:800; margin-bottom:6px; }
+        .cta-card .cta-text { font-size:12px; opacity:.9; line-height:1.5; margin-bottom:12px; }
+        .cta-btn { display:inline-flex; align-items:center; gap:6px; padding:10px 20px; background:#fff; color:var(--primary-dark); font-size:13px; font-weight:700; border-radius:10px; cursor:pointer; border:none; transition:.15s; box-shadow:0 2px 8px rgba(0,0,0,0.1); }
+        .cta-btn:active { transform:scale(0.97); }
+
+        /* Settings */
+        .setting-row { display:flex; justify-content:space-between; align-items:center; padding:15px; background:var(--card); border-radius:var(--radius); margin-bottom:8px; border:1px solid var(--border); box-shadow:var(--shadow); }
+        .setting-row .s-left { display:flex; align-items:center; gap:10px; }
+        .setting-row .s-label { font-size:14px; font-weight:600; }
+        .setting-row .s-val { font-size:13px; color:var(--primary); font-weight:700; font-family:'JetBrains Mono'; }
+
+        /* Search */
+        .search-wrap { position:relative; margin-bottom:14px; }
+        .search-wrap .material-symbols-rounded { position:absolute; left:14px; top:50%; transform:translateY(-50%); color:var(--muted); font-size:20px; }
+        .search-bar { width:100%; padding:12px 14px 12px 42px; background:var(--card); border:1px solid var(--border); border-radius:var(--radius); font-size:14px; color:var(--txt); outline:none; box-shadow:var(--shadow); }
+        .search-bar:focus { border-color:var(--primary); box-shadow:0 0 0 3px rgba(37,99,235,0.1); }
+
+        /* Install Prompt */
+        .install-banner { background:linear-gradient(135deg,#f0f9ff,#eff6ff); border:1px solid #bfdbfe; border-radius:var(--radius); padding:16px; margin:12px 20px; display:flex; align-items:center; gap:12px; }
+        .install-banner .ib-icon { width:44px; height:44px; background:var(--primary); border-radius:12px; display:flex; align-items:center; justify-content:center; color:#fff; flex-shrink:0; }
+        .install-banner .ib-body { flex:1; }
+        .install-banner .ib-title { font-size:13px; font-weight:800; color:var(--primary-dark); }
+        .install-banner .ib-text { font-size:11px; color:var(--txt-secondary); margin-top:2px; }
+        .install-btn { padding:8px 14px; background:var(--primary); color:#fff; border:none; border-radius:8px; font-size:11px; font-weight:700; cursor:pointer; flex-shrink:0; }
+
+        /* Progress bars */
+        .progress-bar { height:6px; background:var(--border); border-radius:3px; overflow:hidden; margin-top:6px; }
+        .progress-fill { height:100%; border-radius:3px; transition:width 1s ease; }
+    </style>
+</head>
+<body>
+
+<div class="status-bar">
+    <span class="time" id="mobTime">18:12</span>
+    <span style="display:flex;align-items:center;gap:10px;">
+        <span class="sync-badge"><span class="dot"></span>Real-time Sync</span>
+        <span style="color:var(--muted);font-size:12px;">📶 🔋</span>
+    </span>
+</div>
+
+<!-- Install Banner -->
+<div class="install-banner" id="installBanner">
+    <div class="ib-icon"><span class="material-symbols-rounded" style="font-size:24px;">download</span></div>
+    <div class="ib-body">
+        <div class="ib-title">Install SentinelTwin</div>
+        <div class="ib-text">Add to your home screen for offline access</div>
+    </div>
+    <button class="install-btn" onclick="installApp()"><span class="material-symbols-rounded icon-sm">install_mobile</span> Install</button>
+</div>
+
+<!-- ═══ SCREEN 1: DASHBOARD ═══ -->
+<div class="screen active" id="screen-dash">
+    <div class="page-header" style="display:flex;justify-content:space-between;align-items:flex-start">
+        <div>
+            <div class="page-title">Inventory Hub <span class="live-tag"><span class="dot" style="width:4px;height:4px;border-radius:50%;background:var(--success);"></span>LIVE</span></div>
+            <p class="page-sub">Monitoring, alerts & quick decisions</p>
+        </div>
+        <span class="material-symbols-rounded icon-md" style="color:var(--muted);background:var(--card);padding:6px;border-radius:50%;border:1px solid var(--border)">tune</span>
+    </div>
+
+    <div class="kpi-strip">
+        <div class="kpi-tile"><div class="kv" style="color:var(--primary)">₹7.3Cr</div><div class="kl">Total Inv Value</div></div>
+        <div class="kpi-tile"><div class="kv" style="color:var(--success)">88%</div><div class="kl">Stock Avail %</div></div>
+        <div class="kpi-tile"><div class="kv" style="color:var(--cyan)">12,450</div><div class="kl">7-Day Demand</div></div>
+        <div class="kpi-tile"><div class="kv" style="color:var(--danger)" id="mKpiCrit">3</div><div class="kl">Stockout Alerts</div></div>
+    </div>
+
+    <div class="page-padding">
+        <div class="cta-card" style="background:linear-gradient(135deg,#047857,#10b981)">
+            <div style="font-size:10px;text-transform:uppercase;letter-spacing:1px;margin-bottom:4px;opacity:0.8;font-weight:700">★ Smart Replenishment</div>
+            <div class="cta-title">Reorder Recommended</div>
+            <div class="cta-text" style="background:rgba(255,255,255,0.1);padding:10px;border-radius:8px;margin-bottom:12px">
+                <div><strong>Product:</strong> Wheat Flour</div>
+                <div><strong>Suggested Order:</strong> 850 Units</div>
+                <div><strong>Supplier:</strong> ABC Traders (Score: 94%)</div>
+                <div><strong>Delivery ETA:</strong> 2 Days</div>
+            </div>
+            <button class="cta-btn" onclick="alert('PO Generated and sent to ABC Traders.')"><span class="material-symbols-rounded icon-sm">send</span> Approve Order</button>
+        </div>
+
+        <div class="sec-title"><span class="material-symbols-rounded icon-sm" style="color:var(--danger)">error</span> Critical SKUs</div>
+        <div id="dashSkuFeed"></div>
+    </div>
+</div>
+
+<!-- ═══ SCREEN 2: FORECAST ═══ -->
+<div class="screen" id="screen-forecast">
+    <div class="page-header">
+        <div class="page-title"><span class="material-symbols-rounded icon-md" style="color:var(--primary)">show_chart</span> Forecast</div>
+        <p class="page-sub">ML prediction · 8-week rolling horizon</p>
+    </div>
+    <div class="page-padding">
+        <div class="chart-card">
+            <div class="chart-label">
+                <span class="title">Aggregate Demand Trend</span>
+                <span class="badge ok">MAPE 4.2%</span>
+            </div>
+            <div class="chart-wrap"><canvas id="mobileForecastChart"></canvas></div>
+        </div>
+
+        <div class="sec-title"><span class="material-symbols-rounded icon-sm" style="color:var(--warn)">trending_up</span> Highest Demand Spikes</div>
+        <div id="forecastSpikes"></div>
+    </div>
+</div>
+
+<!-- ═══ SCREEN 3: SKU BROWSER ═══ -->
+<div class="screen" id="screen-sku">
+    <div class="page-header">
+        <div class="page-title"><span class="material-symbols-rounded icon-md" style="color:var(--cyan)">inventory_2</span> SKU Browser</div>
+        <p class="page-sub">Search and manage inventory items</p>
+    </div>
+    <div class="page-padding">
+        <div class="search-wrap">
+            <span class="material-symbols-rounded">search</span>
+            <input type="text" class="search-bar" placeholder="Search SKUs, categories..." id="skuSearch" oninput="filterSKUs(this.value)">
+        </div>
+        <div id="skuBrowser"></div>
+    </div>
+</div>
+
+<!-- ═══ SCREEN 4: ALERTS ═══ -->
+<div class="screen" id="screen-alerts">
+    <div class="page-header">
+        <div class="page-title"><span class="material-symbols-rounded icon-md" style="color:var(--danger)">notifications_active</span> Alerts</div>
+        <p class="page-sub">Live stockout warnings & reorder triggers</p>
+    </div>
+    <div class="page-padding" id="alertsFeed"></div>
+</div>
+
+<!-- ═══ SCREEN 5: AI ASSISTANT ═══ -->
+<div class="screen" id="screen-chat">
+    <div class="page-header">
+        <div class="page-title"><span class="material-symbols-rounded icon-md" style="color:var(--cyan)">smart_toy</span> Sentinel AI</div>
+        <p class="page-sub">Ask me anything about inventory risks</p>
+    </div>
+    <div class="page-padding" style="display:flex;flex-direction:column;height:calc(100vh - 150px)">
+        <div id="mobChatArea" style="flex:1;overflow-y:auto;background:var(--surface);border-radius:var(--radius);padding:14px;margin-bottom:12px;font-size:13px;color:var(--txt)">
+            <div style="display:flex;gap:12px;margin-bottom:16px">
+                <span style="font-size:24px">🤖</span>
+                <div style="background:var(--primary-light);color:var(--primary-dark);padding:10px 14px;border-radius:2px 14px 14px 14px">
+                    I am Sentinel AI. I forecast demand, monitor stockouts, and suggest replenishments. Try asking:<br><br>
+                    • <em>"Which products will stock out this week?"</em><br>
+                    • <em>"Forecast demand for rice in Chennai."</em>
+                </div>
+            </div>
+        </div>
+        <div style="display:flex;gap:8px">
+            <input type="text" id="mobChatInput" placeholder="Ask Sentinel AI..." style="flex:1;padding:12px 16px;border-radius:20px;border:1px solid var(--border);font-size:14px;outline:none;background:var(--surface);box-shadow:var(--shadow)" onkeypress="if(event.key==='Enter') window.sendMobChat()">
+            <button onclick="window.sendMobChat()" style="width:44px;height:44px;border-radius:50%;background:var(--primary);color:#fff;border:none;display:flex;align-items:center;justify-content:center;box-shadow:var(--shadow)"><span class="material-symbols-rounded">arrow_upward</span></button>
+        </div>
+    </div>
+</div>
+
+<nav class="tab-bar">
+    <div class="tab-item active" onclick="switchScreen('screen-dash')"><span class="material-symbols-rounded">home</span>Home</div>
+    <div class="tab-item" onclick="switchScreen('screen-forecast')"><span class="material-symbols-rounded">insights</span>Forecast</div>
+    <div class="tab-item" onclick="switchScreen('screen-sku')"><span class="material-symbols-rounded">inventory_2</span>Stock</div>
+    <div class="tab-item" onclick="switchScreen('screen-alerts')"><span class="material-symbols-rounded">notifications</span>Alerts</div>
+    <div class="tab-item" onclick="switchScreen('screen-chat')"><span class="material-symbols-rounded">forum</span>AI Chat</div>
+</nav>
+
+<script>
+(function(){
+    // Navigation
+    window.switchScreen = function(id) {
+        document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+        document.getElementById(id).classList.add('active');
+        document.querySelectorAll('.tab-item').forEach(t => t.classList.remove('active'));
+        const map = {'screen-dash':0,'screen-forecast':1,'screen-sku':2,'screen-alerts':3,'screen-chat':4};
+        if (map[id] !== undefined) document.querySelectorAll('.tab-item')[map[id]].classList.add('active');
+    };
+
+    // Clock
+    function tick() {
+        const now = new Date();
+        document.getElementById('mobTime').textContent = String(now.getHours()).padStart(2,'0') + ':' + String(now.getMinutes()).padStart(2,'0');
+        document.getElementById('lastSync').textContent = String(now.getHours()).padStart(2,'0') + ':' + String(now.getMinutes()).padStart(2,'0') + ':' + String(now.getSeconds()).padStart(2,'0');
+    }
+    setInterval(tick, 10000); tick();
+
+    // Install prompt
+    let deferredPrompt;
+    window.addEventListener('beforeinstallprompt', e => { e.preventDefault(); deferredPrompt = e; });
+    window.installApp = function() {
+        if (deferredPrompt) { deferredPrompt.prompt(); deferredPrompt.userChoice.then(() => { deferredPrompt = null; }); }
+        else { alert('To install: tap your browser menu → "Add to Home Screen"'); }
+    };
+
+    // SKU Data
+    const skuData = [
+        { id:'SKU-1001', name:'Portable Radio', cat:'Electronics', stock:118, demand:75, risk:100, status:'danger', mat_icon:'radio', bg:'var(--danger-light)', bc:'var(--danger-border)' },
+        { id:'SKU-2041', name:'Diesel 500L', cat:'Fuel', stock:340, demand:200, risk:88, status:'danger', mat_icon:'local_gas_station', bg:'var(--danger-light)', bc:'var(--danger-border)' },
+        { id:'SKU-5022', name:'Tarpaulin 12x10', cat:'Shelter', stock:220, demand:80, risk:91, status:'danger', mat_icon:'roofing', bg:'var(--danger-light)', bc:'var(--danger-border)' },
+        { id:'SKU-3015', name:'First Aid Kit', cat:'Medical', stock:450, demand:60, risk:72, status:'warn', mat_icon:'medical_services', bg:'var(--warn-light)', bc:'var(--warn-border)' },
+        { id:'SKU-6001', name:'Water Purifier', cat:'Equipment', stock:95, demand:40, risk:67, status:'warn', mat_icon:'water_drop', bg:'var(--warn-light)', bc:'var(--warn-border)' },
+        { id:'SKU-4010', name:'Rice 25kg', cat:'FMCG', stock:890, demand:120, risk:45, status:'warn', mat_icon:'rice_bowl', bg:'var(--warn-light)', bc:'var(--warn-border)' },
+        { id:'SKU-8020', name:'N95 Masks (50pk)', cat:'Medical', stock:1200, demand:150, risk:35, status:'ok', mat_icon:'masks', bg:'var(--success-light)', bc:'var(--success-border)' },
+        { id:'SKU-7003', name:'Solar Charger', cat:'Electronics', stock:180, demand:25, risk:20, status:'ok', mat_icon:'solar_power', bg:'var(--success-light)', bc:'var(--success-border)' },
+    ];
+
+    function cardHTML(s, showRisk) {
+        const statusColor = s.status === 'danger' ? 'var(--danger)' : s.status === 'warn' ? 'var(--warn)' : 'var(--success)';
+        const rightContent = showRisk
+            ? `<div class="val" style="color:${statusColor}">${s.risk}%</div><div class="lbl">Stockout Risk</div>`
+            : `<div class="val">${s.stock}</div><div class="lbl">In Stock</div>`;
+        return `<div class="item-card" onclick="switchScreen('screen-sku')">
+            <div class="item-icon" style="background:${s.bg};border:1px solid ${s.bc};">
+                <span class="material-symbols-rounded icon-md" style="color:${statusColor}">${s.mat_icon}</span>
+            </div>
+            <div class="item-body">
+                <div class="name">${s.name}</div>
+                <div class="meta">${s.id} · ${s.cat}</div>
+            </div>
+            <div class="item-right">${rightContent}</div>
+        </div>`;
+    }
+
+    // Dashboard critical SKUs
+    const dashFeed = document.getElementById('dashSkuFeed');
+    skuData.filter(s => s.status === 'danger').forEach(s => { dashFeed.innerHTML += cardHTML(s, true); });
+
+    // Forecast spikes
+    const spikesFeed = document.getElementById('forecastSpikes');
+    skuData.sort((a,b) => b.risk - a.risk).slice(0,5).forEach(s => {
+        const badgeClass = s.risk > 80 ? 'danger' : s.risk > 50 ? 'warn' : 'ok';
+        spikesFeed.innerHTML += `<div class="item-card">
+            <div class="item-icon" style="background:${s.bg};border:1px solid ${s.bc};">
+                <span class="material-symbols-rounded icon-md" style="color:${s.status === 'danger' ? 'var(--danger)' : s.status === 'warn' ? 'var(--warn)' : 'var(--success)'}">${s.mat_icon}</span>
+            </div>
+            <div class="item-body">
+                <div class="name">${s.name}</div>
+                <div class="meta">Stock: ${s.stock} · Demand: ${s.demand}/wk</div>
+            </div>
+            <div class="item-right"><span class="badge ${badgeClass}">${s.risk}%</span></div>
+        </div>`;
+    });
+
+    // SKU Browser
+    function renderSKUs(list) {
+        const el = document.getElementById('skuBrowser');
+        el.innerHTML = list.map(s => {
+            const pct = Math.min(100, Math.round((s.stock / (s.demand * 4)) * 100));
+            const fillColor = pct < 30 ? 'var(--danger)' : pct < 60 ? 'var(--warn)' : 'var(--success)';
+            return `<div class="item-card">
+                <div class="item-icon" style="background:${s.bg};border:1px solid ${s.bc};">
+                    <span class="material-symbols-rounded icon-md" style="color:${s.status === 'danger' ? 'var(--danger)' : s.status === 'warn' ? 'var(--warn)' : 'var(--success)'}">${s.mat_icon}</span>
+                </div>
+                <div class="item-body">
+                    <div class="name">${s.name}</div>
+                    <div class="meta">${s.id} · ${s.cat}</div>
+                    <div class="progress-bar"><div class="progress-fill" style="width:${pct}%;background:${fillColor};"></div></div>
+                </div>
+                <div class="item-right"><div class="val">${s.stock}</div><div class="lbl">${s.demand}/wk demand</div></div>
+            </div>`;
+        }).join('');
+    }
+    renderSKUs(skuData);
+    window.filterSKUs = function(q) { renderSKUs(skuData.filter(s => (s.name+s.id+s.cat).toLowerCase().includes(q.toLowerCase()))); };
+
+    // Alerts
+    const alertsFeed = document.getElementById('alertsFeed');
+    const alerts = [
+        { icon:'error', title:'Portable Radio — Stockout Imminent', text:'100% probability of stockout within 12 days. Recommended immediate PO for 903 units.', time:'2 min ago', color:'var(--danger)', border:'var(--danger)' },
+        { icon:'local_shipping', title:'Diesel Supply Delay +4.2 Days', text:'Red Sea transit disruption. Safety stock buffer insufficient at current consumption rate.', time:'8 min ago', color:'var(--warn)', border:'var(--warn)' },
+        { icon:'trending_up', title:'Tarpaulin Demand Spike +38%', text:'IMD monsoon advisory for Chennai region triggering higher demand.', time:'15 min ago', color:'var(--warn)', border:'var(--warn)' },
+        { icon:'model_training', title:'ML Model Retrained', text:'Holt-Winters + external regressors. New MAPE: 4.2% (prev: 5.1%). 120 SKUs re-scored.', time:'22 min ago', color:'var(--primary)', border:'var(--primary)' },
+        { icon:'check_circle', title:'Reorder Approved: First Aid Kits', text:'SKU-3015 purchase order for 200 units pushed to routing engine.', time:'45 min ago', color:'var(--success)', border:'var(--success)' },
+    ];
+    alerts.forEach(a => {
+        alertsFeed.innerHTML += `<div class="alert-card" style="border-left-color:${a.border};">
+            <span class="material-symbols-rounded icon-md" style="color:${a.color}">${a.icon}</span>
+            <div class="a-body">
+                <div class="a-title">${a.title}</div>
+                <div class="a-text">${a.text}</div>
+                <div class="a-time"><span class="material-symbols-rounded" style="font-size:12px;">schedule</span> ${a.time}</div>
+            </div>
+        </div>`;
+    });
+
+    // Forecast Chart
+    const ctx = document.getElementById('mobileForecastChart');
+    if (ctx) {
+        new Chart(ctx, {
+            type:'line',
+            data: {
+                labels:['W1','W2','W3','W4','W5','W6','W7','W8'],
+                datasets: [
+                    { label:'Actual', data:[320,380,350,420,390,410,null,null], borderColor:'#2563eb', backgroundColor:'rgba(37,99,235,0.08)', fill:true, tension:.4, pointRadius:4, pointBackgroundColor:'#2563eb', borderWidth:2 },
+                    { label:'ML Forecast', data:[null,null,null,null,null,410,445,470], borderColor:'#10b981', backgroundColor:'rgba(16,185,129,0.08)', fill:true, tension:.4, borderDash:[6,3], pointRadius:4, pointBackgroundColor:'#10b981', borderWidth:2 },
+                    { label:'Upper CI', data:[null,null,null,null,null,430,480,520], borderColor:'transparent', backgroundColor:'rgba(16,185,129,0.04)', fill:'+1', pointRadius:0 },
+                    { label:'Lower CI', data:[null,null,null,null,null,390,410,420], borderColor:'transparent', backgroundColor:'transparent', fill:false, pointRadius:0 }
+                ]
+            },
+            options: {
+                responsive:true, maintainAspectRatio:false,
+                plugins: { legend:{display:false} },
+                scales: {
+                    x: { grid:{color:'rgba(0,0,0,0.04)'}, ticks:{font:{size:10,weight:600}} },
+                    y: { grid:{color:'rgba(0,0,0,0.04)'}, ticks:{font:{size:10}} }
+                }
+            }
+        });
+    }
+
+    // Real-time sync from desktop dashboard
+    function syncFromDesktop() {
+        try {
+            // Read main flags/orders from the web dashboard
+            let stats = JSON.parse(localStorage.getItem('sentinel_inventory_stats') || 'null');
+            let flagged = JSON.parse(localStorage.getItem('FLAGGED') || 'null');
+            const orders = JSON.parse(localStorage.getItem('ORDERS') || '[]');
+            
+            // Mock data for mobile demo if localStorage is empty (different device)
+            if (!stats || !stats.critical) {
+                stats = { critical: 3, value: '₹7.3Cr', avail: '88%' };
+            }
+            if (!flagged || flagged.length === 0) {
+                flagged = [
+                    { id:'SKU-4010', name:'Rice 25kg', category:'FMCG' },
+                    { id:'SKU-7003', name:'Solar Charger', category:'Electronics' },
+                    { id:'SKU-3015', name:'First Aid Kit', category:'Medical' }
+                ];
+            }
+            
+            // Update KPIs
+            document.getElementById('mKpiCrit').textContent = flagged.length > 0 ? flagged.length : stats.critical;
+            if (stats.value && document.getElementById('mKpiVal')) document.getElementById('mKpiVal').textContent = stats.value;
+            if (stats.avail && document.getElementById('mKpiAvail')) document.getElementById('mKpiAvail').textContent = stats.avail;
+
+            // Generate SKU List dynamically from FLAGGED items
+            const skuContainer = document.getElementById('dashSkuFeed');
+            if (skuContainer && flagged.length > 0) {
+                let html = '';
+                flagged.forEach(sku => {
+                    const isOrdered = orders.includes(sku.id);
+                    const statusColor = isOrdered ? 'var(--success)' : 'var(--danger)';
+                    const statusBg = isOrdered ? 'var(--success-light)' : 'var(--danger-light)';
+                    const icon = isOrdered ? 'check_circle' : 'warning';
+                    
+                    html += `<div class="item-card">
+                        <div class="item-icon" style="background:${statusBg};border:1px solid ${statusColor};">
+                            <span class="material-symbols-rounded icon-md" style="color:${statusColor}">${icon}</span>
+                        </div>
+                        <div class="item-body">
+                            <div class="name">${sku.name}</div>
+                            <div class="meta">${sku.id} · ${sku.category}</div>
+                            <div class="progress-bar"><div class="progress-fill" style="width:${Math.random() * 40 + 10}%;background:${statusColor};"></div></div>
+                        </div>
+                        <div class="item-right">
+                            <div class="val" style="color:${statusColor}">${isOrdered ? 'Ordered' : 'Stockout Risk'}</div>
+                            <div class="lbl">Auto-sync</div>
+                        </div>
+                    </div>`;
+                });
+                skuContainer.innerHTML = html;
+            }
+
+        } catch(e) { console.error('Sync Error', e); }
+    }
+    setInterval(syncFromDesktop, 2000);
+    syncFromDesktop();
+
+    // AI Chat UI Logic
+    window.sendMobChat = function() {
+        const inp = document.getElementById('mobChatInput');
+        const q = inp.value.trim();
+        if (!q) return;
+        inp.value = '';
+        const area = document.getElementById('mobChatArea');
+        area.innerHTML += `<div style="display:flex;gap:12px;margin-bottom:16px;flex-direction:row-reverse">
+            <span style="font-size:24px">👤</span>
+            <div style="background:var(--card);padding:10px 14px;border-radius:14px 2px 14px 14px;border:1px solid var(--border)">${q}</div>
+        </div>`;
+        area.scrollTop = area.scrollHeight;
+
+        // Dummy typing and response
+        setTimeout(() => {
+            const ans = q.toLowerCase().includes('rice') 
+                ? "The forecast for <strong>Rice (Chennai)</strong> shows a 38% spike next week due to monsoon alerts. Reorder 1,240 units from ABC Traders (94% reliability) to avoid stockouts."
+                : "Based on current ML models, <strong>Portable Radio</strong> and <strong>Diesel</strong> are at immediate risk of stockout across all warehouses.";
+            
+            area.innerHTML += `<div style="display:flex;gap:12px;margin-bottom:16px">
+                <span style="font-size:24px">🤖</span>
+                <div style="background:var(--primary-light);color:var(--primary-dark);padding:10px 14px;border-radius:2px 14px 14px 14px">${ans}</div>
+            </div>`;
+            area.scrollTop = area.scrollHeight;
+        }, 800);
+    };
+})();
+
+// Service Worker Registration for PWA
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('sw.js').then(reg => {
+      console.log('SW registered!', reg);
+    }).catch(err => console.log('SW registration failed', err));
+  });
+}
+</script>
+</body>
+</html>

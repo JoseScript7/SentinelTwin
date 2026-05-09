@@ -1,0 +1,1642 @@
+{
+    "metadata": {
+        "version": "2.0.0",
+        "lastUpdated": "2026-02-03",
+        "source": "NDMA, IMD, State Disaster Management Authorities",
+        "coverage": "Pan-India (Focus: Tamil Nadu, Flood-Prone States)"
+    },
+    "tamilNadu": {
+        "state": "Tamil Nadu",
+        "stateCode": "TN",
+        "sdmaContact": "1070",
+        "districts": {
+            "chennai": {
+                "name": "Chennai",
+                "population": 7088000,
+                "area": 426,
+                "center": [
+                    13.0827,
+                    80.2707
+                ],
+                "zoom": 11,
+                "zones": {
+                    "TN-CHN-01": {
+                        "name": "Porur / Kundrathur",
+                        "shortName": "Porur",
+                        "lat": 13.0350,
+                        "lng": 80.1420,
+                        "elevation": 3.2,
+                        "drainage": 0.42,
+                        "population": 245000,
+                        "floodHistory": [
+                            2015,
+                            2021
+                        ],
+                        "neighbors": [
+                            "TN-CHN-02",
+                            "TN-CHN-05"
+                        ]
+                    },
+                    "TN-CHN-02": {
+                        "name": "Velachery / Adyar",
+                        "shortName": "Velachery",
+                        "lat": 12.9815,
+                        "lng": 80.2176,
+                        "elevation": 4.8,
+                        "drainage": 0.55,
+                        "population": 312000,
+                        "floodHistory": [
+                            2015,
+                            2021
+                        ],
+                        "neighbors": [
+                            "TN-CHN-01",
+                            "TN-CHN-03"
+                        ]
+                    },
+                    "TN-CHN-03": {
+                        "name": "Marina / Mylapore",
+                        "shortName": "Marina",
+                        "lat": 13.0500,
+                        "lng": 80.2824,
+                        "elevation": 1.9,
+                        "drainage": 0.70,
+                        "population": 178000,
+                        "floodHistory": [
+                            2015
+                        ],
+                        "neighbors": [
+                            "TN-CHN-02",
+                            "TN-CHN-04"
+                        ]
+                    },
+                    "TN-CHN-04": {
+                        "name": "T.Nagar / Kodambakkam",
+                        "shortName": "T.Nagar",
+                        "lat": 13.0418,
+                        "lng": 80.2341,
+                        "elevation": 6.1,
+                        "drainage": 0.63,
+                        "population": 425000,
+                        "floodHistory": [
+                            2015
+                        ],
+                        "neighbors": [
+                            "TN-CHN-03",
+                            "TN-CHN-05"
+                        ]
+                    },
+                    "TN-CHN-05": {
+                        "name": "Ambattur / Avadi",
+                        "shortName": "Ambattur",
+                        "lat": 13.1143,
+                        "lng": 80.1548,
+                        "elevation": 7.4,
+                        "drainage": 0.68,
+                        "population": 520000,
+                        "floodHistory": [],
+                        "neighbors": [
+                            "TN-CHN-01",
+                            "TN-CHN-04"
+                        ]
+                    },
+                    "TN-CHN-06": {
+                        "name": "Tambaram / Chromepet",
+                        "shortName": "Tambaram",
+                        "lat": 12.9249,
+                        "lng": 80.1000,
+                        "elevation": 5.2,
+                        "drainage": 0.58,
+                        "population": 380000,
+                        "floodHistory": [
+                            2015
+                        ],
+                        "neighbors": [
+                            "TN-CHN-01",
+                            "TN-CHN-07"
+                        ]
+                    },
+                    "TN-CHN-07": {
+                        "name": "Sholinganallur / OMR",
+                        "shortName": "OMR",
+                        "lat": 12.9010,
+                        "lng": 80.2279,
+                        "elevation": 3.8,
+                        "drainage": 0.45,
+                        "population": 290000,
+                        "floodHistory": [
+                            2015,
+                            2021
+                        ],
+                        "neighbors": [
+                            "TN-CHN-02",
+                            "TN-CHN-06"
+                        ]
+                    },
+                    "TN-CHN-08": {
+                        "name": "Madhavaram / Red Hills",
+                        "shortName": "Madhavaram",
+                        "lat": 13.1485,
+                        "lng": 80.2336,
+                        "elevation": 8.5,
+                        "drainage": 0.72,
+                        "population": 195000,
+                        "floodHistory": [],
+                        "neighbors": [
+                            "TN-CHN-05"
+                        ]
+                    }
+                }
+            },
+            "kancheepuram": {
+                "name": "Kancheepuram",
+                "population": 1166401,
+                "area": 4393,
+                "center": [
+                    12.8342,
+                    79.7036
+                ],
+                "zoom": 10,
+                "zones": {
+                    "TN-KAN-01": {
+                        "name": "Kancheepuram Town",
+                        "shortName": "Kanchi",
+                        "lat": 12.8342,
+                        "lng": 79.7036,
+                        "elevation": 83.2,
+                        "drainage": 0.65,
+                        "population": 164265,
+                        "floodHistory": [
+                            2015
+                        ],
+                        "neighbors": [
+                            "TN-KAN-02"
+                        ]
+                    },
+                    "TN-KAN-02": {
+                        "name": "Sriperumbudur",
+                        "shortName": "Sriperumbudur",
+                        "lat": 12.9675,
+                        "lng": 79.9428,
+                        "elevation": 95.0,
+                        "drainage": 0.70,
+                        "population": 85000,
+                        "floodHistory": [],
+                        "neighbors": [
+                            "TN-KAN-01",
+                            "TN-CHN-06"
+                        ]
+                    },
+                    "TN-KAN-03": {
+                        "name": "Mamallapuram",
+                        "shortName": "Mamallapuram",
+                        "lat": 12.6269,
+                        "lng": 80.1927,
+                        "elevation": 2.5,
+                        "drainage": 0.55,
+                        "population": 15172,
+                        "floodHistory": [
+                            2015,
+                            2004
+                        ],
+                        "neighbors": [
+                            "TN-KAN-02"
+                        ]
+                    }
+                }
+            },
+            "tiruvallur": {
+                "name": "Tiruvallur",
+                "population": 3728104,
+                "area": 3422,
+                "center": [
+                    13.1431,
+                    "79.9086"
+                ],
+                "zoom": 10,
+                "zones": {
+                    "TN-TIR-01": {
+                        "name": "Tiruvallur Town",
+                        "shortName": "Tiruvallur",
+                        "lat": 13.1431,
+                        "lng": 79.9086,
+                        "elevation": 72.0,
+                        "drainage": 0.62,
+                        "population": 95462,
+                        "floodHistory": [
+                            2015
+                        ],
+                        "neighbors": [
+                            "TN-TIR-02"
+                        ]
+                    },
+                    "TN-TIR-02": {
+                        "name": "Ponneri / Minjur",
+                        "shortName": "Ponneri",
+                        "lat": 13.3373,
+                        "lng": 80.1841,
+                        "elevation": 3.5,
+                        "drainage": 0.38,
+                        "population": 125000,
+                        "floodHistory": [
+                            2015,
+                            2021
+                        ],
+                        "neighbors": [
+                            "TN-TIR-01",
+                            "TN-CHN-08"
+                        ]
+                    },
+                    "TN-TIR-03": {
+                        "name": "Gummidipoondi",
+                        "shortName": "Gummidipoondi",
+                        "lat": 13.4021,
+                        "lng": 80.1074,
+                        "elevation": 18.0,
+                        "drainage": 0.55,
+                        "population": 78000,
+                        "floodHistory": [
+                            2015
+                        ],
+                        "neighbors": [
+                            "TN-TIR-02"
+                        ]
+                    }
+                }
+            },
+            "cuddalore": {
+                "name": "Cuddalore",
+                "population": 2605914,
+                "area": 3678,
+                "center": [
+                    11.7480,
+                    79.7714
+                ],
+                "zoom": 10,
+                "zones": {
+                    "TN-CUD-01": {
+                        "name": "Cuddalore Town",
+                        "shortName": "Cuddalore",
+                        "lat": 11.7480,
+                        "lng": 79.7714,
+                        "elevation": 4.2,
+                        "drainage": 0.48,
+                        "population": 173676,
+                        "floodHistory": [
+                            2015,
+                            2018
+                        ],
+                        "neighbors": [
+                            "TN-CUD-02"
+                        ]
+                    },
+                    "TN-CUD-02": {
+                        "name": "Chidambaram",
+                        "shortName": "Chidambaram",
+                        "lat": 11.3993,
+                        "lng": 79.6910,
+                        "elevation": 5.8,
+                        "drainage": 0.52,
+                        "population": 62153,
+                        "floodHistory": [
+                            2015
+                        ],
+                        "neighbors": [
+                            "TN-CUD-01",
+                            "TN-CUD-03"
+                        ]
+                    },
+                    "TN-CUD-03": {
+                        "name": "Neyveli",
+                        "shortName": "Neyveli",
+                        "lat": 11.5447,
+                        "lng": 79.4760,
+                        "elevation": 42.0,
+                        "drainage": 0.68,
+                        "population": 98912,
+                        "floodHistory": [],
+                        "neighbors": [
+                            "TN-CUD-02"
+                        ]
+                    }
+                }
+            },
+            "nagapattinam": {
+                "name": "Nagapattinam",
+                "population": 1616450,
+                "area": 2716,
+                "center": [
+                    10.7672,
+                    79.8420
+                ],
+                "zoom": 10,
+                "zones": {
+                    "TN-NAG-01": {
+                        "name": "Nagapattinam Town",
+                        "shortName": "Nagapattinam",
+                        "lat": 10.7672,
+                        "lng": 79.8420,
+                        "elevation": 2.1,
+                        "drainage": 0.35,
+                        "population": 102905,
+                        "floodHistory": [
+                            2004,
+                            2015,
+                            2018
+                        ],
+                        "neighbors": [
+                            "TN-NAG-02"
+                        ]
+                    },
+                    "TN-NAG-02": {
+                        "name": "Velankanni",
+                        "shortName": "Velankanni",
+                        "lat": 10.6828,
+                        "lng": 79.8380,
+                        "elevation": 1.5,
+                        "drainage": 0.32,
+                        "population": 45000,
+                        "floodHistory": [
+                            2004,
+                            2018
+                        ],
+                        "neighbors": [
+                            "TN-NAG-01"
+                        ]
+                    },
+                    "TN-NAG-03": {
+                        "name": "Mayiladuthurai",
+                        "shortName": "Mayiladuthurai",
+                        "lat": 11.1018,
+                        "lng": 79.6516,
+                        "elevation": 8.5,
+                        "drainage": 0.58,
+                        "population": 88000,
+                        "floodHistory": [
+                            2015
+                        ],
+                        "neighbors": [
+                            "TN-NAG-01"
+                        ]
+                    }
+                }
+            },
+            "thanjavur": {
+                "name": "Thanjavur",
+                "population": 2405890,
+                "area": 3397,
+                "center": [
+                    10.7870,
+                    79.1378
+                ],
+                "zoom": 10,
+                "zones": {
+                    "TN-THA-01": {
+                        "name": "Thanjavur City",
+                        "shortName": "Thanjavur",
+                        "lat": 10.7870,
+                        "lng": 79.1378,
+                        "elevation": 56.0,
+                        "drainage": 0.62,
+                        "population": 222943,
+                        "floodHistory": [
+                            2015
+                        ],
+                        "neighbors": [
+                            "TN-THA-02"
+                        ]
+                    },
+                    "TN-THA-02": {
+                        "name": "Kumbakonam",
+                        "shortName": "Kumbakonam",
+                        "lat": 10.9617,
+                        "lng": 79.3881,
+                        "elevation": 26.0,
+                        "drainage": 0.55,
+                        "population": 140156,
+                        "floodHistory": [
+                            2015,
+                            2018
+                        ],
+                        "neighbors": [
+                            "TN-THA-01"
+                        ]
+                    }
+                }
+            },
+            "ramanathapuram": {
+                "name": "Ramanathapuram",
+                "population": 1353445,
+                "area": 4123,
+                "center": [
+                    9.3639,
+                    78.8395
+                ],
+                "zoom": 10,
+                "zones": {
+                    "TN-RAM-01": {
+                        "name": "Ramanathapuram Town",
+                        "shortName": "Ramnad",
+                        "lat": 9.3639,
+                        "lng": 78.8395,
+                        "elevation": 3.8,
+                        "drainage": 0.42,
+                        "population": 60055,
+                        "floodHistory": [
+                            2018
+                        ],
+                        "neighbors": [
+                            "TN-RAM-02"
+                        ]
+                    },
+                    "TN-RAM-02": {
+                        "name": "Rameswaram",
+                        "shortName": "Rameswaram",
+                        "lat": 9.2881,
+                        "lng": 79.3129,
+                        "elevation": 1.2,
+                        "drainage": 0.28,
+                        "population": 44856,
+                        "floodHistory": [
+                            2004,
+                            2018
+                        ],
+                        "neighbors": [
+                            "TN-RAM-01"
+                        ]
+                    }
+                }
+            },
+            "madurai": {
+                "name": "Madurai",
+                "population": 3038252,
+                "area": 3741,
+                "center": [
+                    9.9252,
+                    78.1198
+                ],
+                "zoom": 11,
+                "zones": {
+                    "TN-MAD-01": {
+                        "name": "Madurai Central",
+                        "shortName": "Central",
+                        "lat": 9.9252,
+                        "lng": 78.1198,
+                        "elevation": 101.0,
+                        "drainage": 0.68,
+                        "population": 450000,
+                        "floodHistory": [
+                            2015
+                        ],
+                        "neighbors": [
+                            "TN-MAD-02"
+                        ]
+                    },
+                    "TN-MAD-02": {
+                        "name": "Vaigai River Basin",
+                        "shortName": "Vaigai",
+                        "lat": 9.9100,
+                        "lng": 78.0800,
+                        "elevation": 95.0,
+                        "drainage": 0.52,
+                        "population": 180000,
+                        "floodHistory": [
+                            2015,
+                            2021
+                        ],
+                        "neighbors": [
+                            "TN-MAD-01",
+                            "TN-MAD-03"
+                        ]
+                    },
+                    "TN-MAD-03": {
+                        "name": "Thirumangalam",
+                        "shortName": "Thirumangalam",
+                        "lat": 9.8180,
+                        "lng": 77.9820,
+                        "elevation": 112.0,
+                        "drainage": 0.65,
+                        "population": 75000,
+                        "floodHistory": [],
+                        "neighbors": [
+                            "TN-MAD-02"
+                        ]
+                    }
+                }
+            },
+            "coimbatore": {
+                "name": "Coimbatore",
+                "population": 3458045,
+                "area": 4723,
+                "center": [
+                    11.0168,
+                    76.9558
+                ],
+                "zoom": 11,
+                "zones": {
+                    "TN-CBE-01": {
+                        "name": "Coimbatore City",
+                        "shortName": "Coimbatore",
+                        "lat": 11.0168,
+                        "lng": 76.9558,
+                        "elevation": 411.0,
+                        "drainage": 0.72,
+                        "population": 1061447,
+                        "floodHistory": [
+                            2021
+                        ],
+                        "neighbors": [
+                            "TN-CBE-02"
+                        ]
+                    },
+                    "TN-CBE-02": {
+                        "name": "Noyyal River Basin",
+                        "shortName": "Noyyal Basin",
+                        "lat": 10.9800,
+                        "lng": 76.9200,
+                        "elevation": 398.0,
+                        "drainage": 0.55,
+                        "population": 280000,
+                        "floodHistory": [
+                            2021
+                        ],
+                        "neighbors": [
+                            "TN-CBE-01",
+                            "TN-CBE-03"
+                        ]
+                    },
+                    "TN-CBE-03": {
+                        "name": "Pollachi",
+                        "shortName": "Pollachi",
+                        "lat": 10.6609,
+                        "lng": 77.0089,
+                        "elevation": 293.0,
+                        "drainage": 0.62,
+                        "population": 91428,
+                        "floodHistory": [],
+                        "neighbors": [
+                            "TN-CBE-02"
+                        ]
+                    }
+                }
+            },
+            "tirunelveli": {
+                "name": "Tirunelveli",
+                "population": 3077233,
+                "area": 6823,
+                "center": [
+                    8.7139,
+                    77.7567
+                ],
+                "zoom": 10,
+                "zones": {
+                    "TN-TNV-01": {
+                        "name": "Tirunelveli City",
+                        "shortName": "Tirunelveli",
+                        "lat": 8.7139,
+                        "lng": 77.7567,
+                        "elevation": 52.0,
+                        "drainage": 0.58,
+                        "population": 474838,
+                        "floodHistory": [
+                            2015,
+                            2021
+                        ],
+                        "neighbors": [
+                            "TN-TNV-02"
+                        ]
+                    },
+                    "TN-TNV-02": {
+                        "name": "Thamiraparani Basin",
+                        "shortName": "Thamiraparani",
+                        "lat": 8.6800,
+                        "lng": 77.7200,
+                        "elevation": 45.0,
+                        "drainage": 0.42,
+                        "population": 165000,
+                        "floodHistory": [
+                            2015,
+                            2021
+                        ],
+                        "neighbors": [
+                            "TN-TNV-01"
+                        ]
+                    }
+                }
+            }
+        }
+    },
+    "indiaRegions": {
+        "kerala": {
+            "state": "Kerala",
+            "stateCode": "KL",
+            "sdmaContact": "1077",
+            "districts": {
+                "ernakulam": {
+                    "name": "Ernakulam",
+                    "population": 3282388,
+                    "area": 3068,
+                    "center": [
+                        9.9312,
+                        76.2673
+                    ],
+                    "zoom": 11,
+                    "zones": {
+                        "KL-EKM-01": {
+                            "name": "Kochi City",
+                            "shortName": "Kochi",
+                            "lat": 9.9312,
+                            "lng": 76.2673,
+                            "elevation": 2.8,
+                            "drainage": 0.45,
+                            "population": 602046,
+                            "floodHistory": [
+                                2018,
+                                2019
+                            ],
+                            "neighbors": [
+                                "KL-EKM-02"
+                            ]
+                        },
+                        "KL-EKM-02": {
+                            "name": "Aluva / Periyar",
+                            "shortName": "Aluva",
+                            "lat": 10.1076,
+                            "lng": 76.3528,
+                            "elevation": 5.2,
+                            "drainage": 0.38,
+                            "population": 280000,
+                            "floodHistory": [
+                                2018,
+                                2019
+                            ],
+                            "neighbors": [
+                                "KL-EKM-01",
+                                "KL-EKM-03"
+                            ]
+                        },
+                        "KL-EKM-03": {
+                            "name": "Perumbavoor",
+                            "shortName": "Perumbavoor",
+                            "lat": 10.1100,
+                            "lng": 76.4700,
+                            "elevation": 18.0,
+                            "drainage": 0.52,
+                            "population": 125000,
+                            "floodHistory": [
+                                2018
+                            ],
+                            "neighbors": [
+                                "KL-EKM-02"
+                            ]
+                        }
+                    }
+                },
+                "alappuzha": {
+                    "name": "Alappuzha",
+                    "population": 2127789,
+                    "area": 1414,
+                    "center": [
+                        9.4981,
+                        76.3388
+                    ],
+                    "zoom": 11,
+                    "zones": {
+                        "KL-ALP-01": {
+                            "name": "Alappuzha Town",
+                            "shortName": "Alappuzha",
+                            "lat": 9.4981,
+                            "lng": 76.3388,
+                            "elevation": 0.8,
+                            "drainage": 0.25,
+                            "population": 174164,
+                            "floodHistory": [
+                                2018,
+                                2019,
+                                2020
+                            ],
+                            "neighbors": [
+                                "KL-ALP-02"
+                            ]
+                        },
+                        "KL-ALP-02": {
+                            "name": "Kuttanad Backwaters",
+                            "shortName": "Kuttanad",
+                            "lat": 9.4200,
+                            "lng": 76.4200,
+                            "elevation": -2.2,
+                            "drainage": 0.15,
+                            "population": 85000,
+                            "floodHistory": [
+                                2018,
+                                2019,
+                                2020,
+                                2021
+                            ],
+                            "neighbors": [
+                                "KL-ALP-01"
+                            ]
+                        }
+                    }
+                },
+                "wayanad": {
+                    "name": "Wayanad",
+                    "population": 817420,
+                    "area": 2132,
+                    "center": [
+                        11.6854,
+                        76.1320
+                    ],
+                    "zoom": 11,
+                    "zones": {
+                        "KL-WYD-01": {
+                            "name": "Kalpetta",
+                            "shortName": "Kalpetta",
+                            "lat": 11.6088,
+                            "lng": 76.0830,
+                            "elevation": 780.0,
+                            "drainage": 0.65,
+                            "population": 28292,
+                            "floodHistory": [
+                                2018,
+                                2019
+                            ],
+                            "neighbors": [
+                                "KL-WYD-02"
+                            ]
+                        },
+                        "KL-WYD-02": {
+                            "name": "Sultan Bathery",
+                            "shortName": "Sultan Bathery",
+                            "lat": 11.6654,
+                            "lng": 76.2560,
+                            "elevation": 905.0,
+                            "drainage": 0.58,
+                            "population": 25000,
+                            "floodHistory": [
+                                2018
+                            ],
+                            "neighbors": [
+                                "KL-WYD-01"
+                            ]
+                        }
+                    }
+                }
+            }
+        },
+        "karnataka": {
+            "state": "Karnataka",
+            "stateCode": "KA",
+            "sdmaContact": "1070",
+            "districts": {
+                "bengaluru": {
+                    "name": "Bengaluru Urban",
+                    "population": 9621551,
+                    "area": 2196,
+                    "center": [
+                        12.9716,
+                        77.5946
+                    ],
+                    "zoom": 11,
+                    "zones": {
+                        "KA-BLR-01": {
+                            "name": "Bellandur / Marathahalli",
+                            "shortName": "Bellandur",
+                            "lat": 12.9360,
+                            "lng": 77.6780,
+                            "elevation": 914.0,
+                            "drainage": 0.32,
+                            "population": 520000,
+                            "floodHistory": [
+                                2022,
+                                2023
+                            ],
+                            "neighbors": [
+                                "KA-BLR-02"
+                            ]
+                        },
+                        "KA-BLR-02": {
+                            "name": "Koramangala / HSR",
+                            "shortName": "Koramangala",
+                            "lat": 12.9352,
+                            "lng": 77.6245,
+                            "elevation": 905.0,
+                            "drainage": 0.48,
+                            "population": 380000,
+                            "floodHistory": [
+                                2022
+                            ],
+                            "neighbors": [
+                                "KA-BLR-01",
+                                "KA-BLR-03"
+                            ]
+                        },
+                        "KA-BLR-03": {
+                            "name": "Whitefield / ITPL",
+                            "shortName": "Whitefield",
+                            "lat": 12.9698,
+                            "lng": 77.7499,
+                            "elevation": 898.0,
+                            "drainage": 0.55,
+                            "population": 620000,
+                            "floodHistory": [
+                                2022,
+                                2023
+                            ],
+                            "neighbors": [
+                                "KA-BLR-02",
+                                "KA-BLR-04"
+                            ]
+                        },
+                        "KA-BLR-04": {
+                            "name": "Yelahanka / Hebbal",
+                            "shortName": "Yelahanka",
+                            "lat": 13.1005,
+                            "lng": 77.5960,
+                            "elevation": 922.0,
+                            "drainage": 0.62,
+                            "population": 450000,
+                            "floodHistory": [
+                                2023
+                            ],
+                            "neighbors": [
+                                "KA-BLR-03"
+                            ]
+                        }
+                    }
+                },
+                "kodagu": {
+                    "name": "Kodagu",
+                    "population": 554519,
+                    "area": 4102,
+                    "center": [
+                        12.4244,
+                        75.7382
+                    ],
+                    "zoom": 10,
+                    "zones": {
+                        "KA-KDG-01": {
+                            "name": "Madikeri",
+                            "shortName": "Madikeri",
+                            "lat": 12.4244,
+                            "lng": 75.7382,
+                            "elevation": 1452.0,
+                            "drainage": 0.65,
+                            "population": 33381,
+                            "floodHistory": [
+                                2018,
+                                2019
+                            ],
+                            "neighbors": [
+                                "KA-KDG-02"
+                            ]
+                        },
+                        "KA-KDG-02": {
+                            "name": "Virajpet",
+                            "shortName": "Virajpet",
+                            "lat": 12.1968,
+                            "lng": 75.8047,
+                            "elevation": 1090.0,
+                            "drainage": 0.58,
+                            "population": 27000,
+                            "floodHistory": [
+                                2018
+                            ],
+                            "neighbors": [
+                                "KA-KDG-01"
+                            ]
+                        }
+                    }
+                }
+            }
+        },
+        "maharashtra": {
+            "state": "Maharashtra",
+            "stateCode": "MH",
+            "sdmaContact": "1077",
+            "districts": {
+                "mumbai": {
+                    "name": "Mumbai",
+                    "population": 12442373,
+                    "area": 603,
+                    "center": [
+                        19.0760,
+                        72.8777
+                    ],
+                    "zoom": 11,
+                    "zones": {
+                        "MH-MUM-01": {
+                            "name": "Dharavi / Sion",
+                            "shortName": "Dharavi",
+                            "lat": 19.0430,
+                            "lng": 72.8550,
+                            "elevation": 2.1,
+                            "drainage": 0.35,
+                            "population": 850000,
+                            "floodHistory": [
+                                2005,
+                                2017,
+                                2019,
+                                2021
+                            ],
+                            "neighbors": [
+                                "MH-MUM-02",
+                                "MH-MUM-03"
+                            ]
+                        },
+                        "MH-MUM-02": {
+                            "name": "Kurla / Chembur",
+                            "shortName": "Kurla",
+                            "lat": 19.0650,
+                            "lng": 72.8790,
+                            "elevation": 3.5,
+                            "drainage": 0.48,
+                            "population": 620000,
+                            "floodHistory": [
+                                2005,
+                                2017,
+                                2021
+                            ],
+                            "neighbors": [
+                                "MH-MUM-01",
+                                "MH-MUM-04"
+                            ]
+                        },
+                        "MH-MUM-03": {
+                            "name": "Andheri / Jogeshwari",
+                            "shortName": "Andheri",
+                            "lat": 19.1190,
+                            "lng": 72.8460,
+                            "elevation": 5.2,
+                            "drainage": 0.52,
+                            "population": 780000,
+                            "floodHistory": [
+                                2005,
+                                2017
+                            ],
+                            "neighbors": [
+                                "MH-MUM-01",
+                                "MH-MUM-05"
+                            ]
+                        },
+                        "MH-MUM-04": {
+                            "name": "Mulund / Bhandup",
+                            "shortName": "Mulund",
+                            "lat": 19.1726,
+                            "lng": 72.9560,
+                            "elevation": 8.5,
+                            "drainage": 0.62,
+                            "population": 420000,
+                            "floodHistory": [
+                                2019
+                            ],
+                            "neighbors": [
+                                "MH-MUM-02"
+                            ]
+                        },
+                        "MH-MUM-05": {
+                            "name": "Malad / Goregaon",
+                            "shortName": "Malad",
+                            "lat": 19.1860,
+                            "lng": 72.8490,
+                            "elevation": 12.0,
+                            "drainage": 0.58,
+                            "population": 580000,
+                            "floodHistory": [
+                                2005,
+                                2017
+                            ],
+                            "neighbors": [
+                                "MH-MUM-03"
+                            ]
+                        }
+                    }
+                },
+                "kolhapur": {
+                    "name": "Kolhapur",
+                    "population": 3876001,
+                    "area": 7685,
+                    "center": [
+                        16.7050,
+                        74.2433
+                    ],
+                    "zoom": 10,
+                    "zones": {
+                        "MH-KOL-01": {
+                            "name": "Kolhapur City",
+                            "shortName": "Kolhapur",
+                            "lat": 16.7050,
+                            "lng": 74.2433,
+                            "elevation": 569.0,
+                            "drainage": 0.52,
+                            "population": 549236,
+                            "floodHistory": [
+                                2019,
+                                2021
+                            ],
+                            "neighbors": [
+                                "MH-KOL-02"
+                            ]
+                        },
+                        "MH-KOL-02": {
+                            "name": "Panchganga Basin",
+                            "shortName": "Panchganga",
+                            "lat": 16.6800,
+                            "lng": 74.2000,
+                            "elevation": 545.0,
+                            "drainage": 0.38,
+                            "population": 185000,
+                            "floodHistory": [
+                                2019,
+                                2021
+                            ],
+                            "neighbors": [
+                                "MH-KOL-01"
+                            ]
+                        }
+                    }
+                }
+            }
+        },
+        "westBengal": {
+            "state": "West Bengal",
+            "stateCode": "WB",
+            "sdmaContact": "1070",
+            "districts": {
+                "kolkata": {
+                    "name": "Kolkata",
+                    "population": 4496694,
+                    "area": 206,
+                    "center": [
+                        22.5726,
+                        88.3639
+                    ],
+                    "zoom": 11,
+                    "zones": {
+                        "WB-KOL-01": {
+                            "name": "Salt Lake / Bidhannagar",
+                            "shortName": "Salt Lake",
+                            "lat": 22.5800,
+                            "lng": 88.4200,
+                            "elevation": 3.8,
+                            "drainage": 0.40,
+                            "population": 450000,
+                            "floodHistory": [
+                                2021
+                            ],
+                            "neighbors": [
+                                "WB-KOL-02"
+                            ]
+                        },
+                        "WB-KOL-02": {
+                            "name": "Howrah / Shibpur",
+                            "shortName": "Howrah",
+                            "lat": 22.5890,
+                            "lng": 88.3100,
+                            "elevation": 4.2,
+                            "drainage": 0.38,
+                            "population": 680000,
+                            "floodHistory": [
+                                2021
+                            ],
+                            "neighbors": [
+                                "WB-KOL-01",
+                                "WB-KOL-03"
+                            ]
+                        },
+                        "WB-KOL-03": {
+                            "name": "South Kolkata / Jadavpur",
+                            "shortName": "Jadavpur",
+                            "lat": 22.4970,
+                            "lng": 88.3690,
+                            "elevation": 5.1,
+                            "drainage": 0.55,
+                            "population": 520000,
+                            "floodHistory": [],
+                            "neighbors": [
+                                "WB-KOL-02"
+                            ]
+                        }
+                    }
+                },
+                "murshidabad": {
+                    "name": "Murshidabad",
+                    "population": 7102430,
+                    "area": 5324,
+                    "center": [
+                        24.1751,
+                        88.2665
+                    ],
+                    "zoom": 10,
+                    "zones": {
+                        "WB-MUR-01": {
+                            "name": "Berhampore",
+                            "shortName": "Berhampore",
+                            "lat": 24.1000,
+                            "lng": 88.2500,
+                            "elevation": 18.0,
+                            "drainage": 0.42,
+                            "population": 305609,
+                            "floodHistory": [
+                                2020,
+                                2021
+                            ],
+                            "neighbors": [
+                                "WB-MUR-02"
+                            ]
+                        },
+                        "WB-MUR-02": {
+                            "name": "Bhagirathi Basin",
+                            "shortName": "Bhagirathi",
+                            "lat": 24.2000,
+                            "lng": 88.3000,
+                            "elevation": 12.0,
+                            "drainage": 0.32,
+                            "population": 180000,
+                            "floodHistory": [
+                                2020,
+                                2021
+                            ],
+                            "neighbors": [
+                                "WB-MUR-01"
+                            ]
+                        }
+                    }
+                }
+            }
+        },
+        "bihar": {
+            "state": "Bihar",
+            "stateCode": "BR",
+            "sdmaContact": "1070",
+            "districts": {
+                "patna": {
+                    "name": "Patna",
+                    "population": 5838465,
+                    "area": 3202,
+                    "center": [
+                        25.5941,
+                        85.1376
+                    ],
+                    "zoom": 11,
+                    "zones": {
+                        "BR-PAT-01": {
+                            "name": "Patna Central",
+                            "shortName": "Central",
+                            "lat": 25.6080,
+                            "lng": 85.1140,
+                            "elevation": 53.0,
+                            "drainage": 0.42,
+                            "population": 1684222,
+                            "floodHistory": [
+                                2019,
+                                2021
+                            ],
+                            "neighbors": [
+                                "BR-PAT-02"
+                            ]
+                        },
+                        "BR-PAT-02": {
+                            "name": "Rajendra Nagar",
+                            "shortName": "Rajendra Nagar",
+                            "lat": 25.6150,
+                            "lng": 85.0820,
+                            "elevation": 48.0,
+                            "drainage": 0.38,
+                            "population": 290000,
+                            "floodHistory": [
+                                2019
+                            ],
+                            "neighbors": [
+                                "BR-PAT-01",
+                                "BR-PAT-03"
+                            ]
+                        },
+                        "BR-PAT-03": {
+                            "name": "Danapur / Digha",
+                            "shortName": "Danapur",
+                            "lat": 25.6220,
+                            "lng": 84.9890,
+                            "elevation": 45.0,
+                            "drainage": 0.35,
+                            "population": 420000,
+                            "floodHistory": [
+                                2019,
+                                2021
+                            ],
+                            "neighbors": [
+                                "BR-PAT-02"
+                            ]
+                        }
+                    }
+                },
+                "darbhanga": {
+                    "name": "Darbhanga",
+                    "population": 3937385,
+                    "area": 2279,
+                    "center": [
+                        26.1542,
+                        85.8918
+                    ],
+                    "zoom": 10,
+                    "zones": {
+                        "BR-DAR-01": {
+                            "name": "Darbhanga City",
+                            "shortName": "Darbhanga",
+                            "lat": 26.1542,
+                            "lng": 85.8918,
+                            "elevation": 49.0,
+                            "drainage": 0.32,
+                            "population": 296039,
+                            "floodHistory": [
+                                2017,
+                                2019,
+                                2020
+                            ],
+                            "neighbors": [
+                                "BR-DAR-02"
+                            ]
+                        },
+                        "BR-DAR-02": {
+                            "name": "Kamla Basin",
+                            "shortName": "Kamla Basin",
+                            "lat": 26.2000,
+                            "lng": 85.9500,
+                            "elevation": 42.0,
+                            "drainage": 0.25,
+                            "population": 180000,
+                            "floodHistory": [
+                                2017,
+                                2019,
+                                2020,
+                                2021
+                            ],
+                            "neighbors": [
+                                "BR-DAR-01"
+                            ]
+                        }
+                    }
+                }
+            }
+        },
+        "assam": {
+            "state": "Assam",
+            "stateCode": "AS",
+            "sdmaContact": "1070",
+            "districts": {
+                "kamrup": {
+                    "name": "Kamrup Metropolitan",
+                    "population": 1260419,
+                    "area": 1528,
+                    "center": [
+                        26.1445,
+                        91.7362
+                    ],
+                    "zoom": 11,
+                    "zones": {
+                        "AS-KAM-01": {
+                            "name": "Guwahati City",
+                            "shortName": "Guwahati",
+                            "lat": 26.1445,
+                            "lng": 91.7362,
+                            "elevation": 55.0,
+                            "drainage": 0.48,
+                            "population": 968549,
+                            "floodHistory": [
+                                2020,
+                                2022
+                            ],
+                            "neighbors": [
+                                "AS-KAM-02"
+                            ]
+                        },
+                        "AS-KAM-02": {
+                            "name": "Brahmaputra Riverfront",
+                            "shortName": "Riverfront",
+                            "lat": 26.1880,
+                            "lng": 91.7450,
+                            "elevation": 48.0,
+                            "drainage": 0.28,
+                            "population": 95000,
+                            "floodHistory": [
+                                2019,
+                                2020,
+                                2022
+                            ],
+                            "neighbors": [
+                                "AS-KAM-01",
+                                "AS-KAM-03"
+                            ]
+                        },
+                        "AS-KAM-03": {
+                            "name": "North Guwahati",
+                            "shortName": "North Guwahati",
+                            "lat": 26.2000,
+                            "lng": 91.7200,
+                            "elevation": 52.0,
+                            "drainage": 0.35,
+                            "population": 120000,
+                            "floodHistory": [
+                                2020
+                            ],
+                            "neighbors": [
+                                "AS-KAM-02"
+                            ]
+                        }
+                    }
+                },
+                "dhubri": {
+                    "name": "Dhubri",
+                    "population": 1948632,
+                    "area": 2838,
+                    "center": [
+                        26.0167,
+                        89.9500
+                    ],
+                    "zoom": 10,
+                    "zones": {
+                        "AS-DHU-01": {
+                            "name": "Dhubri Town",
+                            "shortName": "Dhubri",
+                            "lat": 26.0167,
+                            "lng": 89.9500,
+                            "elevation": 32.0,
+                            "drainage": 0.22,
+                            "population": 68280,
+                            "floodHistory": [
+                                2019,
+                                2020,
+                                2021,
+                                2022
+                            ],
+                            "neighbors": [
+                                "AS-DHU-02"
+                            ]
+                        },
+                        "AS-DHU-02": {
+                            "name": "Brahmaputra Basin",
+                            "shortName": "Brahmaputra",
+                            "lat": 26.0500,
+                            "lng": 90.0000,
+                            "elevation": 28.0,
+                            "drainage": 0.18,
+                            "population": 250000,
+                            "floodHistory": [
+                                2019,
+                                2020,
+                                2021,
+                                2022
+                            ],
+                            "neighbors": [
+                                "AS-DHU-01"
+                            ]
+                        }
+                    }
+                }
+            }
+        },
+        "uttarPradesh": {
+            "state": "Uttar Pradesh",
+            "stateCode": "UP",
+            "sdmaContact": "112",
+            "districts": {
+                "varanasi": {
+                    "name": "Varanasi",
+                    "population": 3682194,
+                    "area": 1535,
+                    "center": [
+                        25.3176,
+                        82.9739
+                    ],
+                    "zoom": 11,
+                    "zones": {
+                        "UP-VAR-01": {
+                            "name": "Varanasi City",
+                            "shortName": "Varanasi",
+                            "lat": 25.3176,
+                            "lng": 82.9739,
+                            "elevation": 80.0,
+                            "drainage": 0.52,
+                            "population": 1201815,
+                            "floodHistory": [
+                                2019
+                            ],
+                            "neighbors": [
+                                "UP-VAR-02"
+                            ]
+                        },
+                        "UP-VAR-02": {
+                            "name": "Ganga Ghats",
+                            "shortName": "Ghats",
+                            "lat": 25.3100,
+                            "lng": 83.0000,
+                            "elevation": 72.0,
+                            "drainage": 0.35,
+                            "population": 280000,
+                            "floodHistory": [
+                                2019,
+                                2021
+                            ],
+                            "neighbors": [
+                                "UP-VAR-01"
+                            ]
+                        }
+                    }
+                }
+            }
+        },
+        "odisha": {
+            "state": "Odisha",
+            "stateCode": "OD",
+            "sdmaContact": "1070",
+            "districts": {
+                "puri": {
+                    "name": "Puri",
+                    "population": 1697983,
+                    "area": 3479,
+                    "center": [
+                        19.8135,
+                        85.8312
+                    ],
+                    "zoom": 10,
+                    "zones": {
+                        "OD-PUR-01": {
+                            "name": "Puri Town",
+                            "shortName": "Puri",
+                            "lat": 19.7983,
+                            "lng": 85.8249,
+                            "elevation": 3.5,
+                            "drainage": 0.42,
+                            "population": 201026,
+                            "floodHistory": [
+                                2019,
+                                2021
+                            ],
+                            "neighbors": [
+                                "OD-PUR-02"
+                            ]
+                        },
+                        "OD-PUR-02": {
+                            "name": "Chilika Coast",
+                            "shortName": "Chilika",
+                            "lat": 19.7000,
+                            "lng": 85.5000,
+                            "elevation": 1.8,
+                            "drainage": 0.28,
+                            "population": 85000,
+                            "floodHistory": [
+                                2019,
+                                2021
+                            ],
+                            "neighbors": [
+                                "OD-PUR-01"
+                            ]
+                        }
+                    }
+                },
+                "kendrapara": {
+                    "name": "Kendrapara",
+                    "population": 1439891,
+                    "area": 2644,
+                    "center": [
+                        20.5000,
+                        86.4200
+                    ],
+                    "zoom": 10,
+                    "zones": {
+                        "OD-KEN-01": {
+                            "name": "Kendrapara Town",
+                            "shortName": "Kendrapara",
+                            "lat": 20.5000,
+                            "lng": 86.4200,
+                            "elevation": 8.0,
+                            "drainage": 0.35,
+                            "population": 42101,
+                            "floodHistory": [
+                                2011,
+                                2019,
+                                2021
+                            ],
+                            "neighbors": [
+                                "OD-KEN-02"
+                            ]
+                        },
+                        "OD-KEN-02": {
+                            "name": "Mahanadi Delta",
+                            "shortName": "Mahanadi Delta",
+                            "lat": 20.4500,
+                            "lng": 86.5000,
+                            "elevation": 4.0,
+                            "drainage": 0.22,
+                            "population": 180000,
+                            "floodHistory": [
+                                2011,
+                                2019,
+                                2020,
+                                2021
+                            ],
+                            "neighbors": [
+                                "OD-KEN-01"
+                            ]
+                        }
+                    }
+                }
+            }
+        },
+        "gujarat": {
+            "state": "Gujarat",
+            "stateCode": "GJ",
+            "sdmaContact": "1070",
+            "districts": {
+                "ahmedabad": {
+                    "name": "Ahmedabad",
+                    "population": 7214225,
+                    "area": 8707,
+                    "center": [
+                        23.0225,
+                        72.5714
+                    ],
+                    "zoom": 11,
+                    "zones": {
+                        "GJ-AMD-01": {
+                            "name": "Sabarmati Riverfront",
+                            "shortName": "Sabarmati",
+                            "lat": 23.0400,
+                            "lng": 72.5800,
+                            "elevation": 51.0,
+                            "drainage": 0.45,
+                            "population": 145000,
+                            "floodHistory": [
+                                2017
+                            ],
+                            "neighbors": [
+                                "GJ-AMD-02"
+                            ]
+                        },
+                        "GJ-AMD-02": {
+                            "name": "Maninagar / Isanpur",
+                            "shortName": "Maninagar",
+                            "lat": 22.9950,
+                            "lng": 72.6120,
+                            "elevation": 48.0,
+                            "drainage": 0.38,
+                            "population": 480000,
+                            "floodHistory": [
+                                2017,
+                                2021
+                            ],
+                            "neighbors": [
+                                "GJ-AMD-01"
+                            ]
+                        }
+                    }
+                },
+                "surat": {
+                    "name": "Surat",
+                    "population": 6081322,
+                    "area": 4549,
+                    "center": [
+                        21.1702,
+                        72.8311
+                    ],
+                    "zoom": 11,
+                    "zones": {
+                        "GJ-SUR-01": {
+                            "name": "Surat City",
+                            "shortName": "Surat",
+                            "lat": 21.1702,
+                            "lng": 72.8311,
+                            "elevation": 13.0,
+                            "drainage": 0.42,
+                            "population": 4467797,
+                            "floodHistory": [
+                                2006,
+                                2019
+                            ],
+                            "neighbors": [
+                                "GJ-SUR-02"
+                            ]
+                        },
+                        "GJ-SUR-02": {
+                            "name": "Tapi Basin",
+                            "shortName": "Tapi Basin",
+                            "lat": 21.2000,
+                            "lng": 72.8800,
+                            "elevation": 8.0,
+                            "drainage": 0.32,
+                            "population": 350000,
+                            "floodHistory": [
+                                2006,
+                                2019,
+                                2021
+                            ],
+                            "neighbors": [
+                                "GJ-SUR-01"
+                            ]
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

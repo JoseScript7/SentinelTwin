@@ -1,0 +1,927 @@
+{
+    "regions": {
+        "chennai": {
+            "name": "Chennai Metropolitan",
+            "state": "Tamil Nadu",
+            "center": [
+                13.05,
+                80.20
+            ],
+            "zoom": 11,
+            "zones": {
+                "CHN-01": {
+                    "name": "Porur / Kundrathur",
+                    "shortName": "Porur",
+                    "lat": 13.035,
+                    "lng": 80.142,
+                    "elevation": 3.2,
+                    "drainage": 0.42,
+                    "population": 245000,
+                    "neighbors": [
+                        "CHN-02",
+                        "CHN-05"
+                    ]
+                },
+                "CHN-02": {
+                    "name": "Velachery / Adyar",
+                    "shortName": "Velachery",
+                    "lat": 12.981,
+                    "lng": 80.217,
+                    "elevation": 4.8,
+                    "drainage": 0.55,
+                    "population": 312000,
+                    "neighbors": [
+                        "CHN-01",
+                        "CHN-03"
+                    ]
+                },
+                "CHN-03": {
+                    "name": "Marina / Mylapore",
+                    "shortName": "Marina",
+                    "lat": 13.050,
+                    "lng": 80.282,
+                    "elevation": 1.9,
+                    "drainage": 0.70,
+                    "population": 178000,
+                    "neighbors": [
+                        "CHN-02",
+                        "CHN-04"
+                    ]
+                },
+                "CHN-04": {
+                    "name": "T. Nagar / Kodambakkam",
+                    "shortName": "T. Nagar",
+                    "lat": 13.041,
+                    "lng": 80.234,
+                    "elevation": 6.1,
+                    "drainage": 0.63,
+                    "population": 425000,
+                    "neighbors": [
+                        "CHN-03",
+                        "CHN-05"
+                    ]
+                },
+                "CHN-05": {
+                    "name": "Ambattur / Avadi",
+                    "shortName": "Ambattur",
+                    "lat": 13.114,
+                    "lng": 80.154,
+                    "elevation": 7.4,
+                    "drainage": 0.68,
+                    "population": 520000,
+                    "neighbors": [
+                        "CHN-01",
+                        "CHN-04"
+                    ]
+                }
+            }
+        },
+        "mumbai": {
+            "name": "Mumbai Metropolitan",
+            "state": "Maharashtra",
+            "center": [
+                19.076,
+                72.877
+            ],
+            "zoom": 11,
+            "zones": {
+                "MUM-01": {
+                    "name": "Dharavi / Sion",
+                    "shortName": "Dharavi",
+                    "lat": 19.043,
+                    "lng": 72.855,
+                    "elevation": 2.1,
+                    "drainage": 0.35,
+                    "population": 850000,
+                    "neighbors": [
+                        "MUM-02",
+                        "MUM-03"
+                    ]
+                },
+                "MUM-02": {
+                    "name": "Kurla / Chembur",
+                    "shortName": "Kurla",
+                    "lat": 19.065,
+                    "lng": 72.879,
+                    "elevation": 3.5,
+                    "drainage": 0.48,
+                    "population": 620000,
+                    "neighbors": [
+                        "MUM-01",
+                        "MUM-04"
+                    ]
+                },
+                "MUM-03": {
+                    "name": "Andheri / Jogeshwari",
+                    "shortName": "Andheri",
+                    "lat": 19.119,
+                    "lng": 72.846,
+                    "elevation": 5.2,
+                    "drainage": 0.52,
+                    "population": 780000,
+                    "neighbors": [
+                        "MUM-01",
+                        "MUM-05"
+                    ]
+                },
+                "MUM-04": {
+                    "name": "Thane / Mulund",
+                    "shortName": "Thane",
+                    "lat": 19.186,
+                    "lng": 72.975,
+                    "elevation": 4.8,
+                    "drainage": 0.58,
+                    "population": 920000,
+                    "neighbors": [
+                        "MUM-02",
+                        "MUM-05"
+                    ]
+                },
+                "MUM-05": {
+                    "name": "Bandra / Khar",
+                    "shortName": "Bandra",
+                    "lat": 19.054,
+                    "lng": 72.840,
+                    "elevation": 2.8,
+                    "drainage": 0.45,
+                    "population": 345000,
+                    "neighbors": [
+                        "MUM-03",
+                        "MUM-04"
+                    ]
+                }
+            }
+        },
+        "kolkata": {
+            "name": "Kolkata Metropolitan",
+            "state": "West Bengal",
+            "center": [
+                22.572,
+                88.363
+            ],
+            "zoom": 11,
+            "zones": {
+                "KOL-01": {
+                    "name": "Salt Lake / Bidhannagar",
+                    "shortName": "Salt Lake",
+                    "lat": 22.580,
+                    "lng": 88.420,
+                    "elevation": 3.8,
+                    "drainage": 0.40,
+                    "population": 450000,
+                    "neighbors": [
+                        "KOL-02",
+                        "KOL-03"
+                    ]
+                },
+                "KOL-02": {
+                    "name": "Howrah / Shibpur",
+                    "shortName": "Howrah",
+                    "lat": 22.589,
+                    "lng": 88.310,
+                    "elevation": 4.2,
+                    "drainage": 0.38,
+                    "population": 680000,
+                    "neighbors": [
+                        "KOL-01",
+                        "KOL-04"
+                    ]
+                },
+                "KOL-03": {
+                    "name": "Jadavpur / Garia",
+                    "shortName": "Jadavpur",
+                    "lat": 22.497,
+                    "lng": 88.369,
+                    "elevation": 5.1,
+                    "drainage": 0.55,
+                    "population": 520000,
+                    "neighbors": [
+                        "KOL-01",
+                        "KOL-05"
+                    ]
+                },
+                "KOL-04": {
+                    "name": "Dum Dum / Barasat",
+                    "shortName": "Dum Dum",
+                    "lat": 22.652,
+                    "lng": 88.433,
+                    "elevation": 6.2,
+                    "drainage": 0.62,
+                    "population": 380000,
+                    "neighbors": [
+                        "KOL-02",
+                        "KOL-05"
+                    ]
+                },
+                "KOL-05": {
+                    "name": "Park Street / Esplanade",
+                    "shortName": "Central",
+                    "lat": 22.551,
+                    "lng": 88.351,
+                    "elevation": 4.5,
+                    "drainage": 0.50,
+                    "population": 290000,
+                    "neighbors": [
+                        "KOL-03",
+                        "KOL-04"
+                    ]
+                }
+            }
+        },
+        "delhi": {
+            "name": "Delhi NCR",
+            "state": "Delhi",
+            "center": [
+                28.613,
+                77.209
+            ],
+            "zoom": 11,
+            "zones": {
+                "DEL-01": {
+                    "name": "Yamuna Floodplain",
+                    "shortName": "Yamuna",
+                    "lat": 28.642,
+                    "lng": 77.258,
+                    "elevation": 1.8,
+                    "drainage": 0.30,
+                    "population": 125000,
+                    "neighbors": [
+                        "DEL-02",
+                        "DEL-03"
+                    ]
+                },
+                "DEL-02": {
+                    "name": "Rohini / Pitampura",
+                    "shortName": "Rohini",
+                    "lat": 28.735,
+                    "lng": 77.112,
+                    "elevation": 5.5,
+                    "drainage": 0.55,
+                    "population": 680000,
+                    "neighbors": [
+                        "DEL-01",
+                        "DEL-04"
+                    ]
+                },
+                "DEL-03": {
+                    "name": "Dwarka / Janakpuri",
+                    "shortName": "Dwarka",
+                    "lat": 28.592,
+                    "lng": 77.042,
+                    "elevation": 6.8,
+                    "drainage": 0.62,
+                    "population": 720000,
+                    "neighbors": [
+                        "DEL-01",
+                        "DEL-05"
+                    ]
+                },
+                "DEL-04": {
+                    "name": "Mayur Vihar / Patparganj",
+                    "shortName": "Mayur Vihar",
+                    "lat": 28.609,
+                    "lng": 77.298,
+                    "elevation": 3.2,
+                    "drainage": 0.42,
+                    "population": 450000,
+                    "neighbors": [
+                        "DEL-02",
+                        "DEL-05"
+                    ]
+                },
+                "DEL-05": {
+                    "name": "Saket / Mehrauli",
+                    "shortName": "Saket",
+                    "lat": 28.524,
+                    "lng": 77.206,
+                    "elevation": 7.2,
+                    "drainage": 0.68,
+                    "population": 380000,
+                    "neighbors": [
+                        "DEL-03",
+                        "DEL-04"
+                    ]
+                }
+            }
+        },
+        "bengaluru": {
+            "name": "Bengaluru Urban",
+            "state": "Karnataka",
+            "center": [
+                12.971,
+                77.594
+            ],
+            "zoom": 11,
+            "zones": {
+                "BLR-01": {
+                    "name": "Bellandur / Marathahalli",
+                    "shortName": "Bellandur",
+                    "lat": 12.936,
+                    "lng": 77.678,
+                    "elevation": 2.8,
+                    "drainage": 0.32,
+                    "population": 520000,
+                    "neighbors": [
+                        "BLR-02",
+                        "BLR-03"
+                    ]
+                },
+                "BLR-02": {
+                    "name": "Koramangala / HSR",
+                    "shortName": "Koramangala",
+                    "lat": 12.935,
+                    "lng": 77.624,
+                    "elevation": 4.5,
+                    "drainage": 0.48,
+                    "population": 380000,
+                    "neighbors": [
+                        "BLR-01",
+                        "BLR-04"
+                    ]
+                },
+                "BLR-03": {
+                    "name": "Whitefield / ITPL",
+                    "shortName": "Whitefield",
+                    "lat": 12.969,
+                    "lng": 77.749,
+                    "elevation": 5.2,
+                    "drainage": 0.55,
+                    "population": 620000,
+                    "neighbors": [
+                        "BLR-01",
+                        "BLR-05"
+                    ]
+                },
+                "BLR-04": {
+                    "name": "Jayanagar / JP Nagar",
+                    "shortName": "Jayanagar",
+                    "lat": 12.925,
+                    "lng": 77.582,
+                    "elevation": 6.8,
+                    "drainage": 0.65,
+                    "population": 290000,
+                    "neighbors": [
+                        "BLR-02",
+                        "BLR-05"
+                    ]
+                },
+                "BLR-05": {
+                    "name": "Majestic / Malleshwaram",
+                    "shortName": "Central",
+                    "lat": 12.977,
+                    "lng": 77.566,
+                    "elevation": 7.5,
+                    "drainage": 0.70,
+                    "population": 420000,
+                    "neighbors": [
+                        "BLR-03",
+                        "BLR-04"
+                    ]
+                }
+            }
+        },
+        "hyderabad": {
+            "name": "Hyderabad Metropolitan",
+            "state": "Telangana",
+            "center": [
+                17.385,
+                78.486
+            ],
+            "zoom": 11,
+            "zones": {
+                "HYD-01": {
+                    "name": "Hussain Sagar / Tank Bund",
+                    "shortName": "Tank Bund",
+                    "lat": 17.423,
+                    "lng": 78.474,
+                    "elevation": 2.5,
+                    "drainage": 0.38,
+                    "population": 180000,
+                    "neighbors": [
+                        "HYD-02",
+                        "HYD-03"
+                    ]
+                },
+                "HYD-02": {
+                    "name": "Kukatpally / KPHB",
+                    "shortName": "Kukatpally",
+                    "lat": 17.494,
+                    "lng": 78.408,
+                    "elevation": 4.8,
+                    "drainage": 0.52,
+                    "population": 580000,
+                    "neighbors": [
+                        "HYD-01",
+                        "HYD-04"
+                    ]
+                },
+                "HYD-03": {
+                    "name": "LB Nagar / Dilsukhnagar",
+                    "shortName": "LB Nagar",
+                    "lat": 17.349,
+                    "lng": 78.551,
+                    "elevation": 3.2,
+                    "drainage": 0.45,
+                    "population": 420000,
+                    "neighbors": [
+                        "HYD-01",
+                        "HYD-05"
+                    ]
+                },
+                "HYD-04": {
+                    "name": "Gachibowli / HITEC City",
+                    "shortName": "HITEC City",
+                    "lat": 17.440,
+                    "lng": 78.348,
+                    "elevation": 6.5,
+                    "drainage": 0.62,
+                    "population": 350000,
+                    "neighbors": [
+                        "HYD-02",
+                        "HYD-05"
+                    ]
+                },
+                "HYD-05": {
+                    "name": "Secunderabad / Begumpet",
+                    "shortName": "Secunderabad",
+                    "lat": 17.439,
+                    "lng": 78.498,
+                    "elevation": 5.8,
+                    "drainage": 0.58,
+                    "population": 480000,
+                    "neighbors": [
+                        "HYD-03",
+                        "HYD-04"
+                    ]
+                }
+            }
+        },
+        "ahmedabad": {
+            "name": "Ahmedabad Urban",
+            "state": "Gujarat",
+            "center": [
+                23.022,
+                72.571
+            ],
+            "zoom": 11,
+            "zones": {
+                "AMD-01": {
+                    "name": "Sabarmati Riverfront",
+                    "shortName": "Sabarmati",
+                    "lat": 23.040,
+                    "lng": 72.580,
+                    "elevation": 1.5,
+                    "drainage": 0.28,
+                    "population": 145000,
+                    "neighbors": [
+                        "AMD-02",
+                        "AMD-03"
+                    ]
+                },
+                "AMD-02": {
+                    "name": "Vastrapur / Satellite",
+                    "shortName": "Vastrapur",
+                    "lat": 23.030,
+                    "lng": 72.529,
+                    "elevation": 4.2,
+                    "drainage": 0.52,
+                    "population": 320000,
+                    "neighbors": [
+                        "AMD-01",
+                        "AMD-04"
+                    ]
+                },
+                "AMD-03": {
+                    "name": "Maninagar / Isanpur",
+                    "shortName": "Maninagar",
+                    "lat": 22.995,
+                    "lng": 72.612,
+                    "elevation": 3.5,
+                    "drainage": 0.45,
+                    "population": 480000,
+                    "neighbors": [
+                        "AMD-01",
+                        "AMD-05"
+                    ]
+                },
+                "AMD-04": {
+                    "name": "Chandkheda / Motera",
+                    "shortName": "Chandkheda",
+                    "lat": 23.108,
+                    "lng": 72.593,
+                    "elevation": 5.8,
+                    "drainage": 0.60,
+                    "population": 280000,
+                    "neighbors": [
+                        "AMD-02",
+                        "AMD-05"
+                    ]
+                },
+                "AMD-05": {
+                    "name": "Naroda / Nikol",
+                    "shortName": "Naroda",
+                    "lat": 23.075,
+                    "lng": 72.660,
+                    "elevation": 4.5,
+                    "drainage": 0.55,
+                    "population": 520000,
+                    "neighbors": [
+                        "AMD-03",
+                        "AMD-04"
+                    ]
+                }
+            }
+        },
+        "patna": {
+            "name": "Patna Urban",
+            "state": "Bihar",
+            "center": [
+                25.594,
+                85.137
+            ],
+            "zoom": 11,
+            "zones": {
+                "PAT-01": {
+                    "name": "Gandhi Maidan / Kankarbagh",
+                    "shortName": "Central",
+                    "lat": 25.608,
+                    "lng": 85.114,
+                    "elevation": 1.2,
+                    "drainage": 0.25,
+                    "population": 380000,
+                    "neighbors": [
+                        "PAT-02",
+                        "PAT-03"
+                    ]
+                },
+                "PAT-02": {
+                    "name": "Patna Junction / Rajendra Nagar",
+                    "shortName": "Rajendra Nagar",
+                    "lat": 25.615,
+                    "lng": 85.082,
+                    "elevation": 2.5,
+                    "drainage": 0.35,
+                    "population": 290000,
+                    "neighbors": [
+                        "PAT-01",
+                        "PAT-04"
+                    ]
+                },
+                "PAT-03": {
+                    "name": "Digha / Danapur",
+                    "shortName": "Danapur",
+                    "lat": 25.622,
+                    "lng": 84.989,
+                    "elevation": 3.8,
+                    "drainage": 0.48,
+                    "population": 420000,
+                    "neighbors": [
+                        "PAT-01",
+                        "PAT-05"
+                    ]
+                },
+                "PAT-04": {
+                    "name": "Boring Road / Fraser Road",
+                    "shortName": "Boring Road",
+                    "lat": 25.610,
+                    "lng": 85.134,
+                    "elevation": 2.2,
+                    "drainage": 0.32,
+                    "population": 185000,
+                    "neighbors": [
+                        "PAT-02",
+                        "PAT-05"
+                    ]
+                },
+                "PAT-05": {
+                    "name": "Phulwari / Khagaul",
+                    "shortName": "Phulwari",
+                    "lat": 25.585,
+                    "lng": 85.002,
+                    "elevation": 4.5,
+                    "drainage": 0.55,
+                    "population": 350000,
+                    "neighbors": [
+                        "PAT-03",
+                        "PAT-04"
+                    ]
+                }
+            }
+        },
+        "guwahati": {
+            "name": "Guwahati Metropolitan",
+            "state": "Assam",
+            "center": [
+                26.144,
+                91.736
+            ],
+            "zoom": 12,
+            "zones": {
+                "GUW-01": {
+                    "name": "Brahmaputra Riverfront",
+                    "shortName": "Riverfront",
+                    "lat": 26.188,
+                    "lng": 91.745,
+                    "elevation": 0.8,
+                    "drainage": 0.20,
+                    "population": 95000,
+                    "neighbors": [
+                        "GUW-02",
+                        "GUW-03"
+                    ]
+                },
+                "GUW-02": {
+                    "name": "Paltan Bazaar / Fancy Bazaar",
+                    "shortName": "Paltan Bazaar",
+                    "lat": 26.181,
+                    "lng": 91.756,
+                    "elevation": 2.2,
+                    "drainage": 0.32,
+                    "population": 180000,
+                    "neighbors": [
+                        "GUW-01",
+                        "GUW-04"
+                    ]
+                },
+                "GUW-03": {
+                    "name": "Dispur / Guwahati Club",
+                    "shortName": "Dispur",
+                    "lat": 26.140,
+                    "lng": 91.788,
+                    "elevation": 5.5,
+                    "drainage": 0.58,
+                    "population": 145000,
+                    "neighbors": [
+                        "GUW-01",
+                        "GUW-05"
+                    ]
+                },
+                "GUW-04": {
+                    "name": "Chandmari / Zoo Road",
+                    "shortName": "Chandmari",
+                    "lat": 26.168,
+                    "lng": 91.770,
+                    "elevation": 3.8,
+                    "drainage": 0.45,
+                    "population": 220000,
+                    "neighbors": [
+                        "GUW-02",
+                        "GUW-05"
+                    ]
+                },
+                "GUW-05": {
+                    "name": "Beltola / Six Mile",
+                    "shortName": "Beltola",
+                    "lat": 26.123,
+                    "lng": 91.802,
+                    "elevation": 6.2,
+                    "drainage": 0.62,
+                    "population": 310000,
+                    "neighbors": [
+                        "GUW-03",
+                        "GUW-04"
+                    ]
+                }
+            }
+        },
+        "kochi": {
+            "name": "Kochi Metropolitan",
+            "state": "Kerala",
+            "center": [
+                9.931,
+                76.267
+            ],
+            "zoom": 12,
+            "zones": {
+                "KOC-01": {
+                    "name": "Fort Kochi / Mattancherry",
+                    "shortName": "Fort Kochi",
+                    "lat": 9.963,
+                    "lng": 76.243,
+                    "elevation": 0.5,
+                    "drainage": 0.22,
+                    "population": 85000,
+                    "neighbors": [
+                        "KOC-02",
+                        "KOC-03"
+                    ]
+                },
+                "KOC-02": {
+                    "name": "Ernakulam / MG Road",
+                    "shortName": "Ernakulam",
+                    "lat": 9.981,
+                    "lng": 76.289,
+                    "elevation": 2.8,
+                    "drainage": 0.42,
+                    "population": 320000,
+                    "neighbors": [
+                        "KOC-01",
+                        "KOC-04"
+                    ]
+                },
+                "KOC-03": {
+                    "name": "Aluva / Kalamassery",
+                    "shortName": "Aluva",
+                    "lat": 10.107,
+                    "lng": 76.352,
+                    "elevation": 1.5,
+                    "drainage": 0.35,
+                    "population": 280000,
+                    "neighbors": [
+                        "KOC-01",
+                        "KOC-05"
+                    ]
+                },
+                "KOC-04": {
+                    "name": "Kakkanad / Infopark",
+                    "shortName": "Kakkanad",
+                    "lat": 10.011,
+                    "lng": 76.348,
+                    "elevation": 4.2,
+                    "drainage": 0.55,
+                    "population": 195000,
+                    "neighbors": [
+                        "KOC-02",
+                        "KOC-05"
+                    ]
+                },
+                "KOC-05": {
+                    "name": "Tripunithura / Maradu",
+                    "shortName": "Tripunithura",
+                    "lat": 9.951,
+                    "lng": 76.338,
+                    "elevation": 3.5,
+                    "drainage": 0.48,
+                    "population": 240000,
+                    "neighbors": [
+                        "KOC-03",
+                        "KOC-04"
+                    ]
+                }
+            }
+        }
+    },
+    "shelterDatabase": {
+        "CHN-01": [
+            {
+                "name": "Porur Community Hall",
+                "capacity": 500,
+                "distance": "0.8 km",
+                "status": "open",
+                "contact": "044-2476-XXXX"
+            },
+            {
+                "name": "Kundrathur Govt School",
+                "capacity": 300,
+                "distance": "1.2 km",
+                "status": "open",
+                "contact": "044-2477-XXXX"
+            },
+            {
+                "name": "SDMC Relief Center",
+                "capacity": 200,
+                "distance": "1.5 km",
+                "status": "standby",
+                "contact": "1077"
+            }
+        ],
+        "MUM-01": [
+            {
+                "name": "Dharavi Municipal School",
+                "capacity": 800,
+                "distance": "0.3 km",
+                "status": "open",
+                "contact": "022-2407-XXXX"
+            },
+            {
+                "name": "Sion Hospital Shelter",
+                "capacity": 400,
+                "distance": "1.0 km",
+                "status": "open",
+                "contact": "022-2407-XXXX"
+            }
+        ],
+        "DEL-01": [
+            {
+                "name": "Yamuna Sports Complex",
+                "capacity": 2000,
+                "distance": "0.5 km",
+                "status": "open",
+                "contact": "011-2358-XXXX"
+            },
+            {
+                "name": "NDRF Base Camp",
+                "capacity": 500,
+                "distance": "2.0 km",
+                "status": "standby",
+                "contact": "011-2436-XXXX"
+            }
+        ]
+    },
+    "evacuationRoutes": {
+        "CHN-01": [
+            "NH-4 → Tambaram via Poonamallee",
+            "Kundrathur Road → Chromepet",
+            "Mount Road → Guindy"
+        ],
+        "MUM-01": [
+            "Eastern Express Highway → Thane",
+            "Western Express Highway → Borivali",
+            "LBS Marg → Mulund"
+        ],
+        "DEL-01": [
+            "Ring Road → Connaught Place",
+            "NH-24 → Noida",
+            "GT Karnal Road → Sonipat"
+        ]
+    },
+    "historicalFloodEvents": [
+        {
+            "year": 2015,
+            "region": "chennai",
+            "severity": "extreme",
+            "rainfall": 490,
+            "casualties": 269,
+            "affected": 1800000
+        },
+        {
+            "year": 2019,
+            "region": "patna",
+            "severity": "severe",
+            "rainfall": 210,
+            "casualties": 29,
+            "affected": 520000
+        },
+        {
+            "year": 2020,
+            "region": "hyderabad",
+            "severity": "severe",
+            "rainfall": 192,
+            "casualties": 50,
+            "affected": 380000
+        },
+        {
+            "year": 2021,
+            "region": "chennai",
+            "severity": "moderate",
+            "rainfall": 145,
+            "casualties": 14,
+            "affected": 95000
+        },
+        {
+            "year": 2022,
+            "region": "bengaluru",
+            "severity": "moderate",
+            "rainfall": 132,
+            "casualties": 5,
+            "affected": 45000
+        },
+        {
+            "year": 2023,
+            "region": "delhi",
+            "severity": "severe",
+            "rainfall": 228,
+            "casualties": 22,
+            "affected": 280000
+        },
+        {
+            "year": 2024,
+            "region": "mumbai",
+            "severity": "moderate",
+            "rainfall": 156,
+            "casualties": 8,
+            "affected": 120000
+        },
+        {
+            "year": 2024,
+            "region": "guwahati",
+            "severity": "extreme",
+            "rainfall": 312,
+            "casualties": 78,
+            "affected": 450000
+        },
+        {
+            "year": 2024,
+            "region": "kochi",
+            "severity": "severe",
+            "rainfall": 245,
+            "casualties": 35,
+            "affected": 280000
+        }
+    ],
+    "riskWeights": {
+        "elevation": 0.18,
+        "drainage": 0.15,
+        "rainfall": 0.25,
+        "sarWater": 0.22,
+        "socialMedia": 0.12,
+        "neighborPropagation": 0.08
+    },
+    "alertThresholds": {
+        "low": 25,
+        "elevated": 40,
+        "moderate": 55,
+        "high": 75,
+        "critical": 90
+    }
+}

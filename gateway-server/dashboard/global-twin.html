@@ -1,0 +1,486 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SentinelTwin — Global Command Center</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        :root {
+            --bg-deep: #0a0a0f;
+            --bg-surface: #12121a;
+            --bg-card: #1a1a24;
+            --bg-elevated: #242430;
+            --text-primary: #f0f0f5;
+            --text-secondary: #a0a0b0;
+            --text-muted: #606070;
+            --border: #2a2a3a;
+            --critical: #dc2626;
+            --high: #ef4444;
+            --moderate: #f97316;
+            --elevated: #eab308;
+            --low: #22c55e;
+            --success: #10b981;
+            --info: #06b6d4;
+            --accent: #3b82f6;
+            --purple: #a855f7;
+        }
+        * { margin:0; padding:0; box-sizing:border-box; }
+        body { font-family:'Inter',sans-serif; background:var(--bg-deep); color:var(--text-primary); min-height:100vh; overflow:hidden; }
+
+        .app-container { display:grid; grid-template-columns:1fr 320px; grid-template-rows:auto auto 1fr auto; height:100vh; }
+
+        /* ═══ HEADER ═══ */
+        .header { grid-column:1/-1; display:flex; align-items:center; gap:10px; padding:6px 12px; background:var(--bg-surface); border-bottom:1px solid var(--border); }
+        .header-divider { width:1px; height:28px; background:var(--border); flex-shrink:0; }
+        .header-group { display:flex; align-items:center; gap:6px; flex-shrink:0; }
+        .header-spacer { flex:1; min-width:4px; }
+
+        .logo { display:flex; align-items:center; gap:10px; }
+        .logo-icon { width:32px; height:32px; background:linear-gradient(135deg,var(--info),var(--accent)); border-radius:8px; display:flex; align-items:center; justify-content:center; font-size:16px; box-shadow:0 0 15px rgba(6,182,212,0.3); }
+        .logo-title { font-size:13px; font-weight:700; background:linear-gradient(90deg,var(--info),var(--accent)); -webkit-background-clip:text; background-clip:text; -webkit-text-fill-color:transparent; }
+        .logo-subtitle { font-size:9px; color:var(--text-muted); }
+
+        .stat-pill { display:flex; align-items:center; gap:4px; padding:3px 8px; background:var(--bg-card); border:1px solid var(--border); border-radius:6px; font-family:'JetBrains Mono'; font-size:11px; }
+        .stat-pill .dot { width:6px; height:6px; border-radius:50%; flex-shrink:0; }
+        .stat-pill .val { font-weight:700; }
+        .stat-pill .lbl { color:var(--text-muted); font-size:9px; margin-left:2px; }
+
+        .mode-pill { display:flex; align-items:center; gap:5px; padding:4px 10px; border-radius:12px; font-size:10px; font-weight:600; }
+        .mode-pill.live { background:rgba(16,185,129,0.15); border:1px solid var(--success); color:var(--success); }
+        .mode-pill .mode-dot { width:6px; height:6px; border-radius:50%; background:currentColor; animation:pulse 1.5s infinite; }
+        @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.4} }
+
+        .clock { font-family:'JetBrains Mono'; font-size:11px; color:var(--info); padding:4px 10px; background:var(--bg-elevated); border-radius:6px; border:1px solid var(--border); }
+
+        /* ═══ CRISIS TICKER ═══ */
+        .ticker-bar { grid-column:1/-1; background:rgba(220,38,38,0.06); border-bottom:1px solid rgba(220,38,38,0.15); overflow:hidden; height:32px; position:relative; }
+        .ticker-track { display:flex; align-items:center; height:100%; animation:scroll-ticker 50s linear infinite; white-space:nowrap; }
+        .ticker-item { display:inline-flex; align-items:center; gap:8px; padding:0 40px; font-family:'JetBrains Mono'; font-size:11px; }
+        .ticker-dot { width:6px; height:6px; border-radius:50%; flex-shrink:0; }
+        .ticker-dot.c { background:var(--critical); box-shadow:0 0 8px var(--critical); animation:pulse 1s infinite; }
+        .ticker-dot.e { background:var(--elevated); box-shadow:0 0 6px var(--elevated); }
+        .ticker-dot.n { background:var(--success); }
+        @keyframes scroll-ticker { 0%{transform:translateX(0)} 100%{transform:translateX(-50%)} }
+
+        /* ═══ MAIN CONTENT ═══ */
+        .main-content { grid-column:1; display:flex; flex-direction:column; overflow-y:auto; padding:20px; gap:20px; }
+        .main-content::-webkit-scrollbar { width:6px; }
+        .main-content::-webkit-scrollbar-thumb { background:var(--border); border-radius:3px; }
+
+        /* Causal Chain Section */
+        .section-label { font-size:10px; font-weight:700; color:var(--text-muted); text-transform:uppercase; letter-spacing:1.5px; margin-bottom:12px; display:flex; align-items:center; gap:8px; }
+        .section-label::after { content:''; flex:1; height:1px; background:var(--border); }
+
+        .trigger-card { background:rgba(220,38,38,0.05); border:1px solid rgba(220,38,38,0.25); border-radius:12px; padding:16px 20px; display:flex; align-items:center; gap:16px; }
+        .trigger-icon { width:44px; height:44px; border-radius:12px; background:rgba(220,38,38,0.1); display:flex; align-items:center; justify-content:center; font-size:22px; flex-shrink:0; border:1px solid rgba(220,38,38,0.3); }
+        .trigger-body h3 { font-size:13px; font-weight:700; color:var(--critical); margin-bottom:4px; }
+        .trigger-body p { font-size:11px; color:var(--text-secondary); line-height:1.5; }
+        .trigger-body strong { color:var(--text-primary); }
+
+        /* Node Chain */
+        .chain-row { display:flex; align-items:center; justify-content:center; gap:0; flex-wrap:nowrap; padding:8px 0; overflow-x:auto; }
+        .chain-node { display:flex; flex-direction:column; align-items:center; gap:6px; min-width:130px; text-decoration:none; cursor:pointer; transition:.2s; padding:8px; border-radius:10px; }
+        .chain-node:hover { background:rgba(255,255,255,0.03); transform:translateY(-2px); }
+        .cn-icon { width:40px; height:40px; border-radius:10px; display:flex; align-items:center; justify-content:center; font-size:18px; border:2px solid; position:relative; }
+        .cn-icon .pulse-ring { position:absolute; width:10px; height:10px; border-radius:50%; top:-4px; right:-4px; animation:pulse 2s infinite; }
+        .cn-icon.crit { background:rgba(220,38,38,0.1); border-color:rgba(220,38,38,0.5); }
+        .cn-icon.crit .pulse-ring { background:var(--critical); box-shadow:0 0 8px var(--critical); }
+        .cn-icon.warn { background:rgba(239,68,68,0.1); border-color:rgba(239,68,68,0.5); }
+        .cn-icon.warn .pulse-ring { background:var(--high); box-shadow:0 0 8px var(--high); }
+        .cn-icon.info { background:rgba(6,182,212,0.1); border-color:rgba(6,182,212,0.5); }
+        .cn-icon.info .pulse-ring { background:var(--info); box-shadow:0 0 8px var(--info); }
+        .cn-label { font-size:10px; font-weight:600; color:var(--text-secondary); text-align:center; }
+        .cn-val { font-family:'JetBrains Mono'; font-size:10px; font-weight:700; }
+
+        .chain-edge { width:40px; height:2px; background:linear-gradient(90deg,rgba(220,38,38,0.3),rgba(245,158,11,0.3)); position:relative; flex-shrink:0; }
+        .chain-edge .particle { position:absolute; width:6px; height:2px; background:var(--info); border-radius:1px; top:0; left:0; animation:flow 1.5s linear infinite; box-shadow:0 0 6px var(--info); }
+        @keyframes flow { 0%{left:0;opacity:1} 100%{left:100%;opacity:0} }
+
+        /* Module Cards Row */
+        .modules-row { display:grid; grid-template-columns:repeat(3,1fr); gap:16px; }
+        .mod-card { background:var(--bg-card); border:1px solid var(--border); border-radius:12px; padding:16px; text-decoration:none; color:inherit; transition:.2s; position:relative; overflow:hidden; display:flex; flex-direction:column; gap:12px; }
+        .mod-card:hover { border-color:rgba(255,255,255,0.1); transform:translateY(-3px); box-shadow:0 8px 24px rgba(0,0,0,0.4); }
+        .mod-card::before { content:''; position:absolute; top:0; left:0; width:100%; height:3px; }
+        .mod-card.infra::before { background:var(--info); }
+        .mod-card.supply::before { background:var(--moderate); }
+        .mod-card.econ::before { background:var(--success); }
+        .mod-head { display:flex; align-items:center; gap:10px; }
+        .mod-icon { width:36px; height:36px; border-radius:8px; display:flex; align-items:center; justify-content:center; font-size:18px; flex-shrink:0; }
+        .mod-card.infra .mod-icon { background:rgba(6,182,212,0.1); }
+        .mod-card.supply .mod-icon { background:rgba(249,115,22,0.1); }
+        .mod-card.econ .mod-icon { background:rgba(16,185,129,0.1); }
+        .mod-title { font-size:13px; font-weight:700; }
+        .mod-metrics { display:flex; flex-direction:column; gap:6px; }
+        .mm-row { display:flex; justify-content:space-between; align-items:center; font-size:10px; padding:4px 0; border-bottom:1px solid rgba(255,255,255,0.03); }
+        .mm-row:last-child { border-bottom:none; }
+        .mm-lbl { color:var(--text-muted); }
+        .mm-val { font-family:'JetBrains Mono'; font-weight:700; }
+        .mm-val.c { color:var(--critical); }
+        .mm-val.h { color:var(--high); }
+        .mm-val.s { color:var(--success); }
+        .mm-val.i { color:var(--info); }
+        .mod-btn { display:block; text-align:center; padding:8px; background:var(--bg-elevated); border-radius:6px; font-size:10px; font-weight:700; border:1px solid var(--border); color:var(--text-primary); text-decoration:none; transition:.2s; text-transform:uppercase; letter-spacing:0.5px; }
+        .mod-btn:hover { border-color:var(--info); color:var(--info); }
+
+        /* Demand Forecast Strip */
+        .forecast-strip { background:var(--bg-card); border:1px solid var(--border); border-radius:12px; padding:16px; }
+        .fs-header { display:flex; justify-content:space-between; align-items:center; margin-bottom:12px; }
+        .fs-title { font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:1px; display:flex; align-items:center; gap:8px; }
+        .ai-badge { font-size:9px; font-weight:700; background:rgba(6,182,212,0.1); color:var(--info); padding:2px 8px; border-radius:12px; border:1px solid rgba(6,182,212,0.2); }
+        .forecast-bars { display:flex; gap:16px; }
+        .fb-item { flex:1; }
+        .fb-name { font-size:10px; color:var(--text-muted); font-family:'JetBrains Mono'; margin-bottom:4px; }
+        .fb-bar { height:6px; background:rgba(255,255,255,0.05); border-radius:3px; overflow:hidden; }
+        .fb-fill { height:100%; border-radius:3px; transition:width 1.5s ease; }
+        .fb-meta { display:flex; justify-content:space-between; margin-top:4px; font-size:9px; font-family:'JetBrains Mono'; }
+
+        /* ═══ RIGHT PANEL ═══ */
+        .right-panel { grid-column:2; grid-row:3; background:var(--bg-surface); border-left:1px solid var(--border); display:flex; flex-direction:column; overflow-y:auto; }
+        .right-panel::-webkit-scrollbar { width:6px; }
+        .right-panel::-webkit-scrollbar-thumb { background:var(--border); border-radius:3px; }
+
+        .rp-section { padding:14px 16px; border-bottom:1px solid var(--border); }
+        .rp-heading { font-size:10px; font-weight:700; color:var(--text-muted); text-transform:uppercase; letter-spacing:1px; margin-bottom:10px; display:flex; align-items:center; justify-content:space-between; }
+        .rp-heading .badge { background:rgba(6,182,212,0.1); color:var(--info); padding:2px 6px; border-radius:4px; font-size:9px; font-family:'JetBrains Mono'; border:1px solid rgba(6,182,212,0.2); }
+
+        .alert-card { background:var(--bg-card); border:1px solid; border-radius:8px; padding:10px 12px; margin-bottom:8px; position:relative; }
+        .alert-card.crit { border-color:rgba(220,38,38,0.3); }
+        .alert-card.warn { border-color:rgba(239,68,68,0.3); }
+        .alert-card::before { content:''; position:absolute; left:0; top:0; height:100%; width:3px; border-radius:8px 0 0 8px; }
+        .alert-card.crit::before { background:var(--critical); }
+        .alert-card.warn::before { background:var(--high); }
+        .ac-title { font-size:10px; font-weight:700; margin-bottom:4px; }
+        .alert-card.crit .ac-title { color:var(--critical); }
+        .alert-card.warn .ac-title { color:var(--high); }
+        .ac-text { font-size:10px; color:var(--text-secondary); line-height:1.4; }
+
+        .intel-row { display:flex; justify-content:space-between; align-items:center; padding:8px 10px; background:var(--bg-card); border:1px solid var(--border); border-radius:6px; margin-bottom:6px; }
+        .ir-label { font-size:10px; color:var(--text-muted); display:flex; flex-direction:column; gap:2px; }
+        .ir-title { color:var(--text-primary); font-weight:600; font-size:11px; }
+        .ir-val { font-family:'JetBrains Mono'; font-size:11px; font-weight:700; }
+
+        /* Live Activity Feed */
+        .feed-entry { display:flex; gap:8px; padding:6px 0; border-bottom:1px solid rgba(255,255,255,0.03); font-size:10px; }
+        .fe-time { color:var(--text-muted); font-family:'JetBrains Mono'; width:50px; flex-shrink:0; }
+        .fe-tag { font-family:'JetBrains Mono'; font-weight:700; width:60px; flex-shrink:0; }
+        .fe-msg { color:var(--text-secondary); line-height:1.3; }
+
+        /* Mobile Companion Cards */
+        .companion-card { background:var(--bg-card); border:1px solid var(--accent); border-radius:10px; padding:12px; margin-bottom:10px; display:flex; align-items:center; justify-content:space-between; transition:0.2s; position:relative; overflow:hidden; text-decoration:none; color:inherit; }
+        .companion-card:hover { transform:translateY(-2px); border-color:var(--info); box-shadow:0 0 15px rgba(6,182,212,0.15); }
+        .companion-card::before { content:''; position:absolute; top:0; left:0; width:100%; height:100%; background:linear-gradient(45deg, rgba(59,130,246,0.05), transparent); z-index:0; }
+        .comp-info { display:flex; gap:10px; align-items:center; position:relative; z-index:1; }
+        .comp-icon { font-size:24px; }
+        .comp-text h4 { font-size:12px; font-weight:700; color:var(--text-primary); margin-bottom:2px; }
+        .comp-text p { font-size:10px; color:var(--text-secondary); margin:0; }
+        .comp-qr { width:36px; height:36px; background:#fff; padding:3px; border-radius:6px; position:relative; z-index:1; }
+
+        /* Mini Chart */
+        .mini-chart-wrap { height:120px; position:relative; margin-top:8px; }
+
+        /* ═══ FOOTER ═══ */
+        .footer-bar { grid-column:1/-1; display:flex; background:var(--bg-surface); border-top:1px solid var(--border); height:26px; font-family:'JetBrains Mono'; font-size:10px; }
+        .fb-item-foot { display:flex; align-items:center; padding:0 14px; border-right:1px solid var(--border); color:var(--text-secondary); gap:6px; }
+        .fb-item-foot .dot { width:5px; height:5px; border-radius:50%; background:var(--success); }
+        .fb-item-foot strong { color:var(--text-primary); }
+    </style>
+</head>
+<body>
+<div class="app-container">
+
+    <!-- HEADER -->
+    <header class="header">
+        <div class="logo">
+            <div class="logo-icon">🌐</div>
+            <div>
+                <div class="logo-title">SentinelTwin</div>
+                <div class="logo-subtitle">GLOBAL COMMAND CENTER</div>
+            </div>
+        </div>
+        <div class="header-divider"></div>
+
+        <div class="header-group">
+            <div class="stat-pill"><div class="dot" style="background:var(--critical)"></div><span class="val" id="kpiCrisis">1</span><span class="lbl">Crisis</span></div>
+            <div class="stat-pill"><div class="dot" style="background:var(--high)"></div><span class="val" id="kpiBlocked">12%</span><span class="lbl">Blocked</span></div>
+            <div class="stat-pill"><div class="dot" style="background:var(--elevated)"></div><span class="val" id="kpiDelay">+4.2d</span><span class="lbl">Delay</span></div>
+            <div class="stat-pill"><div class="dot" style="background:var(--info)"></div><span class="val" id="kpiSKUs">111</span><span class="lbl">At Risk</span></div>
+            <div class="stat-pill"><div class="dot" style="background:var(--success)"></div><span class="val" id="kpiAccuracy">92%</span><span class="lbl">Model</span></div>
+        </div>
+
+        <div class="header-spacer"></div>
+
+        <div class="header-group">
+            <div class="mode-pill live"><div class="mode-dot"></div>INTELLIGENCE SYNC</div>
+            <div class="clock" id="liveClock">00:00:00</div>
+        </div>
+    </header>
+
+    <!-- CRISIS TICKER -->
+    <div class="ticker-bar">
+        <div class="ticker-track" id="crisisTicker">
+            <div class="ticker-item"><span class="ticker-dot c"></span><span style="color:var(--critical)">CRITICAL</span> Red Sea shipping corridor — Houthi-linked blockade disrupting 12% of global oil transit</div>
+            <div class="ticker-item"><span class="ticker-dot e"></span><span style="color:var(--elevated)">ELEVATED</span> OPEC+ emergency session — production cut extension under discussion</div>
+            <div class="ticker-item"><span class="ticker-dot c"></span><span style="color:var(--critical)">CRITICAL</span> Brent Crude $92/bbl — 5.2% surge in 48h</div>
+            <div class="ticker-item"><span class="ticker-dot e"></span><span style="color:var(--elevated)">ELEVATED</span> Strait of Hormuz transit delay +3.8d average</div>
+            <div class="ticker-item"><span class="ticker-dot n"></span><span style="color:var(--success)">NORMAL</span> Strategic Petroleum Reserve — India holds 39 days cover</div>
+            <!-- duplicate for seamless scroll -->
+            <div class="ticker-item"><span class="ticker-dot c"></span><span style="color:var(--critical)">CRITICAL</span> Red Sea shipping corridor — Houthi-linked blockade disrupting 12% of global oil transit</div>
+            <div class="ticker-item"><span class="ticker-dot e"></span><span style="color:var(--elevated)">ELEVATED</span> OPEC+ emergency session — production cut extension under discussion</div>
+            <div class="ticker-item"><span class="ticker-dot c"></span><span style="color:var(--critical)">CRITICAL</span> Brent Crude $92/bbl — 5.2% surge in 48h</div>
+            <div class="ticker-item"><span class="ticker-dot e"></span><span style="color:var(--elevated)">ELEVATED</span> Strait of Hormuz transit delay +3.8d average</div>
+            <div class="ticker-item"><span class="ticker-dot n"></span><span style="color:var(--success)">NORMAL</span> Strategic Petroleum Reserve — India holds 39 days cover</div>
+        </div>
+    </div>
+
+    <!-- MAIN CONTENT -->
+    <main class="main-content">
+        <div class="section-label">ACTIVE DISRUPTION CASCADE</div>
+
+        <div class="trigger-card">
+            <div class="trigger-icon">⚔</div>
+            <div class="trigger-body">
+                <h3>RED SEA MARITIME BLOCKADE</h3>
+                <p><strong>Region:</strong> Red Sea Corridor & Strait of Hormuz · <strong>Impact:</strong> 47 countries · 12% of global oil transit · <strong>Duration:</strong> Ongoing 14+ days</p>
+            </div>
+        </div>
+
+        <div class="chain-row">
+            <a href="flood-nowcast.html" class="chain-node">
+                <div class="cn-icon crit"><div class="pulse-ring"></div>⚓</div>
+                <div class="cn-label">Port Restriction</div>
+                <div class="cn-val" style="color:var(--critical)" id="chainPort">DISRUPTED</div>
+            </a>
+            <div class="chain-edge"><div class="particle"></div></div>
+            <a href="routing-dashboard.html" class="chain-node">
+                <div class="cn-icon warn"><div class="pulse-ring"></div>🚛</div>
+                <div class="cn-label">Fleet Delay</div>
+                <div class="cn-val" style="color:var(--high)" id="chainDelay">+4.2 DAYS</div>
+            </a>
+            <div class="chain-edge"><div class="particle" style="animation-delay:.4s"></div></div>
+            <a href="inventory-forecast.html" class="chain-node">
+                <div class="cn-icon warn"><div class="pulse-ring"></div>📈</div>
+                <div class="cn-label">Panic Buy Surge</div>
+                <div class="cn-val" style="color:var(--high)" id="chainDemand">+22% DEMAND</div>
+            </a>
+            <div class="chain-edge"><div class="particle" style="animation-delay:.8s"></div></div>
+            <a href="risk-alerts-dashboard.html" class="chain-node">
+                <div class="cn-icon info"><div class="pulse-ring"></div>💰</div>
+                <div class="cn-label">Market Impact</div>
+                <div class="cn-val" style="color:var(--info)" id="chainMarket">BRENT +5.2%</div>
+            </a>
+            <div class="chain-edge"><div class="particle" style="animation-delay:1.2s"></div></div>
+            <a href="inventory-forecast.html" class="chain-node">
+                <div class="cn-icon crit"><div class="pulse-ring"></div>📦</div>
+                <div class="cn-label">Inventory Crisis</div>
+                <div class="cn-val" style="color:var(--critical)" id="chainStockout">3 SKUs RISK</div>
+            </a>
+        </div>
+
+        <div class="section-label">TWIN MODULES</div>
+
+        <div class="modules-row">
+            <a href="flood-nowcast.html" class="mod-card infra">
+                <div class="mod-head"><div class="mod-icon">🌊</div><div class="mod-title">Infrastructure Twin</div></div>
+                <div class="mod-metrics">
+                    <div class="mm-row"><span class="mm-lbl">Port Operations</span><span class="mm-val c" id="modPortStatus">RESTRICTED</span></div>
+                    <div class="mm-row"><span class="mm-lbl">Flood Zones</span><span class="mm-val h" id="modFloodZones">3 Active</span></div>
+                    <div class="mm-row"><span class="mm-lbl">Roads Impacted</span><span class="mm-val h">NH-45, NH-32</span></div>
+                </div>
+                <div class="mod-btn">Launch Dashboard →</div>
+            </a>
+            <a href="routing-dashboard.html" class="mod-card supply">
+                <div class="mod-head"><div class="mod-icon">🚛</div><div class="mod-title">Supply Chain Twin</div></div>
+                <div class="mod-metrics">
+                    <div class="mm-row"><span class="mm-lbl">Avg Delay</span><span class="mm-val h" id="modAvgDelay">+4.2 DAYS</span></div>
+                    <div class="mm-row"><span class="mm-lbl">AI Rerouting</span><span class="mm-val i">3 Routes Active</span></div>
+                    <div class="mm-row"><span class="mm-lbl">Cost Impact</span><span class="mm-val h">+₹4.2L/wk</span></div>
+                </div>
+                <div class="mod-btn">Launch Dashboard →</div>
+            </a>
+            <a href="risk-alerts-dashboard.html" class="mod-card econ">
+                <div class="mod-head"><div class="mod-icon">📈</div><div class="mod-title">Economic Twin</div></div>
+                <div class="mod-metrics">
+                    <div class="mm-row"><span class="mm-lbl">Brent Crude</span><span class="mm-val s" id="modBrent">+5.2% Surge</span></div>
+                    <div class="mm-row"><span class="mm-lbl">Transport Sector</span><span class="mm-val c">-3.8%</span></div>
+                    <div class="mm-row"><span class="mm-lbl">Stockout Risk</span><span class="mm-val c" id="modStockoutRisk">HIGH — 3 SKUs</span></div>
+                </div>
+                <div class="mod-btn">Launch Dashboard →</div>
+            </a>
+        </div>
+
+        <div class="section-label">ML DEMAND FORECAST OVERVIEW</div>
+
+        <div class="forecast-strip">
+            <div class="fs-header">
+                <div class="fs-title">📊 7-Day Horizon <span class="ai-badge">AI Engine · 4.2% MAPE</span></div>
+            </div>
+            <div class="forecast-bars" id="forecastBars"></div>
+        </div>
+    </main>
+
+    <!-- RIGHT PANEL -->
+    <aside class="right-panel">
+        
+        <div class="rp-section" style="padding-bottom:8px">
+            <div class="rp-heading"><span>📱 MOBILE COMPANIONS</span> <span class="badge">LINKS</span></div>
+            <a href="mobile-inventory-app.html" target="_blank" class="companion-card" style="border-color:var(--moderate)">
+                <div class="comp-info">
+                    <div class="comp-icon">📦</div>
+                    <div class="comp-text"><h4>Inventory App</h4><p>Managers & Planners</p></div>
+                </div>
+                <div class="comp-qr" style="background:url('data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 10 10\'><rect width=\'10\' height=\'10\' fill=\'white\'/><path d=\'M1,1v3h3V1H1zM2,2h1v1H2V2zM6,1v3h3V1H6zM7,2h1v1H7V2zM1,6v3h3V6H1zM2,7h1v1H2V7zM6,6v1h1V6H6zM8,6v1h1V8H8zM6,8v1h1V8H6z\' fill=\'black\'/></svg>') center/cover"></div>
+            </a>
+            <a href="mobile-rescue-app.html" target="_blank" class="companion-card" style="border-color:var(--critical)">
+                <div class="comp-info">
+                    <div class="comp-icon">🚁</div>
+                    <div class="comp-text"><h4>RescueLink App</h4><p>Field Responders</p></div>
+                </div>
+                <div class="comp-qr" style="background:url('data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 10 10\'><rect width=\'10\' height=\'10\' fill=\'white\'/><path d=\'M1,1v3h3V1H1zM2,2h1v1H2V2zM6,1v3h3V1H6zM7,2h1v1H7V2zM1,6v3h3V6H1zM2,7h1v1H2V7zM6,6v1h1V6H6zM8,6v1h1V8H8zM6,8v1h1V8H6z\' fill=\'black\'/></svg>') center/cover"></div>
+            </a>
+        </div>
+
+        <div class="rp-section">
+            <div class="rp-heading">GLOBAL RISK SYNTHESIS <span class="badge">LIVE</span></div>
+            <div class="alert-card crit">
+                <div class="ac-title">OPEC+ RESPONSE TRIGGERED</div>
+                <div class="ac-text">Emergency session confirmed. Production cut extensions anticipated, exacerbating Q3 fuel inventory forecasts.</div>
+            </div>
+            <div class="alert-card warn">
+                <div class="ac-title">SUPPLY CHAIN CASCADE</div>
+                <div class="ac-text">Transit delay now at +3.8d average through Hormuz corridor. Routing engine has activated 3 alternative paths.</div>
+            </div>
+        </div>
+
+        <div class="rp-section">
+            <div class="rp-heading">MARKET INDICATORS <span class="badge">REALTIME</span></div>
+            <div class="intel-row"><div class="ir-label"><span class="ir-title">Brent Crude</span>Oil Benchmark</div><div class="ir-val" style="color:var(--info)" id="rpBrent">+5.2%</div></div>
+            <div class="intel-row"><div class="ir-label"><span class="ir-title">Strait Transit</span>Avg Blockage</div><div class="ir-val" style="color:var(--high)" id="rpTransit">+3.8 Days</div></div>
+            <div class="intel-row"><div class="ir-label"><span class="ir-title">India Fuel Reserve</span>Strategic Buffer</div><div class="ir-val" style="color:var(--success)">39 Days</div></div>
+        </div>
+
+        <div class="rp-section">
+            <div class="rp-heading">DEMAND SPIKES <span class="badge" style="color:var(--moderate);border-color:rgba(249,115,22,0.3);background:rgba(249,115,22,0.1)">AI MODEL</span></div>
+            <div id="rpDemandFeed"></div>
+        </div>
+
+        <div class="rp-section" style="flex:1;">
+            <div class="rp-heading">LIVE ACTIVITY <span class="badge">STREAMING</span></div>
+            <div id="activityFeed"></div>
+        </div>
+    </aside>
+
+    <!-- FOOTER -->
+    <footer class="footer-bar">
+        <div class="fb-item-foot"><div class="dot"></div>System: <strong>Operational</strong></div>
+        <div class="fb-item-foot">Causal Model: <strong>v2.0</strong></div>
+        <div class="fb-item-foot">Feeds: <strong>POS · GPS · Weather · Commodities</strong></div>
+        <div class="fb-item-foot">TNI26086 · <strong>KIT Hackathon 14-Mar-2026</strong></div>
+    </footer>
+</div>
+
+<script>
+(function(){
+    'use strict';
+
+    // ─── CLOCK ───
+    function updateClock(){
+        const now=new Date();
+        document.getElementById('liveClock').textContent=
+            String(now.getHours()).padStart(2,'0')+':'+
+            String(now.getMinutes()).padStart(2,'0')+':'+
+            String(now.getSeconds()).padStart(2,'0');
+    }
+    setInterval(updateClock,1000); updateClock();
+
+    // ─── FORECAST BARS ───
+    const skus=[
+        {name:'Diesel 500L',conf:96,trend:'+22%',color:'var(--critical)'},
+        {name:'Petrol 200L',conf:91,trend:'+12%',color:'var(--high)'},
+        {name:'LPG Cylinders',conf:88,trend:'Stable',color:'var(--success)'},
+        {name:'Aviation Fuel',conf:82,trend:'+8%',color:'var(--moderate)'},
+        {name:'Kerosene',conf:94,trend:'+5%',color:'var(--info)'}
+    ];
+    const barsEl=document.getElementById('forecastBars');
+    skus.forEach(s=>{
+        const d=document.createElement('div'); d.className='fb-item';
+        d.innerHTML=`<div class="fb-name">${s.name}</div><div class="fb-bar"><div class="fb-fill" style="width:0%;background:${s.color}"></div></div><div class="fb-meta"><span style="color:${s.color}">${s.conf}% conf</span><span>${s.trend}</span></div>`;
+        barsEl.appendChild(d);
+    });
+    setTimeout(()=>{ document.querySelectorAll('.fb-fill').forEach((el,i)=>{ el.style.width=skus[i].conf+'%'; }); },300);
+
+    // ─── DEMAND FEED (Right Panel) ───
+    const feedEl=document.getElementById('rpDemandFeed');
+    const spikes=[
+        {name:'Diesel 500L',conf:'96%',val:'+22% Req',color:'var(--critical)',border:'rgba(220,38,38,0.3)'},
+        {name:'Petrol 200L',conf:'91%',val:'+12% Req',color:'var(--high)',border:'rgba(239,68,68,0.3)'},
+        {name:'Aviation Fuel',conf:'82%',val:'+8% Req',color:'var(--info)',border:'rgba(6,182,212,0.3)'},
+        {name:'LPG Cylinders',conf:'88%',val:'Stable',color:'var(--success)',border:'rgba(16,185,129,0.3)'}
+    ];
+    spikes.forEach(s=>{
+        feedEl.innerHTML+=`<div class="intel-row" style="border-left:3px solid ${s.border};margin-bottom:6px;"><div class="ir-label"><span class="ir-title">${s.name}</span>${s.conf} Confidence</div><div class="ir-val" style="color:${s.color}">${s.val}</div></div>`;
+    });
+
+    // ─── LIVE ACTIVITY FEED ───
+    const actEl=document.getElementById('activityFeed');
+    const activities=[
+        {tag:'API',color:'var(--success)',msg:'POS feed connected — 120 SKUs streaming'},
+        {tag:'MODEL',color:'var(--info)',msg:'Holt-Winters retrained — MAPE 4.2%'},
+        {tag:'ALERT',color:'var(--critical)',msg:'SKU-1001 Portable Radio — 100% stockout risk'},
+        {tag:'ROUTE',color:'var(--moderate)',msg:'NH-45 rerouted via Salem bypass (+18km)'},
+        {tag:'SYNC',color:'var(--info)',msg:'Cross-dashboard state broadcast complete'},
+    ];
+    function addActivity(a){
+        const now=new Date();
+        const t=String(now.getHours()).padStart(2,'0')+':'+String(now.getMinutes()).padStart(2,'0');
+        actEl.innerHTML=`<div class="feed-entry"><span class="fe-time">${t}</span><span class="fe-tag" style="color:${a.color}">[${a.tag}]</span><span class="fe-msg">${a.msg}</span></div>`+actEl.innerHTML;
+        if(actEl.children.length>15) actEl.removeChild(actEl.lastChild);
+    }
+    activities.forEach(a=>addActivity(a));
+
+    // Dynamic feed every 8s
+    const dynamicMsgs=[
+        {tag:'POS',color:'var(--success)',msg:'Sales burst detected: Diesel +14 units last hour'},
+        {tag:'MODEL',color:'var(--info)',msg:'Anomaly flagged: SKU-2041 deviation >2σ'},
+        {tag:'ROUTE',color:'var(--moderate)',msg:'Fleet #7 ETA updated: 14:22 → 15:45 (+83m)'},
+        {tag:'WEATHER',color:'var(--elevated)',msg:'IMD Heavy Rain Warning — Chennai region, 48h window'},
+        {tag:'STOCK',color:'var(--critical)',msg:'Safety stock breach: SKU-8020 N95 Masks'},
+        {tag:'SYNC',color:'var(--info)',msg:'Routing engine pushed updated ETA to inventory planner'},
+    ];
+    let msgIdx=0;
+    setInterval(()=>{ addActivity(dynamicMsgs[msgIdx%dynamicMsgs.length]); msgIdx++; },8000);
+
+    // ─── CROSS-DASHBOARD SYNC (localStorage) ───
+    function writeState(){
+        const geoRisk=75+Math.floor(Math.random()*12);
+        localStorage.setItem('sentinel_geo_risk',JSON.stringify({score:geoRisk,updated:new Date().toISOString()}));
+        localStorage.setItem('sentinel_forecast_skus',JSON.stringify(skus.map(s=>({name:s.name,confidence:s.conf+(Math.random()*4-2),trend:s.trend}))));
+        localStorage.setItem('sentinel_infrastructure',JSON.stringify({portStatus:'RESTRICTED',roadsImpacted:['NH-45','NH-32'],floodZonesActive:3,updated:new Date().toISOString()}));
+    }
+    writeState();
+    setInterval(writeState,5000);
+
+    // ─── DYNAMIC KPI UPDATES (Simulate real-time fluctuations) ───
+    function updateKPIs(){
+        const delay=(3.8+Math.random()*1.2).toFixed(1);
+        const critSKUs=Math.floor(108+Math.random()*8);
+        const acc=Math.floor(89+Math.random()*5);
+        document.getElementById('kpiDelay').textContent='+'+delay+'d';
+        document.getElementById('kpiSKUs').textContent=critSKUs;
+        document.getElementById('kpiAccuracy').textContent=acc+'%';
+        document.getElementById('chainDelay').textContent='+'+delay+' DAYS';
+        document.getElementById('modAvgDelay').textContent='+'+delay+' DAYS';
+        
+        const brent=(4.5+Math.random()*1.5).toFixed(1);
+        document.getElementById('rpBrent').textContent='+'+brent+'%';
+        document.getElementById('modBrent').textContent='+'+brent+'% Surge';
+        document.getElementById('chainMarket').textContent='BRENT +'+brent+'%';
+    }
+    setInterval(updateKPIs,6000);
+
+})();
+</script>
+</body>
+</html>

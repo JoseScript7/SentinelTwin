@@ -1,0 +1,633 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RescueLink Command Center</title>
+    <link rel="stylesheet" href="dashboard.css">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.4.1/dist/MarkerCluster.css" />
+    <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.4.1/dist/MarkerCluster.Default.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500&display=swap"
+        rel="stylesheet">
+    <style>
+        /* Additional modern styles for enhanced UI */
+        .quick-actions {
+            display: flex;
+            gap: 8px;
+            margin-left: 12px;
+        }
+
+        .quick-action-btn {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            transition: all 0.2s;
+            text-decoration: none;
+        }
+
+        .quick-action-btn.mobile {
+            background: linear-gradient(135deg, #dc2626, #991b1b);
+            color: white;
+        }
+
+        .quick-action-btn.mobile:hover {
+            transform: scale(1.05);
+            box-shadow: 0 4px 15px rgba(220, 38, 38, 0.4);
+        }
+
+        .quick-action-btn.flood {
+            background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+            color: white;
+        }
+
+        .quick-action-btn.flood:hover {
+            transform: scale(1.05);
+            box-shadow: 0 4px 15px rgba(59, 130, 246, 0.4);
+        }
+
+        /* Improved flood widget - now a collapsible corner card */
+        .flood-widget {
+            position: absolute;
+            bottom: 16px;
+            left: 16px;
+            background: linear-gradient(135deg, rgba(26, 26, 36, 0.95), rgba(18, 18, 26, 0.95));
+            border: 1px solid rgba(59, 130, 246, 0.3);
+            border-radius: 12px;
+            padding: 0;
+            width: 320px;
+            z-index: 1000;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+            overflow: hidden;
+        }
+
+        .flood-widget-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 16px;
+            background: rgba(59, 130, 246, 0.1);
+            cursor: pointer;
+        }
+
+        .flood-widget-header:hover {
+            background: rgba(59, 130, 246, 0.15);
+        }
+
+        .flood-widget-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: #3b82f6;
+        }
+
+        .flood-widget-link {
+            font-size: 12px;
+            color: #60a5fa;
+            text-decoration: none;
+        }
+
+        .flood-widget-content {
+            padding: 12px 16px;
+        }
+
+        .flood-risk-zones {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 8px;
+            margin-bottom: 12px;
+        }
+
+        .flood-zone-mini {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 8px;
+            padding: 8px 12px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .fzm-name {
+            font-size: 12px;
+            color: #a0a0b0;
+        }
+
+        .fzm-risk {
+            font-size: 16px;
+            font-weight: 700;
+        }
+
+        .fzm-risk.high {
+            color: #ef4444;
+        }
+
+        .fzm-risk.moderate {
+            color: #f59e0b;
+        }
+
+        .fzm-risk.elevated {
+            color: #eab308;
+        }
+
+        .fzm-risk.low {
+            color: #22c55e;
+        }
+
+        .flood-widget-stats {
+            display: flex;
+            gap: 16px;
+            padding-top: 12px;
+            border-top: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        .fws-item {
+            flex: 1;
+            text-align: center;
+        }
+
+        .fws-value {
+            font-size: 18px;
+            font-weight: 700;
+            color: #3b82f6;
+        }
+
+        .fws-label {
+            font-size: 10px;
+            color: #666;
+            text-transform: uppercase;
+        }
+
+        /* Map legend improvement */
+        .map-legend {
+            position: absolute;
+            bottom: 16px;
+            right: 16px;
+            background: rgba(26, 26, 36, 0.9);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            padding: 10px 14px;
+            display: flex;
+            gap: 16px;
+            z-index: 999;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 11px;
+            color: #a0a0b0;
+        }
+
+        .legend-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+        }
+
+        .legend-dot.sos-critical {
+            background: #ef4444;
+        }
+
+        .legend-dot.sos-warning {
+            background: #f59e0b;
+        }
+
+        .legend-dot.sos-low {
+            background: #22c55e;
+        }
+
+        .legend-dot.rescue {
+            background: #40c4ff;
+        }
+
+        /* Mobile SOS share QR */
+        .mobile-share-btn {
+            position: fixed;
+            bottom: 20px;
+            left: 350px;
+            background: linear-gradient(135deg, #dc2626, #991b1b);
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 25px;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            z-index: 1001;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            box-shadow: 0 4px 15px rgba(220, 38, 38, 0.4);
+        }
+
+        .mobile-share-btn:hover {
+            transform: scale(1.05);
+        }
+
+        /* GSM Simulation Styling */
+        .quick-action-btn.gsm {
+            background: linear-gradient(135deg, #10b981, #059669);
+            color: white;
+        }
+
+        .quick-action-btn.gsm:hover {
+            transform: scale(1.05);
+            box-shadow: 0 4px 15px rgba(16, 185, 129, 0.4);
+        }
+
+        .gsm-log {
+            background: #111;
+            color: #0f0;
+            font-family: 'Courier New', monospace;
+            padding: 10px;
+            height: 150px;
+            overflow-y: auto;
+            border-radius: 4px;
+            margin-top: 10px;
+            font-size: 12px;
+            text-align: left;
+            border: 1px solid #333;
+        }
+
+        .gsm-input {
+            width: 100%;
+            padding: 10px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: white;
+            border-radius: 6px;
+            margin-bottom: 10px;
+            font-family: inherit;
+        }
+
+        .quick-action-btn.inventory {
+            background: linear-gradient(135deg, #f59e0b, #d97706);
+            color: white;
+        }
+
+        .quick-action-btn.inventory:hover {
+            transform: scale(1.05);
+            box-shadow: 0 4px 15px rgba(245, 158, 11, 0.4);
+        }
+    </style>
+</head>
+
+<body>
+    <div class="dashboard-container">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-left">
+                <div class="logo">
+                    <div class="logo-icon">🆘</div>
+                    <div class="logo-text">
+                        <span class="logo-title">RescueLink</span>
+                        <span class="logo-subtitle">Command Center</span>
+                    </div>
+                </div>
+            </div>
+            <div class="header-center">
+                <div class="stat-cards">
+                    <div class="stat-card critical">
+                        <span class="stat-value" id="criticalCount">0</span>
+                        <span class="stat-label">Critical</span>
+                    </div>
+                    <div class="stat-card warning">
+                        <span class="stat-value" id="warningCount">0</span>
+                        <span class="stat-label">Medium</span>
+                    </div>
+                    <div class="stat-card active">
+                        <span class="stat-value" id="activeCount">0</span>
+                        <span class="stat-label">Active</span>
+                    </div>
+                    <div class="stat-card resolved">
+                        <span class="stat-value" id="resolvedCount">0</span>
+                        <span class="stat-label">Resolved</span>
+                    </div>
+                </div>
+            </div>
+            <div class="header-right">
+                <div class="quick-actions">
+                    <a href="mobile-sos.html" target="_blank" class="quick-action-btn mobile"
+                        title="Open Mobile SOS App">
+                        📱 Mobile SOS
+                    </a>
+                    <button onclick="openGSMPanel()" class="quick-action-btn gsm" title="Simulate Offline SMS">
+                        📡 GSM Signal
+                    </button>
+                    <a href="flood-nowcast.html" class="quick-action-btn flood" title="AI Flood Nowcasting">
+                        🌊 Flood Nowcast
+                    </a>
+                    <a href="inventory-forecast.html" class="quick-action-btn inventory"
+                        title="ML Inventory Forecasting">
+                        📦 Inventory AI
+                    </a>
+                </div>
+                <div class="connection-indicator" id="connectionIndicator">
+                    <span class="indicator-dot"></span>
+                    <span class="indicator-text">Connecting...</span>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Map Section -->
+            <section class="map-section">
+                <div class="map-header">
+                    <h2>📍 Live Emergency Map</h2>
+                    <div class="map-controls">
+                        <button class="map-btn" id="toggleClustering" title="Toggle Clustering">
+                            <span>🔗</span> Cluster
+                        </button>
+                        <button class="map-btn" id="centerMap" title="Center Map">
+                            <span>🎯</span> Center
+                        </button>
+                    </div>
+                </div>
+                <div id="map"></div>
+
+                <!-- Map Legend -->
+                <div class="map-legend">
+                    <span class="legend-item"><span class="legend-dot sos-critical"></span> Critical</span>
+                    <span class="legend-item"><span class="legend-dot sos-warning"></span> Medium</span>
+                    <span class="legend-item"><span class="legend-dot sos-low"></span> Low</span>
+                    <span class="legend-item"><span class="legend-dot rescue"></span> Rescue Team</span>
+                </div>
+
+                <!-- Flood Risk Widget - Collapsible Corner Card -->
+                <div class="flood-widget" id="floodWidget">
+                    <div class="flood-widget-header" onclick="toggleFloodWidget()">
+                        <span class="flood-widget-title">🌊 Live Flood Risk</span>
+                        <a href="flood-nowcast.html" class="flood-widget-link" onclick="event.stopPropagation()">Open
+                            Nowcast →</a>
+                    </div>
+                    <div class="flood-widget-content" id="floodWidgetContent">
+                        <div class="flood-risk-zones" id="floodRiskZones">
+                            <div class="flood-zone-mini" data-risk="72">
+                                <span class="fzm-name">Porur</span>
+                                <span class="fzm-risk high">72%</span>
+                            </div>
+                            <div class="flood-zone-mini" data-risk="58">
+                                <span class="fzm-name">Velachery</span>
+                                <span class="fzm-risk moderate">58%</span>
+                            </div>
+                            <div class="flood-zone-mini" data-risk="45">
+                                <span class="fzm-name">Marina</span>
+                                <span class="fzm-risk elevated">45%</span>
+                            </div>
+                            <div class="flood-zone-mini" data-risk="28">
+                                <span class="fzm-name">T.Nagar</span>
+                                <span class="fzm-risk low">28%</span>
+                            </div>
+                        </div>
+                        <div class="flood-widget-stats">
+                            <div class="fws-item">
+                                <span class="fws-value" id="fwRainfall">0</span>
+                                <span class="fws-label">mm/hr</span>
+                            </div>
+                            <div class="fws-item">
+                                <span class="fws-value" id="fwAlerts">0</span>
+                                <span class="fws-label">Alerts</span>
+                            </div>
+                            <div class="fws-item">
+                                <span class="fws-value" id="fwSOS">0</span>
+                                <span class="fws-label">SOS</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Mobile Share Button -->
+                <button class="mobile-share-btn" onclick="showShareModal()">
+                    📲 Share App (QR)
+                </button>
+            </section>
+
+            <!-- Alerts Panel -->
+            <aside class="alerts-panel">
+                <div class="panel-header">
+                    <h2>🚨 Emergency Alerts</h2>
+                    <div class="filter-tabs">
+                        <button class="filter-tab active" data-filter="all">All</button>
+                        <button class="filter-tab" data-filter="new">New</button>
+                        <button class="filter-tab" data-filter="critical">Critical</button>
+                    </div>
+                </div>
+                <div class="alerts-list" id="alertsList">
+                    <div class="no-alerts">
+                        <div class="no-alerts-icon">📡</div>
+                        <p>Waiting for SOS alerts...</p>
+                        <p class="no-alerts-sub">Connect mobile devices to receive emergency signals</p>
+                    </div>
+                </div>
+            </aside>
+        </main>
+
+        <!-- Share Modal -->
+        <div class="modal" id="shareModal">
+            <div class="modal-content" style="max-width: 400px; text-align: center;">
+                <div class="modal-header">
+                    <h3>📲 Download Mobile App</h3>
+                    <button class="modal-close" onclick="closeShareModal()">✕</button>
+                </div>
+                <div class="modal-body" style="display: flex; flex-direction: column; align-items: center; gap: 20px;">
+                    <div id="qrcode"></div>
+                    <p style="color: #a0a0b0; font-size: 14px;">
+                        1. Connect phone to same WiFi<br>
+                        2. Scan this QR code<br>
+                        3. Tap <strong>"Install App"</strong> button
+                    </p>
+                    <div
+                        style="background: rgba(255,255,255,0.1); padding: 10px; border-radius: 8px; font-family: monospace;">
+                        http://192.168.0.105:5000/mobile-sos.html
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- GSM Simulation Modal -->
+        <div class="modal" id="gsmModal">
+            <div class="modal-content" style="max-width: 500px; background: #1a1a24; border: 1px solid #333;">
+                <div class="modal-header">
+                    <h3>📡 GSM Gateway Receiver</h3>
+                    <button class="modal-close" onclick="closeGSM()">✕</button>
+                </div>
+                <div class="modal-body">
+                    <p style="color:#aaa; font-size:13px; margin-bottom:15px;">
+                        This panel simulates the <strong>Control Room GSM Modem</strong> receiving an offline SMS alert
+                        from the field.
+                    </p>
+                    <textarea id="gsmInput" class="gsm-input" rows="3"
+                        placeholder="Paste SMS content here... (e.g. SOS FLOOD ALERT...)"></textarea>
+
+                    <div style="display:flex; gap:10px; margin-bottom:15px;">
+                        <button onclick="processIncomingSMS()" class="quick-action-btn gsm"
+                            style="flex:1; justify-content:center;">
+                            📥 Receive Signal
+                        </button>
+                    </div>
+
+                    <div class="gsm-log" id="gsmLog">
+                        <div>[SYSTEM] GSM Modem Ready...</div>
+                        <div>[SYSTEM] Listening on Port COM3...</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Alert Detail Modal -->
+        <div class="modal" id="alertModal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3 id="modalTitle">SOS Details</h3>
+                    <button class="modal-close" id="closeModal">✕</button>
+                </div>
+                <div class="modal-body" id="modalBody"></div>
+                <div class="modal-actions" id="modalActions"></div>
+            </div>
+        </div>
+
+        <!-- Audio for alerts -->
+        <audio id="alertSound" preload="auto"
+            src="data:audio/wav;base64,UklGRnoGAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQoGAACBhYqFbF1fdJivrJBhNjVgodDbq2EcBj+a2teleR0WHnHG6Y1lFQQsoeXMbTQJDpHq6Y1lFQQsoeXMbTQJDpHq6Y1lFQQsoeXMbTQJDpHq"></audio>
+    </div>
+
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="https://unpkg.com/leaflet.markercluster@1.4.1/dist/leaflet.markercluster.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+    <script src="dashboard.js"></script>
+    <script>
+        // Toggle flood widget
+        function toggleFloodWidget() {
+            const content = document.getElementById('floodWidgetContent');
+            content.style.display = content.style.display === 'none' ? 'block' : 'none';
+        }
+
+        // Share Modal Logic
+        function showShareModal() {
+            const modal = document.getElementById('shareModal');
+            const qrContainer = document.getElementById('qrcode');
+
+            modal.style.display = 'flex';
+            qrContainer.innerHTML = ''; // Clear previous
+
+            // Use the current host if not localhost, otherwise use IP
+            let shareUrl = "http://192.168.0.105:5000/mobile-sos.html";
+
+            // If we are on a tunnel (HTTPS), use that!
+            if (window.location.protocol === 'https:') {
+                shareUrl = window.location.origin + '/mobile-sos.html';
+            }
+
+            new QRCode(qrContainer, {
+                text: shareUrl,
+                width: 200,
+                height: 200,
+                colorDark: "#000000",
+                colorLight: "#ffffff",
+                correctLevel: QRCode.CorrectLevel.H
+            });
+
+            // Update text display
+            const urlDisplay = document.querySelector('.modal-body div[style*="monospace"]');
+            if (urlDisplay) urlDisplay.textContent = shareUrl;
+        }
+
+        function closeShareModal() {
+            document.getElementById('shareModal').style.display = 'none';
+        }
+
+        // ==========================================
+        // GSM RECEIVER SIMULATION
+        // ==========================================
+        function openGSMPanel() {
+            document.getElementById('gsmModal').style.display = 'flex';
+        }
+
+        function closeGSM() {
+            document.getElementById('gsmModal').style.display = 'none';
+        }
+
+        function processIncomingSMS() {
+            const input = document.getElementById('gsmInput').value;
+            const log = document.getElementById('gsmLog');
+
+            // Animated processing logic
+            log.innerHTML += `<div>📡 Signal Detected... Decoding...</div>`;
+            log.scrollTop = log.scrollHeight;
+
+            setTimeout(() => {
+                // Extract Lat/Lng
+                const coords = input.match(/q=(-?\d+\.\d+),(-?\d+\.\d+)/) || input.match(/(\d+\.\d+),\s*(\d+\.\d+)/);
+
+                if (coords) {
+                    const lat = parseFloat(coords[1]);
+                    const lng = parseFloat(coords[2]);
+
+                    // Create Mock Alert
+                    const offlineAlert = {
+                        id: 'SMS-' + Date.now().toString().slice(-4),
+                        location: { lat, lng },
+                        emergencyType: 'flood',
+                        emergencyStatus: 'CRITICAL',
+                        timestamp: new Date().toISOString(),
+                        source: 'GSM_GATEWAY',
+                        battery: 15,
+                        motion: 'stationary'
+                    };
+
+                    // Inject into Dashboard System
+                    if (typeof handleNewSOS === 'function') {
+                        handleNewSOS(offlineAlert);
+                        // Also update map view to focus on it?
+                        if (map) map.setView([lat, lng], 18);
+                    } else {
+                        console.error('handleNewSOS not found');
+                        log.innerHTML += `<div style="color:#ef4444">❌ System Error: Dashboard API unavailable</div>`;
+                    }
+
+                    log.innerHTML += `<div style="color:#4ade80">✅ SOS Verified: Lat ${lat.toFixed(4)}, Lng ${lng.toFixed(4)}</div>`;
+                    log.innerHTML += `<div style="color:#aaa">📍 Alert injected into Real-time Map</div>`;
+                    document.getElementById('gsmInput').value = '';
+
+                    // Play sound
+                    const audio = document.getElementById('alertSound');
+                    if (audio) audio.play().catch(e => console.log(e));
+
+                } else {
+                    log.innerHTML += `<div style="color:#ef4444">❌ Error: No GPS coordinates found in SMS</div>`;
+                    log.innerHTML += `<div style="color:#aaa">Format expected: ... q=lat,lng ...</div>`;
+                }
+                log.scrollTop = log.scrollHeight;
+            }, 1000);
+        }
+
+        // Update flood widget from flood nowcast data
+        function updateFloodWidget(data) {
+            if (!data) return;
+
+            document.getElementById('fwRainfall').textContent = data.rainfall || 0;
+            document.getElementById('fwAlerts').textContent = data.alerts || 0;
+            document.getElementById('fwSOS').textContent = data.sos || sosAlerts.length;
+        }
+
+        // Update SOS count in flood widget
+        setInterval(() => {
+            const sosCount = typeof sosAlerts !== 'undefined' ? sosAlerts.length : 0;
+            document.getElementById('fwSOS').textContent = sosCount;
+        }, 5000);
+    </script>
+</body>
+
+</html>

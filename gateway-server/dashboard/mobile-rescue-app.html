@@ -1,0 +1,575 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="theme-color" content="#ef4444">
+    <title>SentinelTwin Field</title>
+    <link rel="manifest" href="manifest-rescue.json">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <style>
+        :root {
+            --bg: #f4f5f7;
+            --surface: #ffffff;
+            --card: #ffffff;
+            --card2: #f8fafc;
+            --crit: #ef4444;
+            --high: #f59e0b;
+            --mod: #3b82f6;
+            --ok: #10b981;
+            --cyan: #06b6d4;
+            --amber: #f59e0b;
+            --txt: #0f172a;
+            --muted: #64748b;
+            --border: #e2e8f0;
+            --radius: 20px;
+            --shadow-sm: 0 2px 8px rgba(0,0,0,0.04);
+            --shadow-md: 0 4px 16px rgba(0,0,0,0.06);
+            --shadow-lg: 0 10px 30px rgba(0,0,0,0.08);
+        }
+        * { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+        body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--txt); height: 100vh; overflow: hidden; display: flex; flex-direction: column; }
+
+        /* Status Bar Sim */
+        .status-bar { display:flex; justify-content:space-between; padding:8px 20px; font-size:12px; font-weight:600; background: var(--bg); color: var(--txt); }
+        .status-bar .time { font-weight:700; }
+
+        /* Screens */
+        .screen { display:none; flex:1; overflow-y:auto; padding:0 20px 100px; -webkit-overflow-scrolling:touch; }
+        .screen.active { display:block; animation: fadeIn 0.3s ease; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        
+        .screen-title { font-size:28px; font-weight:800; margin:16px 0 4px; letter-spacing:-0.5px; color: var(--txt); }
+        .screen-sub { font-size:13px; color: var(--muted); margin-bottom:20px; font-weight: 500;}
+
+        /* Bottom Tabs */
+        .tab-bar { position:fixed; bottom:0; left:0; right:0; display:flex; justify-content:space-around; background:rgba(255,255,255,0.9); backdrop-filter:blur(20px); -webkit-backdrop-filter:blur(20px); border-top:1px solid var(--border); padding:10px 0 24px; z-index:200; box-shadow: 0 -4px 20px rgba(0,0,0,0.03);}
+        .tab-item { display:flex; flex-direction:column; align-items:center; gap:4px; font-size:10px; font-weight: 600; color:var(--muted); cursor:pointer; padding:4px 8px; transition:.2s; min-width:56px; }
+        .tab-item.active { color:var(--mod); }
+        .tab-item .icon { font-size:22px; margin-bottom: 2px; transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+        .tab-item.active .icon { transform: scale(1.15); }
+
+        /* Cards */
+        .m-card { background:var(--card); border-radius:var(--radius); padding:20px; margin-bottom:16px; box-shadow: var(--shadow-sm); border: 1px solid var(--border); }
+        .m-card.alert-card { border-left:4px solid; padding-left: 16px;}
+
+        /* SOS Button */
+        .sos-btn { width:140px; height:140px; border-radius:50%; background:radial-gradient(circle at 30% 30%, #ff4b4b, #dc2626); border:4px solid #fff; color:#fff; font-size:16px; font-weight:800; display:flex; flex-direction:column; align-items:center; justify-content:center; margin:30px auto; cursor:pointer; box-shadow:0 10px 30px rgba(220, 38, 38, 0.3); animation:sos-pulse 2s infinite; position:relative; line-height:1.3; transition: transform 0.1s; }
+        .sos-btn:active { transform: scale(0.95); }
+        .sos-btn .sos-icon { font-size:36px; margin-bottom:6px; }
+        @keyframes sos-pulse{0%,100%{box-shadow:0 10px 30px rgba(220,38,38,0.3)}50%{box-shadow:0 15px 40px rgba(220,38,38,0.5),0 0 0 15px rgba(220,38,38,0.1)}}
+
+        /* KPI Strip */
+        .kpi-strip { display:flex; gap:12px; overflow-x:auto; padding:4px 0 8px; margin-bottom:20px; margin-left: -20px; padding-left: 20px; -webkit-overflow-scrolling:touch; }
+        .kpi-strip::-webkit-scrollbar { display: none; }
+        .kpi-tile { flex-shrink:0; background:var(--card); border-radius:16px; padding:16px; min-width:110px; border: 1px solid var(--border); box-shadow: var(--shadow-sm); display: flex; flex-direction: column; align-items: flex-start;}
+        .kpi-tile .kv { font-size:24px; font-weight:800; font-family: 'JetBrains Mono'; margin-bottom: 4px;}
+        .kpi-tile .kl { font-size:11px; color:var(--muted); font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px;}
+
+        /* Situation Feed */
+        .sec-title { font-size:16px; font-weight:800; margin-bottom:12px; color: var(--txt); }
+        .feed-card { display:flex; gap:14px; padding:16px; background:var(--card); border-radius:16px; margin-bottom:10px; border: 1px solid var(--border); border-left:4px solid; cursor:pointer; transition:transform .15s, box-shadow .15s; box-shadow: var(--shadow-sm);}
+        .feed-card:active { transform:scale(0.98); box-shadow: 0 1px 4px rgba(0,0,0,0.05);}
+        .feed-icon { font-size:22px; flex-shrink:0; }
+        .feed-body { flex:1; font-size:14px; line-height:1.5; color: var(--txt); font-weight: 500;}
+        .feed-time { font-size:11px; color:var(--muted); margin-top:6px; font-weight: 600;}
+        
+        .quick-btns { display:flex; gap:12px; margin-bottom:24px; }
+        .quick-btn { flex:1; padding:16px; border-radius:16px; background:var(--surface); border:1px solid #cce4fc; font-size:14px; font-weight:700; color:var(--mod); cursor:pointer; text-align:center; transition:.15s; box-shadow: 0 4px 12px rgba(59,130,246,0.1); }
+        .quick-btn.secondary { background: var(--card); border: 1px solid var(--border); color: var(--txt); box-shadow: var(--shadow-sm); }
+        .quick-btn:active { transform:scale(0.97); }
+
+        /* MAP */
+        #screen-map { padding: 0; display: flex; flex-direction: column;}
+        #mobileMap { flex: 1; border-radius:0; width: 100%; }
+        .layer-wrap { padding: 12px 20px; background: var(--bg); border-bottom: 1px solid var(--border); z-index: 10; position: relative;}
+        .layer-pills { display:flex; gap:8px; overflow-x:auto; -webkit-overflow-scrolling:touch; padding-bottom: 4px;}
+        .layer-pills::-webkit-scrollbar { display: none;}
+        .layer-pill { flex-shrink:0; padding:8px 16px; border-radius:20px; font-size:12px; font-weight:600; background:var(--card); border:1px solid var(--border); cursor:pointer; transition:.2s; color:var(--muted); box-shadow: var(--shadow-sm);}
+        .layer-pill.on { border-color:var(--mod); color:var(--mod); background:#eff6ff; }
+
+        /* Bottom Sheet */
+        .bottom-sheet { position:fixed; bottom:-100%; left:0; right:0; background:var(--card); border-radius:24px 24px 0 0; padding:20px; padding-bottom:100px; max-height:75vh; overflow-y:auto; transition:bottom .35s cubic-bezier(0.175, 0.885, 0.32, 1.1); z-index:150; box-shadow: 0 -10px 40px rgba(0,0,0,0.1); }
+        .bottom-sheet.open { bottom:0; }
+        .sheet-handle { width:40px; height:5px; background:var(--border); border-radius:3px; margin:0 auto 20px; }
+        .sheet-title { font-size:20px; font-weight:800; margin-bottom:12px; }
+
+        /* Inventory */
+        .sku-card { background:var(--card); border-radius:18px; padding:18px; margin-bottom:12px; cursor:pointer; transition:.15s; border: 1px solid var(--border); box-shadow: var(--shadow-sm);}
+        .sku-card:active { transform:scale(0.98); }
+        .sku-header { display:flex; justify-content:space-between; align-items:center; margin-bottom:12px; }
+        .sku-name { font-size:16px; font-weight:700; display:flex; align-items:center; gap:8px; color: var(--txt);}
+        .sku-badge { font-size:10px; font-weight:800; padding:4px 10px; border-radius:8px; text-transform: uppercase; letter-spacing: 0.5px;}
+        .sku-badge.crit { background:#fef2f2; color:var(--crit); border: 1px solid #fca5a5;}
+        .sku-badge.low { background:#fffbeb; color:var(--high); border: 1px solid #fcd34d;}
+        .sku-badge.ok { background:#ecfdf5; color:var(--ok); border: 1px solid #6ee7b7;}
+        .sku-bar { height:6px; background:var(--bg); border-radius:3px; overflow:hidden; margin-bottom:8px; }
+        .sku-bar-fill { height:100%; border-radius:3px; transition:width .8s ease; }
+        .sku-meta { display:flex; justify-content:space-between; font-size:12px; color:var(--muted); font-weight: 600; font-family: 'JetBrains Mono';}
+        .order-btn { width:100%; padding:14px; font-size:14px; font-weight:700; background: var(--mod); color: #fff; border: none; border-radius: 12px; margin-top: 16px; box-shadow: 0 4px 12px rgba(59,130,246,0.3); transition: 0.2s; cursor: pointer;}
+        .order-btn:active { transform: scale(0.98); box-shadow: 0 2px 6px rgba(59,130,246,0.2);}
+
+        /* Alerts */
+        .filter-tabs { display:flex; gap:8px; padding:4px 0 16px; overflow-x:auto; margin-left:-20px; padding-left:20px; -webkit-overflow-scrolling:touch;}
+        .filter-tabs::-webkit-scrollbar { display: none;}
+        .filter-tab { flex-shrink:0; padding:10px 18px; border-radius:20px; font-size:13px; font-weight:600; background:var(--card); border:1px solid var(--border); cursor:pointer; color:var(--muted); box-shadow: var(--shadow-sm);}
+        .filter-tab.active { border-color:var(--mod); color:var(--mod); background:#eff6ff; }
+        
+        .alert-card { padding:18px; background:var(--card); border-radius:18px; margin-bottom:12px; border: 1px solid var(--border); border-left:4px solid; box-shadow: var(--shadow-sm);}
+        .alert-header { display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:8px; }
+        .alert-type { font-size:11px; font-weight:800; text-transform:uppercase; letter-spacing:0.5px; }
+        .alert-time { font-size:11px; color:var(--muted); font-weight: 600; }
+        .alert-title { font-size:16px; font-weight:700; margin-bottom:6px; color: var(--txt); }
+        .alert-body { font-size:14px; color:var(--muted); line-height:1.5; margin-bottom:14px; font-weight: 500;}
+        .alert-actions { display:flex; gap:8px; }
+        .alert-btn { flex:1; padding:10px; border-radius:12px; font-size:13px; font-weight:700; border:none; cursor:pointer; transition:.15s; }
+        .alert-btn.primary { background:var(--bg); color:var(--txt); border: 1px solid var(--border); }
+        .alert-btn.primary:active { background: #e2e8f0; }
+
+        /* Intelligence */
+        .chain-mini { display:flex; align-items:center; gap:4px; overflow-x:auto; padding:4px 0 16px; margin-left:-20px; padding-left:20px; -webkit-overflow-scrolling:touch;}
+        .chain-mini::-webkit-scrollbar { display: none; }
+        .chain-pill { flex-shrink:0; padding:10px 14px; border-radius:14px; font-size:12px; font-weight:700; background:var(--card); border:1px solid; text-align:center; box-shadow: var(--shadow-sm);}
+        .chain-arrow { color:var(--border); font-size:16px; flex-shrink:0; font-weight: 800;}
+        .conf-bar { margin-bottom:14px; }
+        .conf-name { font-size:13px; font-weight:600; margin-bottom:6px; display:flex; justify-content:space-between; color: var(--txt); }
+        .conf-track { height:8px; background:var(--bg); border-radius:4px; overflow:hidden; }
+        .conf-fill { height:100%; border-radius:4px; }
+        .gauge-mini { text-align:center; padding:10px 0; }
+        .gauge-number { font-size:56px; font-weight:800; margin-bottom:4px; font-family: 'JetBrains Mono'; letter-spacing: -2px;}
+        .rec-card { padding:16px; background:var(--card); border-radius:16px; margin-bottom:10px; font-size:14px; font-weight:500; line-height:1.5; display:flex; gap:12px; align-items:flex-start; border: 1px solid var(--border); box-shadow: var(--shadow-sm);}
+        .rec-actions { display:flex; gap:8px; margin-top:12px; width: 100%;}
+        .rec-actions .alert-btn { flex: 1; padding: 10px; border-radius: 10px; font-size: 12px;}
+
+        /* Profile */
+        .profile-card { background:var(--card); border-radius:var(--radius); padding:24px; text-align:center; margin-bottom:20px; border: 1px solid var(--border); box-shadow: var(--shadow-md); position: relative; overflow: hidden;}
+        .profile-bg { position: absolute; top: 0; left: 0; right: 0; height: 80px; background: linear-gradient(135deg, var(--mod), #06b6d4); z-index: 0;}
+        .avatar { width:80px; height:80px; border-radius:50%; background:#fff; border: 4px solid #fff; display:flex; align-items:center; justify-content:center; font-size:32px; font-weight:800; margin: 40px auto 16px; position: relative; z-index: 1; box-shadow: var(--shadow-md); color: var(--mod);}
+        .profile-name { font-size:22px; font-weight:800; margin-bottom:6px; color: var(--txt); position: relative; z-index: 1;}
+        .profile-role { font-size:13px; color:var(--muted); font-weight: 500; position: relative; z-index: 1;}
+        .profile-status { display:inline-flex; align-items: center; gap: 6px; padding:6px 16px; border-radius:20px; background:#ecfdf5; color:#059669; font-size:12px; font-weight:700; margin-top: 16px; border: 1px solid #a7f3d0;}
+        .profile-status::before { content: ''; width: 8px; height: 8px; border-radius: 50%; background: #10b981; }
+
+        .setting-group { background:var(--card); border-radius:16px; margin-bottom:20px; border: 1px solid var(--border); box-shadow: var(--shadow-sm); overflow: hidden;}
+        .toggle-row { display:flex; justify-content:space-between; align-items:center; padding:16px 20px; border-bottom:1px solid var(--border); font-size:15px; font-weight: 600;}
+        .toggle-row:last-child { border-bottom: none; }
+        .toggle { width:50px; height:30px; border-radius:15px; background:#e2e8f0; position:relative; cursor:pointer; transition:.3s; }
+        .toggle.on { background:var(--ok); }
+        .toggle::after { content:''; position:absolute; width:26px; height:26px; border-radius:50%; background:#fff; top:2px; left:2px; transition:.3s; box-shadow: var(--shadow-sm);}
+        .toggle.on::after { left:22px; }
+        .setting-title { font-size:13px; color:var(--muted); text-transform:uppercase; letter-spacing:0.5px; padding:0 0 8px 12px; font-weight:700; }
+
+        /* Modal */
+        .modal-overlay { position:fixed; top:0; left:0; right:0; bottom:0; background:rgba(0,0,0,0.5); backdrop-filter:blur(4px); -webkit-backdrop-filter:blur(4px); z-index:300; display:none; align-items:center; justify-content:center; padding:20px; }
+        .modal-overlay.show { display:flex; animation: fadeIn 0.2s ease; }
+        .modal { background:var(--card); border-radius:24px; padding:24px; width:100%; max-width:360px; text-align:center; box-shadow: var(--shadow-lg); }
+        .modal h3 { font-size:22px; font-weight:800; margin-bottom:12px; color: var(--txt); }
+        .modal p { font-size:14px; color:var(--muted); margin-bottom:20px; line-height:1.5; font-weight: 500;}
+        .modal-select { width:100%; padding:14px 16px; border-radius:14px; background:var(--bg); border:1px solid var(--border); color:var(--txt); font-size:15px; font-weight: 600; margin-bottom:12px; appearance:none; outline: none; box-shadow: inset 0 2px 4px rgba(0,0,0,0.02);}
+        .modal-btn { width:100%; padding:16px; border-radius:16px; font-size:16px; font-weight:800; border:none; cursor:pointer; margin-bottom:10px; transition: 0.2s;}
+        .modal-btn:active { transform: scale(0.98); }
+        
+        .success-screen { display:none; position:fixed; top:0; left:0; right:0; bottom:0; background:var(--ok); z-index:400; flex-direction:column; align-items:center; justify-content:center; color:#fff; }
+        .success-screen.show { display:flex; animation: fadeIn 0.3s ease; }
+        .success-check { width: 80px; height: 80px; background: #fff; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 40px; color: var(--ok); margin-bottom: 24px; box-shadow: 0 10px 30px rgba(0,0,0,0.2);}
+    </style>
+</head>
+<body>
+
+<!-- Status Bar -->
+<div class="status-bar">
+    <span class="time" id="statusTime">10:30</span>
+    <span>SentinelTwin Field</span>
+    <span>📶 🔋 92%</span>
+</div>
+
+<!-- ═══════ SCREEN 1: HOME ═══════ -->
+<div class="screen active" id="screen-home">
+    <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-top:12px">
+        <div>
+            <div class="screen-title" id="greeting">Good morning, Ravi</div>
+            <div class="screen-sub">Tamil Nadu D4 | Active Duty</div>
+        </div>
+        <div style="padding:6px 12px;border-radius:12px;background:#fef2f2;border:1px solid #fca5a5;font-size:11px;font-weight:700;color:var(--crit);white-space:nowrap;box-shadow: 0 2px 6px rgba(239,68,68,0.1)">⚠ ELEVATED RISK</div>
+    </div>
+
+    <button class="sos-btn" id="sosBtn" ontouchstart="startSOS()" onmousedown="startSOS()">
+        <span class="sos-icon">🆘</span>
+        <span style="letter-spacing:0.5px">SOS ALERT</span>
+    </button>
+    <div style="text-align:center; font-size: 11px; color: var(--muted); font-weight: 600; margin-top: -16px; margin-bottom: 24px;">HOLD FOR 2 SECONDS</div>
+
+    <div class="kpi-strip">
+        <div class="kpi-tile"><div class="kv" style="color:var(--crit)">4</div><div class="kl">Active SOS</div></div>
+        <div class="kpi-tile"><div class="kv" style="color:var(--mod)">7</div><div class="kl">Teams Out</div></div>
+        <div class="kpi-tile"><div class="kv" style="color:var(--high)">2</div><div class="kl">Depots Risk</div></div>
+        <div class="kpi-tile"><div class="kv" style="color:var(--crit)">3</div><div class="kl">SKUs Crit</div></div>
+    </div>
+
+    <div class="sec-title">Live Situation Feed</div>
+    <div class="feed-card" style="border-color:var(--crit)"><span class="feed-icon">🌊</span><div class="feed-body">Flood Zone 3 — Adyar basin rising. Road NH-45 blocked. 2 teams deployed.<div class="feed-time">3 min ago</div></div></div>
+    <div class="feed-card" style="border-color:var(--high)"><span class="feed-icon">⛽</span><div class="feed-body">Diesel 500L — Chennai depot at 18% capacity. ML recommends emergency restock.<div class="feed-time">8 min ago</div></div></div>
+    <div class="feed-card" style="border-color:var(--mod)"><span class="feed-icon">🚛</span><div class="feed-body">Route KA-03 rerouted via NH-32. New ETA +4.2 hrs. Cost saving: ₹42,000.<div class="feed-time">12 min ago</div></div></div>
+    
+    <div class="quick-btns" style="margin-top: 16px;">
+        <div class="quick-btn" onclick="switchTab('inventory')">📦 Reorder Stock</div>
+        <div class="quick-btn secondary" onclick="window.open('tel:+911234567890')">📞 Control Room</div>
+    </div>
+</div>
+
+<!-- ═══════ SCREEN 2: MAP ═══════ -->
+<div class="screen" id="screen-map">
+    <div class="layer-wrap">
+        <div class="sec-title" style="margin-bottom: 8px;">Area Map</div>
+        <div class="layer-pills">
+            <div class="layer-pill on" data-layer="flood">🌊 Flood Zones</div>
+            <div class="layer-pill on" data-layer="teams">👥 Rescue Teams</div>
+            <div class="layer-pill on" data-layer="depots">⛽ Depots</div>
+            <div class="layer-pill" data-layer="sos">🚨 SOS Alerts</div>
+            <div class="layer-pill" data-layer="routes">🚛 Routes</div>
+        </div>
+    </div>
+    <div id="mobileMap"></div>
+</div>
+
+<!-- ═══════ SCREEN 3: INVENTORY ═══════ -->
+<div class="screen" id="screen-inventory">
+    <div class="screen-title" style="margin-top: 12px;">Inventory</div>
+    <div class="screen-sub" style="display:flex;gap:8px;align-items:center;margin-bottom: 16px;">
+        <span style="padding:4px 10px;border-radius:10px;background:#ecfdf5;color:var(--ok);font-size:11px;font-weight:700;border:1px solid #6ee7b7">ML Forecast: 4.2% MAPE</span>
+        <span style="font-size:12px;color:var(--muted)">Synced just now</span>
+    </div>
+    <div class="m-card" style="background:#fef2f2;border:1px solid #fca5a5;padding:16px;">
+        <div style="font-size:14px;font-weight:700;color:var(--crit);display:flex;align-items:center;gap:6px"><span>⚠</span> 3 SKUs below safety stock. Review needed.</div>
+    </div>
+    <div id="skuList"></div>
+</div>
+
+<!-- ═══════ SCREEN 4: ALERTS ═══════ -->
+<div class="screen" id="screen-alerts">
+    <div class="screen-title" style="margin-top: 12px;">Security Alerts</div>
+    <div style="display:flex;align-items:center;gap:8px;margin-bottom:16px">
+        <span style="width:10px;height:10px;border-radius:50%;background:var(--crit);animation:pulse 1.5s infinite"></span>
+        <span style="font-size:14px;font-weight:700;color:var(--crit)">Live Feed</span>
+        <span class="screen-sub" style="margin:0">12 active alerts</span>
+    </div>
+    <div class="filter-tabs">
+        <div class="filter-tab active" onclick="filterAlerts('all',this)">All Alerts</div>
+        <div class="filter-tab" onclick="filterAlerts('sos',this)">🚨 SOS</div>
+        <div class="filter-tab" onclick="filterAlerts('flood',this)">🌊 Flood</div>
+        <div class="filter-tab" onclick="filterAlerts('inventory',this)">⛽ Inventory</div>
+        <div class="filter-tab" onclick="filterAlerts('geo',this)">📡 Geopolitics</div>
+    </div>
+    <div id="alertFeed"></div>
+</div>
+
+<!-- ═══════ SCREEN 5: INTELLIGENCE ═══════ -->
+<div class="screen" id="screen-intel">
+    <div class="screen-title" style="margin-top: 12px;">Intelligence</div>
+    <div class="screen-sub">Powered by SentinelTwin Sentinel ML</div>
+
+    <div class="sec-title">Causal Impact Chain</div>
+    <div class="chain-mini">
+        <div class="chain-pill" style="border-color:#fca5a5;color:var(--crit);background:#fef2f2">⚔ Conflict</div>
+        <span class="chain-arrow">→</span>
+        <div class="chain-pill" style="border-color:#fcd34d;color:var(--high);background:#fffbeb">🏭 Port Block</div>
+        <span class="chain-arrow">→</span>
+        <div class="chain-pill" style="border-color:#fcd34d;color:var(--high);background:#fffbeb">🚛 Delay</div>
+        <span class="chain-arrow">→</span>
+        <div class="chain-pill" style="border-color:#fca5a5;color:var(--crit);background:#fef2f2">📦 Shortfall</div>
+        <span class="chain-arrow">→</span>
+        <div class="chain-pill" style="border-color:#bfdbfe;color:var(--mod);background:#eff6ff">💰 Cost ↑</div>
+    </div>
+
+    <div class="m-card">
+        <div class="sec-title" style="margin-top: 0">Forecast Confidence Score</div>
+        <div class="conf-bar"><div class="conf-name"><span>Diesel 500L</span><span style="color:var(--ok)">96%</span></div><div class="conf-track"><div class="conf-fill" style="width:96%;background:var(--ok)"></div></div></div>
+        <div class="conf-bar"><div class="conf-name"><span>Petrol 200L</span><span style="color:var(--ok)">91%</span></div><div class="conf-track"><div class="conf-fill" style="width:91%;background:var(--ok)"></div></div></div>
+        <div class="conf-bar"><div class="conf-name"><span>LPG Cylinders</span><span style="color:var(--high)">88%</span></div><div class="conf-track"><div class="conf-fill" style="width:88%;background:var(--high)"></div></div></div>
+        <div class="conf-bar"><div class="conf-name"><span>Aviation Fuel</span><span style="color:var(--high)">82%</span></div><div class="conf-track"><div class="conf-fill" style="width:82%;background:var(--high)"></div></div></div>
+    </div>
+
+    <div class="m-card" style="text-align:center; padding: 30px 20px;">
+        <div class="sec-title" style="margin-top: 0; margin-bottom: 8px;">Geopolitical Risk Index</div>
+        <div class="gauge-number" style="color:var(--crit)" id="mobileGeo">81</div>
+        <div style="font-size:12px;color:var(--muted); font-weight: 600;">Impact: Supply delay HIGH<br>Cost increase ELEVATED</div>
+    </div>
+
+    <div class="m-card">
+        <div class="sec-title" style="margin-top: 0">🌧 Weather Impact: Monsoon</div>
+        <div class="conf-bar"><div class="conf-name"><span>Week 1 Probability</span><span style="color:var(--crit)">72%</span></div><div class="conf-track"><div class="conf-fill" style="width:72%;background:var(--crit)"></div></div></div>
+        <div style="font-size:13px;color:var(--muted);margin-bottom:12px;line-height: 1.5; font-weight: 500;">+18% demand surge expected. Pre-position 2000L Diesel at Chennai hub recommended.</div>
+        <div class="conf-bar"><div class="conf-name"><span>Week 2 Probability</span><span style="color:var(--high)">65%</span></div><div class="conf-track"><div class="conf-fill" style="width:65%;background:var(--high)"></div></div></div>
+    </div>
+
+    <div class="sec-title" style="margin:24px 0 12px">💡 AI Recommendations</div>
+    <div class="rec-card"><span style="font-size: 20px;">💡</span><div style="flex: 1;"><div style="margin-bottom: 6px;">Increase Diesel 500L safety stock by 15% due to Red Sea disruption</div><div class="rec-actions"><button class="alert-btn primary" style="background:var(--ok);color:#fff;border:none;" onclick="this.textContent='✓ Accepted';this.disabled=true;this.style.opacity='0.6'">Implement</button><button class="alert-btn">Dismiss</button></div></div></div>
+    <div class="rec-card"><span style="font-size: 20px;">💡</span><div style="flex: 1;"><div style="margin-bottom: 6px;">Route KA-03 cost dropped 12% — consider NH-48 alternative</div><div class="rec-actions"><button class="alert-btn primary" style="background:var(--ok);color:#fff;border:none;" onclick="this.textContent='✓ Rerouted';this.disabled=true;this.style.opacity='0.6'">Reroute</button><button class="alert-btn">Dismiss</button></div></div></div>
+</div>
+
+<!-- ═══════ SCREEN 6: PROFILE ═══════ -->
+<div class="screen" id="screen-profile">
+    <div class="screen-title" style="margin-top: 12px;">Profile settings</div>
+    
+    <div class="profile-card">
+        <div class="profile-bg"></div>
+        <div class="avatar">R</div>
+        <div class="profile-name">Officer Ravi Kumar</div>
+        <div class="profile-role">Field Rescue Coordinator | D4, TN</div>
+        <div style="font-size:12px;color:var(--muted);margin-top:6px;font-family:'JetBrains Mono'">ID: TN-FO-2847</div>
+        <div class="profile-status">On Duty</div>
+    </div>
+
+    <div class="setting-title">Connected Twin Systems</div>
+    <div class="setting-group">
+        <div class="toggle-row"><span>Global Twin Hub</span><span style="color:var(--ok);font-size:13px">🟢 Connected</span></div>
+        <div class="toggle-row"><span>Inventory Forecast</span><span style="color:var(--ok);font-size:13px">🟢 Synced (now)</span></div>
+        <div class="toggle-row"><span>Routing Dashboard</span><span style="color:var(--ok);font-size:13px">🟢 Synced (1m)</span></div>
+        <div class="toggle-row"><span>Flood Nowcast</span><span style="color:var(--high);font-size:13px">🟡 Delayed (5m)</span></div>
+    </div>
+
+    <div class="setting-title">Device Notifications</div>
+    <div class="setting-group">
+        <div class="toggle-row"><span>SOS Alerts</span><div class="toggle on" onclick="this.classList.toggle('on')"></div></div>
+        <div class="toggle-row"><span>Inventory Critical</span><div class="toggle on" onclick="this.classList.toggle('on')"></div></div>
+        <div class="toggle-row"><span>Flood Zone Updates</span><div class="toggle on" onclick="this.classList.toggle('on')"></div></div>
+        <div class="toggle-row"><span>AI Recommendations</span><div class="toggle" onclick="this.classList.toggle('on')"></div></div>
+    </div>
+
+    <div class="setting-title">Emergency Dial</div>
+    <div class="setting-group">
+        <div class="toggle-row" style="cursor:pointer" onclick="window.open('tel:+911234567890')"><span>📞 Control Room</span><span style="color:var(--mod);font-size:13px">Call →</span></div>
+        <div class="toggle-row" style="cursor:pointer"><span>📞 State EOC</span><span style="color:var(--mod);font-size:13px">Call →</span></div>
+    </div>
+
+    <div style="text-align:center;margin-top:30px; margin-bottom: 20px;">
+        <div style="font-size:13px;color:var(--txt);font-weight:600">SentinelTwin Field v2.0</div>
+        <div style="font-size:11px;color:var(--muted);margin-top:6px">TNI26086 | Secure Connection</div>
+    </div>
+</div>
+
+<!-- SOS Modal -->
+<div class="modal-overlay" id="sosModal">
+    <div class="modal">
+        <h3>🆘 Send SOS Alert</h3>
+        <p>Your exact location will be shared immediately with the Central Command.</p>
+        <div style="background:var(--bg);padding:12px;border-radius:12px;margin-bottom:16px;font-family:'JetBrains Mono';font-size:12px;color:var(--muted)">Nandambakkam, TN<br>Lat: 13.0067 | Lng: 80.1814</div>
+        
+        <select class="modal-select">
+            <option>🌊 Flood Rescue Needed</option>
+            <option>🔥 Fire / Explosion</option>
+            <option>🚗 Severe Accident</option>
+            <option>🏥 Medical Emergency</option>
+            <option>⛽ Fuel Crisis / Riot</option>
+        </select>
+        
+        <select class="modal-select">
+            <option>Severity 5: CRITICAL</option>
+            <option>Severity 4: HIGH</option>
+            <option>Severity 3: MEDIUM</option>
+        </select>
+        
+        <button class="modal-btn" style="background:var(--crit);color:#fff;box-shadow: 0 4px 15px rgba(239, 68, 68, 0.4);" onclick="confirmSOS()">SEND SOS ALERT</button>
+        <button class="modal-btn" style="background:var(--surface);color:var(--txt);border:1px solid var(--border);" onclick="closeSOS()">Cancel</button>
+    </div>
+</div>
+
+<!-- Success Screen -->
+<div class="success-screen" id="sosSuccess">
+    <div class="success-check">✓</div>
+    <div style="font-size:28px;font-weight:800;margin-bottom:12px;letter-spacing:-0.5px">Alert Broadcasted</div>
+    <div style="font-size:16px;opacity:0.9;font-weight:500;">Incident #ST-2847 logged</div>
+    <div style="font-size:16px;opacity:0.9;margin-top:6px;font-weight:500;">Team Delta (2.3km) dispatched</div>
+    <div style="font-size:20px;font-weight:800;margin-top:24px;background:rgba(0,0,0,0.2);padding:12px 24px;border-radius:20px;">ETA: 8 mins</div>
+</div>
+
+<!-- Bottom Sheet -->
+<div class="bottom-sheet" id="bottomSheet">
+    <div class="sheet-handle"></div>
+    <div id="sheetContent"></div>
+</div>
+
+<!-- TAB BAR -->
+<div class="tab-bar">
+    <div class="tab-item active" onclick="switchTab('home')"><span class="icon">🏠</span>Home</div>
+    <div class="tab-item" onclick="switchTab('map')"><span class="icon">🗺</span>Map</div>
+    <div class="tab-item" onclick="switchTab('inventory')"><span class="icon">📦</span>Stock</div>
+    <div class="tab-item" onclick="switchTab('alerts')"><span class="icon">🚨</span>Alerts</div>
+    <div class="tab-item" onclick="switchTab('intel')"><span class="icon">💡</span>Intel</div>
+    <div class="tab-item" onclick="switchTab('profile')"><span class="icon">👤</span>Profile</div>
+</div>
+
+<script>
+(function(){
+'use strict';
+
+// Clock
+function tick(){const n=new Date();document.getElementById('statusTime').textContent=String(n.getHours()).padStart(2,'0')+':'+String(n.getMinutes()).padStart(2,'0')}
+setInterval(tick,1000);tick();
+
+// Greeting
+const hr=new Date().getHours();
+document.getElementById('greeting').textContent=(hr<12?'Good morning':hr<18?'Good afternoon':'Good evening')+', Ravi';
+
+// Tab switching
+window.switchTab=function(tab){
+    document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+    document.querySelectorAll('.tab-item').forEach(t=>t.classList.remove('active'));
+    document.getElementById('screen-'+tab).classList.add('active');
+    document.querySelectorAll('.tab-item')[['home','map','inventory','alerts','intel','profile'].indexOf(tab)].classList.add('active');
+    if(tab==='map')initMap();
+};
+
+// SOS
+let sosTimer=null;
+window.startSOS=function(){
+    sosTimer=setTimeout(()=>{document.getElementById('sosModal').classList.add('show');if(navigator.vibrate)navigator.vibrate(200)},800);
+};
+window.addEventListener('mouseup',()=>clearTimeout(sosTimer));
+window.addEventListener('touchend',()=>clearTimeout(sosTimer));
+window.closeSOS=function(){document.getElementById('sosModal').classList.remove('show')};
+window.confirmSOS=function(){
+    document.getElementById('sosModal').classList.remove('show');
+    document.getElementById('sosSuccess').classList.add('show');
+    if(navigator.vibrate)navigator.vibrate([100,50,100]);
+    const events=JSON.parse(localStorage.getItem('sentinel_sos_events')||'[]');
+    events.push({id:'ST-'+Date.now().toString().slice(-4),lat:13.0067,lng:80.1814,type:'Flood Rescue',severity:5,time:new Date().toISOString()});
+    localStorage.setItem('sentinel_sos_events',JSON.stringify(events));
+    setTimeout(()=>document.getElementById('sosSuccess').classList.remove('show'),3000);
+};
+
+// Map Placeholder
+let mobileMap=null;
+function initMap(){
+    if(mobileMap)return;
+    setTimeout(()=>{
+        mobileMap=L.map('mobileMap',{zoomControl:false}).setView([13.08,80.27],10);
+        L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png',{maxZoom:19}).addTo(mobileMap);
+        // Flood zones
+        L.circle([13.04,80.24],{radius:3000,color:'#ef4444',fillColor:'#ef4444',fillOpacity:0.15}).addTo(mobileMap).bindPopup('<b>Zone 3 — Adyar</b><br>Risk: CRITICAL');
+        L.circle([13.08,80.28],{radius:2500,color:'#f59e0b',fillColor:'#f59e0b',fillOpacity:0.2}).addTo(mobileMap).bindPopup('<b>Zone 2 — Cooum</b><br>Risk: ELEVATED');
+        // Teams
+        const teamIcon=L.divIcon({className:'',html:'<div style="width:28px;height:28px;background:#3b82f6;border:3px solid #fff;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;box-shadow:0 3px 6px rgba(0,0,0,0.2)">👥</div>',iconSize:[28,28]});
+        L.marker([13.05,80.22],{icon:teamIcon}).addTo(mobileMap).bindPopup('<b>Team Delta</b>');
+        // Depots
+        const depotIcon=L.divIcon({className:'',html:'<div style="width:28px;height:28px;background:#f59e0b;border:3px solid #fff;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:14px;box-shadow:0 3px 6px rgba(0,0,0,0.2)">⛽</div>',iconSize:[28,28]});
+        L.marker([13.07,80.26],{icon:depotIcon}).addTo(mobileMap).bindPopup('<b>Chennai Central</b>');
+        L.circleMarker([13.0067,80.1814],{radius:8,color:'#06b6d4',fillColor:'#06b6d4',fillOpacity:1,weight:3}).addTo(mobileMap).bindPopup('📍 You are here');
+        mobileMap.invalidateSize();
+    },300);
+}
+
+// Dynamic SKU List Sync
+function syncInventoryList() {
+    try {
+        let flagged = JSON.parse(localStorage.getItem('FLAGGED') || 'null');
+        const orders = JSON.parse(localStorage.getItem('ORDERS') || '[]');
+        
+        let skusToRender = [
+            {id: 'SKU-001', name:'Diesel 500L',icon:'⛽',current:340,safety:500,forecast:1200,status:'CRITICAL',pct:18},
+            {id: 'SKU-002', name:'Petrol 200L',icon:'🛢',current:890,safety:600,forecast:980,status:'LOW',pct:45},
+            {id: 'SKU-003', name:'LPG Cylinders',icon:'🔥',current:120,safety:200,forecast:340,status:'CRITICAL',pct:15},
+            {id: 'SKU-004', name:'Aviation Fuel',icon:'✈',current:4200,safety:3000,forecast:2800,status:'ADEQUATE',pct:72}
+        ];
+
+        // Incorporate flagged items dynamically, or fallback to mock data if empty
+        if (!flagged || flagged.length === 0) {
+            flagged = [
+                { id: 'SKU-4010', name:'Rice 25kg' },
+                { id: 'SKU-7003', name:'Solar Charger' },
+                { id: 'SKU-3015', name:'First Aid Kit' }
+            ];
+        }
+
+        if(flagged && flagged.length > 0) {
+            skusToRender = flagged.map(f => ({
+                id: f.id,
+                name: f.name,
+                icon: '📦',
+                current: Math.floor(Math.random() * 100),
+                safety: 200,
+                forecast: 500,
+                status: orders.includes(f.id) ? 'ADEQUATE' : 'CRITICAL',
+                pct: orders.includes(f.id) ? 100 : 10
+            }));
+        }
+
+        const skuList=document.getElementById('skuList');
+        if(skuList) {
+            skuList.innerHTML = '';
+            skusToRender.forEach(s=>{
+                const color=s.status==='CRITICAL'?'var(--crit)':s.status==='LOW'?'var(--high)':'var(--ok)';
+                const badgeClass=s.status==='CRITICAL'?'crit':s.status==='LOW'?'low':'ok';
+                const ordered = orders.includes(s.id);
+                const btnLabel = ordered ? '✓ PO Issued' : '🛒 Auto-Replenish Now';
+                const btnStyle = ordered ? 'background:var(--ok);box-shadow:0 4px 12px rgba(16,185,129,0.3);' : '';
+                const btnDisabled = ordered ? 'disabled' : '';
+
+                skuList.innerHTML+=`<div class="sku-card" onclick="this.querySelector('.sku-detail').style.display=this.querySelector('.sku-detail').style.display==='none'?'block':'none'">
+                    <div class="sku-header"><div class="sku-name"><span style="font-size:20px;margin-right:4px">${s.icon}</span> ${s.name}</div><span class="sku-badge ${badgeClass}">${s.status}</span></div>
+                    <div class="sku-bar"><div class="sku-bar-fill" style="width:${s.pct}%;background:${color}"></div></div>
+                    <div class="sku-meta"><span>Current: ${s.current} units</span><span>Safety ROP: ${s.safety} units</span></div>
+                    <div class="sku-detail" style="display:none;margin-top:16px;padding-top:16px;border-top:1px solid var(--border)">
+                        <div style="font-size:13px;color:var(--txt);margin-bottom:6px;font-weight:600;">📈 7-day predicted need: <span style="font-family:'JetBrains Mono'">${s.forecast}</span></div>
+                        <div style="font-size:13px;color:var(--crit);margin-bottom:12px;font-weight:600;">⚠ Shortfall magnitude: <span style="font-family:'JetBrains Mono'">${Math.max(0,s.forecast-s.current)}</span></div>
+                        <button class="order-btn" style="${btnStyle}" ${btnDisabled} onclick="event.stopPropagation();this.innerHTML='✓ PO Issued';this.style.background='var(--ok)';this.style.boxShadow='0 4px 12px rgba(16,185,129,0.3)';this.disabled=true; let o=JSON.parse(localStorage.getItem('ORDERS')||'[]');o.push('${s.id}');localStorage.setItem('ORDERS',JSON.stringify(o));">${btnLabel}</button>
+                    </div>
+                </div>`;
+            });
+        }
+    } catch(e) {}
+}
+
+setInterval(syncInventoryList, 2000);
+syncInventoryList();
+
+// Alerts Feed
+const alerts=[
+    {type:'sos',color:'var(--crit)',label:'SOS',title:'SOS #ST-2847 | Chinmaya Nagar',body:'Flood rescue requested. 3 persons trapped. Team Delta dispatched.',time:'2 min ago'},
+    {type:'inventory',color:'var(--high)',label:'INVENTORY',title:'Safety stock breach — Diesel 500L',body:'Current: 340L | Safety: 500L. ML recommends emergency reorder based on flood zones.',time:'8 min ago'},
+    {type:'flood',color:'var(--crit)',label:'FLOOD',title:'Zone 3 Adyar — water level risen 0.4m',body:'Last hour surge. Risk level: CRITICAL. 847 residents in affected zone.',time:'12 min ago'},
+    {type:'logistics',color:'var(--mod)',label:'LOGISTICS',title:'Route NH-45 blocked — GeoFuel rerouting',body:'AI rerouted via NH-32. Delay: +1.8hr. Estimated cost saving: ₹42,000.',time:'18 min ago'},
+    {type:'geo',color:'var(--crit)',label:'GEOPOLITICAL',title:'Red Sea Corridor Disruption',body:'Supply chain impact detected. Risk Score: 81/100. Safety stock auto-adjusted.',time:'24 min ago'}
+];
+const alertFeed=document.getElementById('alertFeed');
+function renderAlerts(filter){
+    alertFeed.innerHTML='';
+    alerts.filter(a=>filter==='all'||a.type===filter).forEach(a=>{
+        alertFeed.innerHTML+=`<div class="alert-card" style="border-color:${a.color}" data-type="${a.type}">
+            <div class="alert-header"><span class="alert-type" style="color:${a.color}">${a.label}</span><span class="alert-time">${a.time}</span></div>
+            <div class="alert-title">${a.title}</div>
+            <div class="alert-body">${a.body}</div>
+            <div class="alert-actions"><button class="alert-btn primary" onclick="this.textContent='✓ Handled';this.disabled=true;this.style.opacity='0.6'">Acknowledge</button><button class="alert-btn" style="background:var(--surface);border:1px solid var(--border);color:var(--txt)">Escalate</button></div>
+        </div>`;
+    });
+}
+renderAlerts('all');
+window.filterAlerts=function(type,el){
+    document.querySelectorAll('.filter-tab').forEach(t=>t.classList.remove('active'));
+    el.classList.add('active');
+    renderAlerts(type);
+};
+
+// Layer pills
+document.querySelectorAll('.layer-pill').forEach(p=>{
+    p.addEventListener('click',()=>p.classList.toggle('on'));
+});
+
+})();
+
+// Service Worker Registration for PWA
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('sw.js').then(reg => {
+      console.log('SW registered!', reg);
+    }).catch(err => console.log('SW registration failed', err));
+  });
+}
+</script>
+</body>
+</html>
