@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+        content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="theme-color" content="#ffffff">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <title>RescueLink</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+    <div class="app">
+        <!-- Status Bar -->
+        <div class="status-bar">
+            <div class="time" id="currentTime">9:41</div>
+            <div class="indicators">
+                <span id="signalIcon">📶</span>
+                <span id="batteryIcon">🔋</span>
+            </div>
+        </div>
+
+        <!-- Header -->
+        <header class="header">
+            <h1 class="app-title">Emergency SOS</h1>
+            <div class="header-actions">
+                <button class="theme-toggle" id="themeToggle" title="Toggle Dark/Light Mode">
+                    <span class="theme-icon" id="themeIcon">🌙</span>
+                </button>
+                <div class="connection" id="connection">
+                    <span class="conn-dot"></span>
+                    <span class="conn-text">Connecting</span>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="main">
+            <!-- Location Status Card -->
+            <div class="location-card" id="locationCard">
+                <div class="loc-icon">📍</div>
+                <div class="loc-info">
+                    <span class="loc-label">Your location is being tracked</span>
+                    <span class="loc-value" id="locationText">Acquiring GPS signal...</span>
+                </div>
+                <div class="loc-status" id="locStatus">●</div>
+            </div>
+
+            <!-- SOS Button Area -->
+            <div class="sos-area">
+                <p class="sos-hint">Press and hold to call for help</p>
+
+                <div class="sos-container">
+                    <div class="sos-pulse" id="sosPulse"></div>
+                    <button class="sos-button" id="sosButton">
+                        <svg class="sos-progress" id="sosProgress" viewBox="0 0 100 100">
+                            <circle class="progress-bg" cx="50" cy="50" r="46" />
+                            <circle class="progress-fill" cx="50" cy="50" r="46" id="progressFill" />
+                        </svg>
+                        <div class="sos-content">
+                            <span class="sos-label">SOS</span>
+                        </div>
+                    </button>
+                </div>
+
+                <p class="sos-note">Your location and emergency details will be shared with rescue services</p>
+            </div>
+        </main>
+
+        <!-- Bottom Section -->
+        <footer class="footer">
+            <div class="info-strip">
+                <div class="info-chip">
+                    <span class="chip-icon">🔋</span>
+                    <span class="chip-value" id="batteryText">--%</span>
+                </div>
+                <div class="info-chip" id="motionChip" title="Measures device movement using accelerometer">
+                    <span class="chip-icon">📡</span>
+                    <span class="chip-value" id="motionText">Still</span>
+                </div>
+                <div class="info-chip">
+                    <span class="chip-icon">🎯</span>
+                    <span class="chip-value" id="accuracyText">--m</span>
+                </div>
+            </div>
+
+            <button class="history-btn" id="historyBtn">
+                <span class="history-icon">📋</span>
+                <span class="history-label">Alert History</span>
+                <span class="history-badge" id="alertBadge"></span>
+            </button>
+        </footer>
+
+        <!-- Emergency Type Selection (shown after SOS trigger) -->
+        <div class="overlay" id="emergencyTypeOverlay">
+            <div class="type-card">
+                <h2>What's your emergency?</h2>
+                <p>Select the type of help you need</p>
+
+                <div class="type-grid">
+                    <button class="type-btn" data-type="flood" onclick="selectEmergencyType('flood')">
+                        <span class="type-emoji">🌊</span>
+                        <span class="type-name">Flood</span>
+                    </button>
+                    <button class="type-btn" data-type="fire" onclick="selectEmergencyType('fire')">
+                        <span class="type-emoji">🔥</span>
+                        <span class="type-name">Fire</span>
+                    </button>
+                    <button class="type-btn" data-type="medical" onclick="selectEmergencyType('medical')">
+                        <span class="type-emoji">🚑</span>
+                        <span class="type-name">Medical</span>
+                    </button>
+                    <button class="type-btn" data-type="accident" onclick="selectEmergencyType('accident')">
+                        <span class="type-emoji">🚗</span>
+                        <span class="type-name">Accident</span>
+                    </button>
+                    <button class="type-btn" data-type="crime" onclick="selectEmergencyType('crime')">
+                        <span class="type-emoji">🚨</span>
+                        <span class="type-name">Crime</span>
+                    </button>
+                    <button class="type-btn" data-type="other" onclick="selectEmergencyType('other')">
+                        <span class="type-emoji">⚠️</span>
+                        <span class="type-name">Other</span>
+                    </button>
+                </div>
+
+                <button class="skip-btn" onclick="selectEmergencyType('general')">
+                    Send without specifying →
+                </button>
+            </div>
+        </div>
+
+        <!-- Success Overlay -->
+        <div class="overlay" id="successOverlay">
+            <div class="success-card">
+                <div class="success-icon">
+                    <svg viewBox="0 0 52 52">
+                        <circle class="success-circle" cx="26" cy="26" r="25" />
+                        <path class="success-check" d="M14.1 27.2l7.1 7.2 16.7-16.8" />
+                    </svg>
+                </div>
+                <h2 class="success-title">Alert Sent</h2>
+                <p class="success-desc">Emergency services have been notified of your location</p>
+
+                <div class="rescue-info" id="rescueInfo">
+                    <div class="rescue-header">🚨 Nearest Rescue Unit</div>
+                    <div class="rescue-name" id="rescueName">Locating...</div>
+                    <div class="rescue-distance" id="rescueDistance"></div>
+                </div>
+
+                <div class="success-status">
+                    <div class="status-item done">
+                        <span class="status-dot">✓</span>
+                        <span>Alert created</span>
+                    </div>
+                    <div class="status-item" id="deliveryStatus">
+                        <span class="status-dot">○</span>
+                        <span>Sending to rescue center...</span>
+                    </div>
+                </div>
+
+                <button class="close-btn" id="closeSuccess">Done</button>
+            </div>
+        </div>
+
+        <!-- History Panel -->
+        <div class="panel" id="historyPanel">
+            <div class="panel-header">
+                <h2>Alert History</h2>
+                <button class="panel-close" id="closeHistory">✕</button>
+            </div>
+            <div class="panel-content" id="alertsList"></div>
+        </div>
+
+        <!-- Motion Info Tooltip -->
+        <div class="tooltip" id="motionTooltip">
+            <h4>Motion Detection</h4>
+            <p>Uses your device's accelerometer to detect movement.</p>
+            <ul>
+                <li><strong>Moving:</strong> Significant device motion detected</li>
+                <li><strong>Still:</strong> No movement for 5+ seconds</li>
+            </ul>
+            <p class="tip">This helps rescue teams understand if you're mobile or stationary.</p>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+
+</html>

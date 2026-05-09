@@ -1,0 +1,18 @@
+{
+    "name": "RescueLink SOS",
+    "short_name": "RescueLink",
+    "description": "Offline-First Emergency SOS System",
+    "start_url": "/",
+    "display": "standalone",
+    "background_color": "#0d0d1a",
+    "theme_color": "#e63946",
+    "orientation": "portrait",
+    "icons": [
+        {
+            "src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect fill='%23e63946' width='100' height='100' rx='20'/><text x='50' y='65' font-size='40' text-anchor='middle' fill='white' font-weight='bold'>SOS</text></svg>",
+            "sizes": "any",
+            "type": "image/svg+xml",
+            "purpose": "any maskable"
+        }
+    ]
+}
