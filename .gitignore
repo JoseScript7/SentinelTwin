@@ -11,5 +11,6 @@ brain/
 __pycache__/
 *.pyc
 *.crdownload
+*.backup
 gateway-server/ml/data/*.zip
 gateway-server/ml/data/Unconfirmed *.crdownload
