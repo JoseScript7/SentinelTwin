@@ -1,0 +1,1430 @@
+[
+    {
+        "id": "tn-112",
+        "name": "TN Emergency (112)",
+        "type": "unified",
+        "lat": 13.0827,
+        "lng": 80.2707,
+        "contact": "112",
+        "phone": "112",
+        "jurisdiction": "Tamil Nadu",
+        "priority": 1,
+        "capabilities": [
+            "all_emergencies"
+        ],
+        "status": "available"
+    },
+    {
+        "id": "tn-sdrf",
+        "name": "SDRF Tamil Nadu",
+        "type": "disaster",
+        "lat": 13.0650,
+        "lng": 80.2400,
+        "contact": "1070",
+        "phone": "1070",
+        "jurisdiction": "Tamil Nadu",
+        "priority": 1,
+        "capabilities": [
+            "flood",
+            "cyclone",
+            "disaster"
+        ],
+        "status": "available"
+    },
+    {
+        "id": "tn-women",
+        "name": "TN Women Helpline",
+        "type": "safety",
+        "lat": 13.0600,
+        "lng": 80.2600,
+        "contact": "1091",
+        "phone": "1091",
+        "jurisdiction": "Tamil Nadu",
+        "priority": 1,
+        "capabilities": [
+            "women_safety"
+        ],
+        "status": "available"
+    },
+    {
+        "id": "tn-child",
+        "name": "TN Childline",
+        "type": "safety",
+        "lat": 13.0500,
+        "lng": 80.2500,
+        "contact": "1098",
+        "phone": "1098",
+        "jurisdiction": "Tamil Nadu",
+        "priority": 1,
+        "capabilities": [
+            "child_safety"
+        ],
+        "status": "available"
+    },
+    {
+        "id": "chennai-police",
+        "name": "Chennai Police",
+        "type": "police",
+        "lat": 13.0827,
+        "lng": 80.2707,
+        "contact": "100",
+        "phone": "100",
+        "jurisdiction": "Chennai",
+        "priority": 1,
+        "capabilities": [
+            "crime",
+            "traffic"
+        ],
+        "status": "available"
+    },
+    {
+        "id": "chennai-ems",
+        "name": "Chennai EMS",
+        "type": "medical",
+        "lat": 13.0524,
+        "lng": 80.2508,
+        "contact": "108",
+        "phone": "108",
+        "jurisdiction": "Chennai",
+        "priority": 1,
+        "capabilities": [
+            "medical"
+        ],
+        "status": "available"
+    },
+    {
+        "id": "chennai-fire",
+        "name": "Chennai Fire",
+        "type": "fire",
+        "lat": 13.0878,
+        "lng": 80.2785,
+        "contact": "101",
+        "phone": "101",
+        "jurisdiction": "Chennai",
+        "priority": 1,
+        "capabilities": [
+            "fire"
+        ],
+        "status": "available"
+    },
+    {
+        "id": "chennai-coast",
+        "name": "Coast Guard Chennai",
+        "type": "flood",
+        "lat": 13.0950,
+        "lng": 80.2950,
+        "contact": "1554",
+        "phone": "1554",
+        "jurisdiction": "Chennai Coast",
+        "priority": 2,
+        "capabilities": [
+            "sea_rescue"
+        ],
+        "status": "available"
+    },
+    {
+        "id": "coimbatore-police",
+        "name": "Coimbatore Police",
+        "type": "police",
+        "lat": 11.0168,
+        "lng": 76.9558,
+        "contact": "100",
+        "phone": "100",
+        "jurisdiction": "Coimbatore",
+        "priority": 1,
+        "capabilities": [
+            "crime"
+        ],
+        "status": "available"
+    },
+    {
+        "id": "coimbatore-ems",
+        "name": "Coimbatore EMS",
+        "type": "medical",
+        "lat": 11.0250,
+        "lng": 76.9600,
+        "contact": "108",
+        "phone": "108",
+        "jurisdiction": "Coimbatore",
+        "priority": 1,
+        "capabilities": [
+            "medical"
+        ],
+        "status": "available"
+    },
+    {
+        "id": "coimbatore-fire",
+        "name": "Coimbatore Fire",
+        "type": "fire",
+        "lat": 11.0180,
+        "lng": 76.9580,
+        "contact": "101",
+        "phone": "101",
+        "jurisdiction": "Coimbatore",
+        "priority": 1,
+        "capabilities": [
+            "fire"
+        ],
+        "status": "available"
+    },
+    {
+        "id": "madurai-police",
+        "name": "Madurai Police",
+        "type": "police",
+        "lat": 9.9252,
+        "lng": 78.1198,
+        "contact": "100",
+        "phone": "100",
+        "jurisdiction": "Madurai",
+        "priority": 1,
+        "capabilities": [
+            "crime"
+        ],
+        "status": "available"
+    },
+    {
+        "id": "madurai-ems",
+        "name": "Madurai EMS",
+        "type": "medical",
+        "lat": 9.9300,
+        "lng": 78.1200,
+        "contact": "108",
+        "phone": "108",
+        "jurisdiction": "Madurai",
+        "priority": 1,
+        "capabilities": [
+            "medical"
+        ],
+        "status": "available"
+    },
+    {
+        "id": "madurai-fire",
+        "name": "Madurai Fire",
+        "type": "fire",
+        "lat": 9.9280,
+        "lng": 78.1180,
+        "contact": "101",
+        "phone": "101",
+        "jurisdiction": "Madurai",
+        "priority": 1,
+        "capabilities": [
+            "fire"
+        ],
+        "status": "available"
+    },
+    {
+        "id": "trichy-police",
+        "name": "Trichy Police",
+        "type": "police",
+        "lat": 10.7905,
+        "lng": 78.7047,
+        "contact": "100",
+        "phone": "100",
+        "jurisdiction": "Tiruchirappalli",
+        "priority": 1,
+        "capabilities": [
+            "crime"
+        ],
+        "status": "available"
+    },
+    {
+        "id": "trichy-ems",
+        "name": "Trichy EMS",
+        "type": "medical",
+        "lat": 10.7950,
+        "lng": 78.7100,
+        "contact": "108",
+        "phone": "108",
+        "jurisdiction": "Tiruchirappalli",
+        "priority": 1,
+        "capabilities": [
+            "medical"
+        ],
+        "status": "available"
+    },
+    {
+        "id": "trichy-fire",
+        "name": "Trichy Fire",
+        "type": "fire",
+        "lat": 10.7920,
+        "lng": 78.7050,
+        "contact": "101",
+        "phone": "101",
+        "jurisdiction": "Tiruchirappalli",
+        "priority": 1,
+        "capabilities": [
+            "fire"
+        ],
+        "status": "available"
+    },
+    {
+        "id": "salem-police",
+        "name": "Salem Police",
+        "type": "police",
+        "lat": 11.6643,
+        "lng": 78.1460,
+        "contact": "100",
+        "phone": "100",
+        "jurisdiction": "Salem",
+        "priority": 1,
+        "capabilities": [
+            "crime"
+        ],
+        "status": "available"
+    },
+    {
+        "id": "salem-ems",
+        "name": "Salem EMS",
+        "type": "medical",
+        "lat": 11.6650,
+        "lng": 78.1500,
+        "contact": "108",
+        "phone": "108",
+        "jurisdiction": "Salem",
+        "priority": 1,
+        "capabilities": [
+            "medical"
+        ],
+        "status": "available"
+    },
+    {
+        "id": "salem-fire",
+        "name": "Salem Fire",
+        "type": "fire",
+        "lat": 11.6630,
+        "lng": 78.1480,
+        "contact": "101",
+        "phone": "101",
+        "jurisdiction": "Salem",
+        "priority": 1,
+        "capabilities": [
+            "fire"
+        ],
+        "status": "available"
+    },
+    {
+        "id": "tirunelveli-police",
+        "name": "Tirunelveli Police",
+        "type": "police",
+        "lat": 8.7139,
+        "lng": 77.7567,
+        "contact": "100",
+        "phone": "100",
+        "jurisdiction": "Tirunelveli",
+        "priority": 1,
+        "capabilities": [
+            "crime"
+        ],
+        "status": "available"
+    },
+    {
+        "id": "tirunelveli-ems",
+        "name": "Tirunelveli EMS",
+        "type": "medical",
+        "lat": 8.7150,
+        "lng": 77.7580,
+        "contact": "108",
+        "phone": "108",
+        "jurisdiction": "Tirunelveli",
+        "priority": 1,
+        "capabilities": [
+            "medical"
+        ],
+        "status": "available"
+    },
+    {
+        "id": "tirunelveli-fire",
+        "name": "Tirunelveli Fire",
+        "type": "fire",
+        "lat": 8.7145,
+        "lng": 77.7560,
+        "contact": "101",
+        "phone": "101",
+        "jurisdiction": "Tirunelveli",
+        "priority": 1,
+        "capabilities": [
+            "fire"
+        ],
+        "status": "available"
+    },
+    {
+        "id": "vellore-police",
+        "name": "Vellore Police",
+        "type": "police",
+        "lat": 12.9165,
+        "lng": 79.1325,
+        "contact": "100",
+        "phone": "100",
+        "jurisdiction": "Vellore",
+        "priority": 1,
+        "capabilities": [
+            "crime"
+        ],
+        "status": "available"
+    },
+    {
+        "id": "vellore-ems",
+        "name": "Vellore EMS",
+        "type": "medical",
+        "lat": 12.9180,
+        "lng": 79.1350,
+        "contact": "108",
+        "phone": "108",
+        "jurisdiction": "Vellore",
+        "priority": 1,
+        "capabilities": [
+            "medical"
+        ],
+        "status": "available"
+    },
+    {
+        "id": "vellore-fire",
+        "name": "Vellore Fire",
+        "type": "fire",
+        "lat": 12.9170,
+        "lng": 79.1340,
+        "contact": "101",
+        "phone": "101",
+        "jurisdiction": "Vellore",
+        "priority": 1,
+        "capabilities": [
+            "fire"
+        ],
+        "status": "available"
+    },
+    {
+        "id": "erode-police",
+        "name": "Erode Police",
+        "type": "police",
+        "lat": 11.3410,
+        "lng": 77.7172,
+        "contact": "100",
+        "phone": "100",
+        "jurisdiction": "Erode",
+        "priority": 1,
+        "capabilities": [
+            "crime"
+        ],
+        "status": "available"
+    },
+    {
+        "id": "erode-ems",
+        "name": "Erode EMS",
+        "type": "medical",
+        "lat": 11.3420,
+        "lng": 77.7180,
+        "contact": "108",
+        "phone": "108",
+        "jurisdiction": "Erode",
+        "priority": 1,
+        "capabilities": [
+            "medical"
+        ],
+        "status": "available"
+    },
+    {
+        "id": "erode-fire",
+        "name": "Erode Fire",
+        "type": "fire",
+        "lat": 11.3415,
+        "lng": 77.7165,
+        "contact": "101",
+        "phone": "101",
+        "jurisdiction": "Erode",
+        "priority": 1,
+        "capabilities": [
+            "fire"
+        ],
+        "status": "available"
+    },
+    {
+        "id": "tiruppur-police",
+        "name": "Tiruppur Police",
+        "type": "police",
+        "lat": 11.1085,
+        "lng": 77.3411,
+        "contact": "100",
+        "phone": "100",
+        "jurisdiction": "Tiruppur",
+        "priority": 1,
+        "capabilities": [
+            "crime"
+        ],
+        "status": "available"
+    },
+    {
+        "id": "tiruppur-ems",
+        "name": "Tiruppur EMS",
+        "type": "medical",
+        "lat": 11.1100,
+        "lng": 77.3450,
+        "contact": "108",
+        "phone": "108",
+        "jurisdiction": "Tiruppur",
+        "priority": 1,
+        "capabilities": [
+            "medical"
+        ],
+        "status": "available"
+    },
+    {
+        "id": "tiruppur-fire",
+        "name": "Tiruppur Fire",
+        "type": "fire",
+        "lat": 11.1090,
+        "lng": 77.3420,
+        "contact": "101",
+        "phone": "101",
+        "jurisdiction": "Tiruppur",
+        "priority": 1,
+        "capabilities": [
+            "fire"
+        ],
+        "status": "available"
+    },
+    {
+        "id": "thanjavur-police",
+        "name": "Thanjavur Police",
+        "type": "police",
+        "lat": 10.7870,
+        "lng": 79.1378,
+        "contact": "100",
+        "phone": "100",
+        "jurisdiction": "Thanjavur",
+        "priority": 1,
+        "capabilities": [
+            "crime"
+        ],
+        "status": "available"
+    },
+    {
+        "id": "thanjavur-ems",
+        "name": "Thanjavur EMS",
+        "type": "medical",
+        "lat": 10.7880,
+        "lng": 79.1390,
+        "contact": "108",
+        "phone": "108",
+        "jurisdiction": "Thanjavur",
+        "priority": 1,
+        "capabilities": [
+            "medical"
+        ],
+        "status": "available"
+    },
+    {
+        "id": "thanjavur-fire",
+        "name": "Thanjavur Fire",
+        "type": "fire",
+        "lat": 10.7875,
+        "lng": 79.1385,
+        "contact": "101",
+        "phone": "101",
+        "jurisdiction": "Thanjavur",
+        "priority": 1,
+        "capabilities": [
+            "fire"
+        ],
+        "status": "available"
+    },
+    {
+        "id": "dindigul-police",
+        "name": "Dindigul Police",
+        "type": "police",
+        "lat": 10.3673,
+        "lng": 77.9803,
+        "contact": "100",
+        "phone": "100",
+        "jurisdiction": "Dindigul",
+        "priority": 1,
+        "capabilities": [
+            "crime"
+        ],
+        "status": "available"
+    },
+    {
+        "id": "dindigul-ems",
+        "name": "Dindigul EMS",
+        "type": "medical",
+        "lat": 10.3680,
+        "lng": 77.9810,
+        "contact": "108",
+        "phone": "108",
+        "jurisdiction": "Dindigul",
+        "priority": 1,
+        "capabilities": [
+            "medical"
+        ],
+        "status": "available"
+    },
+    {
+        "id": "dindigul-fire",
+        "name": "Dindigul Fire",
+        "type": "fire",
+        "lat": 10.3675,
+        "lng": 77.9805,
+        "contact": "101",
+        "phone": "101",
+        "jurisdiction": "Dindigul",
+        "priority": 1,
+        "capabilities": [
+            "fire"
+        ],
+        "status": "available"
+    },
+    {
+        "id": "tuticorin-police",
+        "name": "Tuticorin Police",
+        "type": "police",
+        "lat": 8.7642,
+        "lng": 78.1348,
+        "contact": "100",
+        "phone": "100",
+        "jurisdiction": "Tuticorin",
+        "priority": 1,
+        "capabilities": [
+            "crime"
+        ],
+        "status": "available"
+    },
+    {
+        "id": "tuticorin-ems",
+        "name": "Tuticorin EMS",
+        "type": "medical",
+        "lat": 8.7650,
+        "lng": 78.1360,
+        "contact": "108",
+        "phone": "108",
+        "jurisdiction": "Tuticorin",
+        "priority": 1,
+        "capabilities": [
+            "medical"
+        ],
+        "status": "available"
+    },
+    {
+        "id": "tuticorin-fire",
+        "name": "Tuticorin Fire",
+        "type": "fire",
+        "lat": 8.7645,
+        "lng": 78.1355,
+        "contact": "101",
+        "phone": "101",
+        "jurisdiction": "Tuticorin",
+        "priority": 1,
+        "capabilities": [
+            "fire"
+        ],
+        "status": "available"
+    },
+    {
+        "id": "kanyakumari-police",
+        "name": "Kanyakumari Police",
+        "type": "police",
+        "lat": 8.0883,
+        "lng": 77.5385,
+        "contact": "100",
+        "phone": "100",
+        "jurisdiction": "Kanyakumari",
+        "priority": 1,
+        "capabilities": [
+            "crime"
+        ],
+        "status": "available"
+    },
+    {
+        "id": "kanyakumari-ems",
+        "name": "Kanyakumari EMS",
+        "type": "medical",
+        "lat": 8.0890,
+        "lng": 77.5390,
+        "contact": "108",
+        "phone": "108",
+        "jurisdiction": "Kanyakumari",
+        "priority": 1,
+        "capabilities": [
+            "medical"
+        ],
+        "status": "available"
+    },
+    {
+        "id": "kanyakumari-fire",
+        "name": "Kanyakumari Fire",
+        "type": "fire",
+        "lat": 8.0885,
+        "lng": 77.5388,
+        "contact": "101",
+        "phone": "101",
+        "jurisdiction": "Kanyakumari",
+        "priority": 1,
+        "capabilities": [
+            "fire"
+        ],
+        "status": "available"
+    },
+    {
+        "id": "cuddalore-police",
+        "name": "Cuddalore Police",
+        "type": "police",
+        "lat": 11.7480,
+        "lng": 79.7714,
+        "contact": "100",
+        "phone": "100",
+        "jurisdiction": "Cuddalore",
+        "priority": 1,
+        "capabilities": [
+            "crime"
+        ],
+        "status": "available"
+    },
+    {
+        "id": "cuddalore-ems",
+        "name": "Cuddalore EMS",
+        "type": "medical",
+        "lat": 11.7490,
+        "lng": 79.7720,
+        "contact": "108",
+        "phone": "108",
+        "jurisdiction": "Cuddalore",
+        "priority": 1,
+        "capabilities": [
+            "medical"
+        ],
+        "status": "available"
+    },
+    {
+        "id": "cuddalore-fire",
+        "name": "Cuddalore Fire",
+        "type": "fire",
+        "lat": 11.7485,
+        "lng": 79.7718,
+        "contact": "101",
+        "phone": "101",
+        "jurisdiction": "Cuddalore",
+        "priority": 1,
+        "capabilities": [
+            "fire"
+        ],
+        "status": "available"
+    },
+    {
+        "id": "villupuram-police",
+        "name": "Villupuram Police",
+        "type": "police",
+        "lat": 11.9401,
+        "lng": 79.4861,
+        "contact": "100",
+        "phone": "100",
+        "jurisdiction": "Villupuram",
+        "priority": 1,
+        "capabilities": [
+            "crime"
+        ],
+        "status": "available"
+    },
+    {
+        "id": "villupuram-ems",
+        "name": "Villupuram EMS",
+        "type": "medical",
+        "lat": 11.9410,
+        "lng": 79.4870,
+        "contact": "108",
+        "phone": "108",
+        "jurisdiction": "Villupuram",
+        "priority": 1,
+        "capabilities": [
+            "medical"
+        ],
+        "status": "available"
+    },
+    {
+        "id": "krishnagiri-police",
+        "name": "Krishnagiri Police",
+        "type": "police",
+        "lat": 12.5186,
+        "lng": 78.2137,
+        "contact": "100",
+        "phone": "100",
+        "jurisdiction": "Krishnagiri",
+        "priority": 1,
+        "capabilities": [
+            "crime"
+        ],
+        "status": "available"
+    },
+    {
+        "id": "krishnagiri-ems",
+        "name": "Krishnagiri EMS",
+        "type": "medical",
+        "lat": 12.5190,
+        "lng": 78.2145,
+        "contact": "108",
+        "phone": "108",
+        "jurisdiction": "Krishnagiri",
+        "priority": 1,
+        "capabilities": [
+            "medical"
+        ],
+        "status": "available"
+    },
+    {
+        "id": "dharmapuri-police",
+        "name": "Dharmapuri Police",
+        "type": "police",
+        "lat": 12.1211,
+        "lng": 78.1582,
+        "contact": "100",
+        "phone": "100",
+        "jurisdiction": "Dharmapuri",
+        "priority": 1,
+        "capabilities": [
+            "crime"
+        ],
+        "status": "available"
+    },
+    {
+        "id": "dharmapuri-ems",
+        "name": "Dharmapuri EMS",
+        "type": "medical",
+        "lat": 12.1220,
+        "lng": 78.1590,
+        "contact": "108",
+        "phone": "108",
+        "jurisdiction": "Dharmapuri",
+        "priority": 1,
+        "capabilities": [
+            "medical"
+        ],
+        "status": "available"
+    },
+    {
+        "id": "namakkal-police",
+        "name": "Namakkal Police",
+        "type": "police",
+        "lat": 11.2189,
+        "lng": 78.1674,
+        "contact": "100",
+        "phone": "100",
+        "jurisdiction": "Namakkal",
+        "priority": 1,
+        "capabilities": [
+            "crime"
+        ],
+        "status": "available"
+    },
+    {
+        "id": "namakkal-ems",
+        "name": "Namakkal EMS",
+        "type": "medical",
+        "lat": 11.2195,
+        "lng": 78.1680,
+        "contact": "108",
+        "phone": "108",
+        "jurisdiction": "Namakkal",
+        "priority": 1,
+        "capabilities": [
+            "medical"
+        ],
+        "status": "available"
+    },
+    {
+        "id": "karur-police",
+        "name": "Karur Police",
+        "type": "police",
+        "lat": 10.9571,
+        "lng": 78.0792,
+        "contact": "100",
+        "phone": "100",
+        "jurisdiction": "Karur",
+        "priority": 1,
+        "capabilities": [
+            "crime"
+        ],
+        "status": "available"
+    },
+    {
+        "id": "karur-ems",
+        "name": "Karur EMS",
+        "type": "medical",
+        "lat": 10.9580,
+        "lng": 78.0800,
+        "contact": "108",
+        "phone": "108",
+        "jurisdiction": "Karur",
+        "priority": 1,
+        "capabilities": [
+            "medical"
+        ],
+        "status": "available"
+    },
+    {
+        "id": "nagapattinam-police",
+        "name": "Nagapattinam Police",
+        "type": "police",
+        "lat": 10.7672,
+        "lng": 79.8449,
+        "contact": "100",
+        "phone": "100",
+        "jurisdiction": "Nagapattinam",
+        "priority": 1,
+        "capabilities": [
+            "crime"
+        ],
+        "status": "available"
+    },
+    {
+        "id": "nagapattinam-ems",
+        "name": "Nagapattinam EMS",
+        "type": "medical",
+        "lat": 10.7680,
+        "lng": 79.8455,
+        "contact": "108",
+        "phone": "108",
+        "jurisdiction": "Nagapattinam",
+        "priority": 1,
+        "capabilities": [
+            "medical"
+        ],
+        "status": "available"
+    },
+    {
+        "id": "ramanathapuram-police",
+        "name": "Ramanathapuram Police",
+        "type": "police",
+        "lat": 9.3639,
+        "lng": 78.8395,
+        "contact": "100",
+        "phone": "100",
+        "jurisdiction": "Ramanathapuram",
+        "priority": 1,
+        "capabilities": [
+            "crime"
+        ],
+        "status": "available"
+    },
+    {
+        "id": "ramanathapuram-ems",
+        "name": "Ramanathapuram EMS",
+        "type": "medical",
+        "lat": 9.3645,
+        "lng": 78.8400,
+        "contact": "108",
+        "phone": "108",
+        "jurisdiction": "Ramanathapuram",
+        "priority": 1,
+        "capabilities": [
+            "medical"
+        ],
+        "status": "available"
+    },
+    {
+        "id": "sivagangai-police",
+        "name": "Sivagangai Police",
+        "type": "police",
+        "lat": 9.8433,
+        "lng": 78.4809,
+        "contact": "100",
+        "phone": "100",
+        "jurisdiction": "Sivagangai",
+        "priority": 1,
+        "capabilities": [
+            "crime"
+        ],
+        "status": "available"
+    },
+    {
+        "id": "sivagangai-ems",
+        "name": "Sivagangai EMS",
+        "type": "medical",
+        "lat": 9.8440,
+        "lng": 78.4815,
+        "contact": "108",
+        "phone": "108",
+        "jurisdiction": "Sivagangai",
+        "priority": 1,
+        "capabilities": [
+            "medical"
+        ],
+        "status": "available"
+    },
+    {
+        "id": "virudhunagar-police",
+        "name": "Virudhunagar Police",
+        "type": "police",
+        "lat": 9.5680,
+        "lng": 77.9624,
+        "contact": "100",
+        "phone": "100",
+        "jurisdiction": "Virudhunagar",
+        "priority": 1,
+        "capabilities": [
+            "crime"
+        ],
+        "status": "available"
+    },
+    {
+        "id": "virudhunagar-ems",
+        "name": "Virudhunagar EMS",
+        "type": "medical",
+        "lat": 9.5690,
+        "lng": 77.9630,
+        "contact": "108",
+        "phone": "108",
+        "jurisdiction": "Virudhunagar",
+        "priority": 1,
+        "capabilities": [
+            "medical"
+        ],
+        "status": "available"
+    },
+    {
+        "id": "theni-police",
+        "name": "Theni Police",
+        "type": "police",
+        "lat": 10.0104,
+        "lng": 77.4768,
+        "contact": "100",
+        "phone": "100",
+        "jurisdiction": "Theni",
+        "priority": 1,
+        "capabilities": [
+            "crime"
+        ],
+        "status": "available"
+    },
+    {
+        "id": "theni-ems",
+        "name": "Theni EMS",
+        "type": "medical",
+        "lat": 10.0110,
+        "lng": 77.4775,
+        "contact": "108",
+        "phone": "108",
+        "jurisdiction": "Theni",
+        "priority": 1,
+        "capabilities": [
+            "medical"
+        ],
+        "status": "available"
+    },
+    {
+        "id": "nilgiris-police",
+        "name": "Nilgiris Police",
+        "type": "police",
+        "lat": 11.4102,
+        "lng": 76.6950,
+        "contact": "100",
+        "phone": "100",
+        "jurisdiction": "Nilgiris",
+        "priority": 1,
+        "capabilities": [
+            "crime"
+        ],
+        "status": "available"
+    },
+    {
+        "id": "nilgiris-ems",
+        "name": "Nilgiris EMS",
+        "type": "medical",
+        "lat": 11.4110,
+        "lng": 76.6960,
+        "contact": "108",
+        "phone": "108",
+        "jurisdiction": "Nilgiris",
+        "priority": 1,
+        "capabilities": [
+            "medical"
+        ],
+        "status": "available"
+    },
+    {
+        "id": "tiruvallur-police",
+        "name": "Tiruvallur Police",
+        "type": "police",
+        "lat": 13.1425,
+        "lng": 79.9086,
+        "contact": "100",
+        "phone": "100",
+        "jurisdiction": "Tiruvallur",
+        "priority": 1,
+        "capabilities": [
+            "crime"
+        ],
+        "status": "available"
+    },
+    {
+        "id": "tiruvallur-ems",
+        "name": "Tiruvallur EMS",
+        "type": "medical",
+        "lat": 13.1430,
+        "lng": 79.9090,
+        "contact": "108",
+        "phone": "108",
+        "jurisdiction": "Tiruvallur",
+        "priority": 1,
+        "capabilities": [
+            "medical"
+        ],
+        "status": "available"
+    },
+    {
+        "id": "kancheepuram-police",
+        "name": "Kancheepuram Police",
+        "type": "police",
+        "lat": 12.8342,
+        "lng": 79.7036,
+        "contact": "100",
+        "phone": "100",
+        "jurisdiction": "Kancheepuram",
+        "priority": 1,
+        "capabilities": [
+            "crime"
+        ],
+        "status": "available"
+    },
+    {
+        "id": "kancheepuram-ems",
+        "name": "Kancheepuram EMS",
+        "type": "medical",
+        "lat": 12.8350,
+        "lng": 79.7045,
+        "contact": "108",
+        "phone": "108",
+        "jurisdiction": "Kancheepuram",
+        "priority": 1,
+        "capabilities": [
+            "medical"
+        ],
+        "status": "available"
+    },
+    {
+        "id": "chengalpattu-police",
+        "name": "Chengalpattu Police",
+        "type": "police",
+        "lat": 12.6819,
+        "lng": 79.9888,
+        "contact": "100",
+        "phone": "100",
+        "jurisdiction": "Chengalpattu",
+        "priority": 1,
+        "capabilities": [
+            "crime"
+        ],
+        "status": "available"
+    },
+    {
+        "id": "chengalpattu-ems",
+        "name": "Chengalpattu EMS",
+        "type": "medical",
+        "lat": 12.6825,
+        "lng": 79.9895,
+        "contact": "108",
+        "phone": "108",
+        "jurisdiction": "Chengalpattu",
+        "priority": 1,
+        "capabilities": [
+            "medical"
+        ],
+        "status": "available"
+    },
+    {
+        "id": "tiruvannamalai-police",
+        "name": "Tiruvannamalai Police",
+        "type": "police",
+        "lat": 12.2253,
+        "lng": 79.0747,
+        "contact": "100",
+        "phone": "100",
+        "jurisdiction": "Tiruvannamalai",
+        "priority": 1,
+        "capabilities": [
+            "crime"
+        ],
+        "status": "available"
+    },
+    {
+        "id": "tiruvannamalai-ems",
+        "name": "Tiruvannamalai EMS",
+        "type": "medical",
+        "lat": 12.2260,
+        "lng": 79.0755,
+        "contact": "108",
+        "phone": "108",
+        "jurisdiction": "Tiruvannamalai",
+        "priority": 1,
+        "capabilities": [
+            "medical"
+        ],
+        "status": "available"
+    },
+    {
+        "id": "ranipet-police",
+        "name": "Ranipet Police",
+        "type": "police",
+        "lat": 12.9268,
+        "lng": 79.3333,
+        "contact": "100",
+        "phone": "100",
+        "jurisdiction": "Ranipet",
+        "priority": 1,
+        "capabilities": [
+            "crime"
+        ],
+        "status": "available"
+    },
+    {
+        "id": "ranipet-ems",
+        "name": "Ranipet EMS",
+        "type": "medical",
+        "lat": 12.9275,
+        "lng": 79.3340,
+        "contact": "108",
+        "phone": "108",
+        "jurisdiction": "Ranipet",
+        "priority": 1,
+        "capabilities": [
+            "medical"
+        ],
+        "status": "available"
+    },
+    {
+        "id": "tirupattur-police",
+        "name": "Tirupattur Police",
+        "type": "police",
+        "lat": 12.4967,
+        "lng": 78.5730,
+        "contact": "100",
+        "phone": "100",
+        "jurisdiction": "Tirupattur",
+        "priority": 1,
+        "capabilities": [
+            "crime"
+        ],
+        "status": "available"
+    },
+    {
+        "id": "tirupattur-ems",
+        "name": "Tirupattur EMS",
+        "type": "medical",
+        "lat": 12.4975,
+        "lng": 78.5738,
+        "contact": "108",
+        "phone": "108",
+        "jurisdiction": "Tirupattur",
+        "priority": 1,
+        "capabilities": [
+            "medical"
+        ],
+        "status": "available"
+    },
+    {
+        "id": "ariyalur-police",
+        "name": "Ariyalur Police",
+        "type": "police",
+        "lat": 11.1428,
+        "lng": 79.0786,
+        "contact": "100",
+        "phone": "100",
+        "jurisdiction": "Ariyalur",
+        "priority": 1,
+        "capabilities": [
+            "crime"
+        ],
+        "status": "available"
+    },
+    {
+        "id": "ariyalur-ems",
+        "name": "Ariyalur EMS",
+        "type": "medical",
+        "lat": 11.1435,
+        "lng": 79.0792,
+        "contact": "108",
+        "phone": "108",
+        "jurisdiction": "Ariyalur",
+        "priority": 1,
+        "capabilities": [
+            "medical"
+        ],
+        "status": "available"
+    },
+    {
+        "id": "perambalur-police",
+        "name": "Perambalur Police",
+        "type": "police",
+        "lat": 11.2320,
+        "lng": 78.8836,
+        "contact": "100",
+        "phone": "100",
+        "jurisdiction": "Perambalur",
+        "priority": 1,
+        "capabilities": [
+            "crime"
+        ],
+        "status": "available"
+    },
+    {
+        "id": "perambalur-ems",
+        "name": "Perambalur EMS",
+        "type": "medical",
+        "lat": 11.2328,
+        "lng": 78.8842,
+        "contact": "108",
+        "phone": "108",
+        "jurisdiction": "Perambalur",
+        "priority": 1,
+        "capabilities": [
+            "medical"
+        ],
+        "status": "available"
+    },
+    {
+        "id": "pudukkottai-police",
+        "name": "Pudukkottai Police",
+        "type": "police",
+        "lat": 10.3833,
+        "lng": 78.8001,
+        "contact": "100",
+        "phone": "100",
+        "jurisdiction": "Pudukkottai",
+        "priority": 1,
+        "capabilities": [
+            "crime"
+        ],
+        "status": "available"
+    },
+    {
+        "id": "pudukkottai-ems",
+        "name": "Pudukkottai EMS",
+        "type": "medical",
+        "lat": 10.3840,
+        "lng": 78.8008,
+        "contact": "108",
+        "phone": "108",
+        "jurisdiction": "Pudukkottai",
+        "priority": 1,
+        "capabilities": [
+            "medical"
+        ],
+        "status": "available"
+    },
+    {
+        "id": "tiruvarur-police",
+        "name": "Tiruvarur Police",
+        "type": "police",
+        "lat": 10.7726,
+        "lng": 79.6368,
+        "contact": "100",
+        "phone": "100",
+        "jurisdiction": "Tiruvarur",
+        "priority": 1,
+        "capabilities": [
+            "crime"
+        ],
+        "status": "available"
+    },
+    {
+        "id": "tiruvarur-ems",
+        "name": "Tiruvarur EMS",
+        "type": "medical",
+        "lat": 10.7732,
+        "lng": 79.6375,
+        "contact": "108",
+        "phone": "108",
+        "jurisdiction": "Tiruvarur",
+        "priority": 1,
+        "capabilities": [
+            "medical"
+        ],
+        "status": "available"
+    },
+    {
+        "id": "mayiladuthurai-police",
+        "name": "Mayiladuthurai Police",
+        "type": "police",
+        "lat": 11.1018,
+        "lng": 79.6491,
+        "contact": "100",
+        "phone": "100",
+        "jurisdiction": "Mayiladuthurai",
+        "priority": 1,
+        "capabilities": [
+            "crime"
+        ],
+        "status": "available"
+    },
+    {
+        "id": "mayiladuthurai-ems",
+        "name": "Mayiladuthurai EMS",
+        "type": "medical",
+        "lat": 11.1025,
+        "lng": 79.6498,
+        "contact": "108",
+        "phone": "108",
+        "jurisdiction": "Mayiladuthurai",
+        "priority": 1,
+        "capabilities": [
+            "medical"
+        ],
+        "status": "available"
+    },
+    {
+        "id": "tenkasi-police",
+        "name": "Tenkasi Police",
+        "type": "police",
+        "lat": 8.9604,
+        "lng": 77.3152,
+        "contact": "100",
+        "phone": "100",
+        "jurisdiction": "Tenkasi",
+        "priority": 1,
+        "capabilities": [
+            "crime"
+        ],
+        "status": "available"
+    },
+    {
+        "id": "tenkasi-ems",
+        "name": "Tenkasi EMS",
+        "type": "medical",
+        "lat": 8.9610,
+        "lng": 77.3158,
+        "contact": "108",
+        "phone": "108",
+        "jurisdiction": "Tenkasi",
+        "priority": 1,
+        "capabilities": [
+            "medical"
+        ],
+        "status": "available"
+    },
+    {
+        "id": "kallakurichi-police",
+        "name": "Kallakurichi Police",
+        "type": "police",
+        "lat": 11.7384,
+        "lng": 78.9597,
+        "contact": "100",
+        "phone": "100",
+        "jurisdiction": "Kallakurichi",
+        "priority": 1,
+        "capabilities": [
+            "crime"
+        ],
+        "status": "available"
+    },
+    {
+        "id": "kallakurichi-ems",
+        "name": "Kallakurichi EMS",
+        "type": "medical",
+        "lat": 11.7390,
+        "lng": 78.9603,
+        "contact": "108",
+        "phone": "108",
+        "jurisdiction": "Kallakurichi",
+        "priority": 1,
+        "capabilities": [
+            "medical"
+        ],
+        "status": "available"
+    }
+]
