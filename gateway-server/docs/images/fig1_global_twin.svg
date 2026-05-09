@@ -1,0 +1,43 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="800" viewBox="0 0 1200 800">
+  <style>
+    .bg{fill:#f6f7fb}
+    .card{fill:#fff;stroke:#e6e9f2;stroke-width:2;rx:12}
+    .title{font:600 36px/1.2 'Segoe UI', Roboto, Arial;color:#203a63}
+    .muted{font:400 18px 'Segoe UI', Roboto, Arial;color:#55607a}
+    .accent{fill:#3b82f6}
+  </style>
+  <rect class="bg" width="1200" height="800"/>
+  <g transform="translate(60,60)">
+    <rect class="card" width="1080" height="680" rx="12"/>
+    <text x="36" y="60" class="title">Global Twin — System Overview</text>
+    <text x="36" y="96" class="muted">Clean, modern dashboard snapshot</text>
+
+    <!-- left panel -->
+    <rect x="36" y="120" width="420" height="520" rx="10" fill="#fbfdff" stroke="#eef3ff"/>
+    <text x="60" y="156" class="muted">Key Metrics</text>
+    <g transform="translate(60,170)">
+      <rect width="240" height="80" rx="8" fill="#fff" stroke="#e6eefc"/>
+      <text x="16" y="48" font-family="Segoe UI, Roboto, Arial" font-weight="600" font-size="24" fill="#102a43">Active Areas</text>
+    </g>
+
+    <!-- map area -->
+    <rect x="480" y="120" width="552" height="520" rx="10" fill="#fff" stroke="#e6eefc"/>
+    <text x="500" y="156" class="muted">Interactive Map</text>
+    <g transform="translate(520,200)">
+      <rect width="420" height="320" rx="8" fill="#f7fbff"/>
+      <circle cx="120" cy="120" r="36" fill="#34d399"/>
+      <circle cx="260" cy="80" r="24" fill="#f97316"/>
+      <rect x="320" y="220" width="60" height="20" rx="4" fill="#3b82f6"/>
+    </g>
+
+    <!-- footer badges -->
+    <g transform="translate(60,660)">
+      <rect width="140" height="36" rx="8" fill="#eef2ff"/>
+      <text x="18" y="24" class="muted">Nowcast</text>
+    </g>
+    <g transform="translate(220,660)">
+      <rect width="180" height="36" rx="8" fill="#eef2ff"/>
+      <text x="18" y="24" class="muted">Forecast Confidence</text>
+    </g>
+  </g>
+</svg>

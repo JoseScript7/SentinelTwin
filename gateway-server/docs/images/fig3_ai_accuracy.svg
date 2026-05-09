@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="800" viewBox="0 0 1200 800">
+  <style>
+    .bg{fill:#f7fafc}
+    .title{font:600 34px 'Segoe UI', Roboto, Arial;fill:#0f172a}
+    .muted{font:400 16px 'Segoe UI', Roboto, Arial;fill:#475569}
+    .pie1{fill:#10b981}
+    .pie2{fill:#f59e0b}
+    .pie3{fill:#ef4444}
+  </style>
+  <rect class="bg" width="1200" height="800"/>
+  <g transform="translate(60,60)">
+    <text x="0" y="30" class="title">AI Accuracy & Model Performance</text>
+    <text x="0" y="58" class="muted">Precision, recall and confidence overview</text>
+
+    <g transform="translate(80,140)">
+      <circle cx="180" cy="160" r="140" class="pie1"/>
+      <path d="M180 20 A140 140 0 0 1 320 260 L180 160 Z" class="pie2"/>
+      <path d="M180 20 A140 140 0 0 1 500 180 L180 160 Z" class="pie3"/>
+      <rect x="380" y="20" width="360" height="260" rx="10" fill="#fff" stroke="#e6eefc"/>
+      <text x="400" y="60" class="muted">Top Predictions</text>
+    </g>
+  </g>
+</svg>
